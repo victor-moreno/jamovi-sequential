@@ -73,3 +73,43 @@ plot_power <- function(st, cols, base, labels) {
         ggplot2::facet_wrap(~panel, ncol = 1, scales = "free_y") +
         ggplot2::labs(x = labels$x, y = NULL) + base
 }
+
+# Phase II: probability of a "promising" conclusion and expected size against the true
+# response rate (two panels, never two axes), with p0 and p1 marked.
+plot_ph2_oc <- function(st, cols, base, labels) {
+    df <- rbind(data.frame(p = st$p, y = st$reject, panel = labels$reject),
+                data.frame(p = st$p, y = st$en, panel = labels$en))
+    df$panel <- factor(df$panel, c(labels$reject, labels$en))
+    ggplot2::ggplot(df, ggplot2::aes(p, y)) +
+        ggplot2::geom_vline(xintercept = c(st$p0, st$p1), linewidth = 0.3, colour = "grey60", linetype = "dotted") +
+        ggplot2::geom_line(linewidth = 0.9, colour = cols[1]) +
+        ggplot2::facet_wrap(~panel, ncol = 1, scales = "free_y") +
+        ggplot2::labs(x = labels$x, y = NULL) + base
+}
+
+# Phase II stopping boundaries: responses against patients at each look.
+plot_ph2_bounds <- function(st, cols, base, labels) {
+    s <- st$stages
+    ok_f <- s$fut >= 0
+    ok_e <- s$eff <= s$nk
+    df <- rbind(data.frame(n = s$nk[ok_f], y = s$fut[ok_f], what = labels$fut),
+                data.frame(n = s$nk[ok_e], y = s$eff[ok_e], what = labels$eff))
+    df$what <- factor(df$what, c(labels$eff, labels$fut))
+    p <- ggplot2::ggplot(df, ggplot2::aes(n, y, colour = what, linetype = what)) +
+        ggplot2::geom_step(linewidth = 0.8, direction = "hv") +
+        ggplot2::geom_point(size = 2.8) +
+        ggplot2::scale_colour_manual(values = stats::setNames(cols[1:2], c(labels$eff, labels$fut))) +
+        ggplot2::scale_linetype_manual(values = stats::setNames(c("solid", "22"), c(labels$eff, labels$fut))) +
+        ggplot2::expand_limits(x = 0, y = 0) +
+        ggplot2::labs(x = labels$x, y = labels$y, colour = NULL, linetype = NULL)
+    if (!is.null(st$obs)) {
+        # geom_text ignores the theme: take the theme's own text colour (dark mode)
+        ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+        if (is.null(ink)) ink <- "grey30"
+        p <- p + ggplot2::annotate("point", x = st$obs[["n"]], y = st$obs[["x"]], shape = 4, size = 4, stroke = 1.3,
+                                   colour = if (length(cols) >= 3) cols[3] else ink) +
+            ggplot2::annotate("text", x = st$obs[["n"]], y = st$obs[["x"]], label = labels$obs, vjust = -1.2,
+                              size = 3.5, colour = ink)
+    }
+    p + base + ggplot2::theme(legend.position = "top")
+}

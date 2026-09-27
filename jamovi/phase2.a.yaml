@@ -1,0 +1,213 @@
+---
+name:  phase2
+title: Phase II Multistage Design
+menuGroup: Sequential
+menuTitle: Phase II Multistage Design
+menuSubtitle: Simon, Fleming, Bayesian monitoring
+version: '0.1.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Single-arm phase II designs for a binary response: Simon's optimal,
+      minimax and admissible two-stage designs, the exact single-stage design,
+      Fleming's multistage test, and Bayesian monitoring with predictive
+      (Lee & Liu) or posterior probabilities. Exact operating characteristics,
+      and inference for observed data.
+
+options:
+    - name: data
+      type: Data
+
+    - name: design
+      title: Design
+      type: List
+      options:
+        - name: simon
+          title: Simon two-stage
+        - name: single
+          title: Single-stage (exact)
+        - name: fleming
+          title: Fleming multistage
+        - name: predictive
+          title: Bayesian predictive probability (Lee & Liu)
+        - name: posterior
+          title: Bayesian posterior probability
+      default: simon
+
+    - name: p0
+      title: Uninteresting response rate (p0)
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.2
+
+    - name: p1
+      title: Target response rate (p1)
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.4
+
+    - name: alpha
+      title: Type I error (one-sided α)
+      type: Number
+      min: 0.001
+      max: 0.5
+      default: 0.05
+
+    - name: power
+      title: Power
+      type: Number
+      min: 0.5
+      max: 0.999
+      default: 0.8
+
+    - name: simonType
+      title: Simon design
+      type: List
+      options:
+        - name: optimal
+          title: Optimal (smallest expected N under p0)
+        - name: minimax
+          title: Minimax (smallest maximum N)
+        - name: admissible
+          title: Admissible (weight q)
+      default: optimal
+
+    - name: admWeight
+      title: Weight on the maximum N (q)
+      type: Number
+      min: 0
+      max: 1
+      default: 0.5
+
+    - name: nMax
+      title: Largest N searched (0 = automatic)
+      type: Integer
+      min: 0
+      max: 1000
+      default: 0
+
+    - name: flemingStages
+      title: Number of stages
+      type: Integer
+      min: 1
+      max: 10
+      default: 3
+
+    - name: flemingN
+      title: Cumulative sample sizes
+      type: String
+      default: ''
+
+    - name: prior
+      title: Prior
+      type: List
+      options:
+        - name: meanp0
+          title: Beta with mean p0, weight of one patient
+        - name: jeffreys
+          title: Jeffreys, Beta(0.5, 0.5)
+        - name: uniform
+          title: Uniform, Beta(1, 1)
+        - name: custom
+          title: Beta(a, b)
+      default: meanp0
+
+    - name: priorA
+      title: a
+      type: Number
+      min: 0.0001
+      default: 1
+
+    - name: priorB
+      title: b
+      type: Number
+      min: 0.0001
+      default: 1
+
+    - name: bayesNmax
+      title: Maximum sample size
+      type: Integer
+      min: 2
+      max: 1000
+      default: 40
+
+    - name: bayesFirst
+      title: First interim analysis after
+      type: Integer
+      min: 1
+      default: 10
+
+    - name: bayesEvery
+      title: Then every
+      type: Integer
+      min: 1
+      default: 5
+
+    - name: thetaT
+      title: Final threshold θT
+      type: Number
+      min: 0.5
+      max: 0.9999
+      default: 0.95
+
+    - name: thetaL
+      title: Futility threshold θL
+      type: Number
+      min: 0
+      max: 0.5
+      default: 0.05
+
+    - name: thetaU
+      title: Efficacy threshold θU (1 = none)
+      type: Number
+      min: 0.5
+      max: 1
+      default: 1
+
+    - name: analyse
+      title: Observed data
+      type: Bool
+      default: false
+
+    - name: obsN
+      title: Patients evaluated
+      type: Integer
+      min: 0
+      default: 0
+
+    - name: obsX
+      title: Responses
+      type: Integer
+      min: 0
+      default: 0
+
+    - name: ciLevel
+      title: Interval level
+      type: Number
+      min: 0.5
+      max: 0.999
+      default: 0.95
+
+    - name: candidates
+      title: Candidate Simon designs
+      type: Bool
+      default: false
+
+    - name: ocTable
+      title: Operating characteristics
+      type: Bool
+      default: true
+
+    - name: ocPlot
+      title: Operating characteristics plot
+      type: Bool
+      default: true
+
+    - name: boundPlot
+      title: Stopping boundaries plot
+      type: Bool
+      default: false
+...

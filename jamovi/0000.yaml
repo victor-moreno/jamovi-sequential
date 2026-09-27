@@ -11,8 +11,9 @@ type: R
 description: >-
   Design and monitoring of studies analysed repeatedly as data accumulate, with
   control of type I and type II errors: group sequential boundaries (classical
-  and error spending, with futility), Whitehead's triangular tests, and sample
-  size for means, proportions and survival (accrual, follow-up, dropout).
+  and error spending, with futility), Whitehead's triangular tests, sample size
+  for means, proportions and survival (accrual, follow-up, dropout), and phase
+  II multistage designs (Simon, Fleming, Bayesian predictive and posterior).
 analyses:
   - title: Group Sequential Design
     name: gsd
@@ -26,6 +27,19 @@ analyses:
       error-spending or Whitehead's triangular test), optional futility
       boundaries, operating characteristics and the sample size or number of
       events, including survival designs with accrual, follow-up and dropout.
+  - title: Phase II Multistage Design
+    name: phase2
+    ns: jmsequential
+    category: analyses
+    menuGroup: Sequential
+    menuTitle: Phase II Multistage Design
+    menuSubtitle: Simon, Fleming, Bayesian monitoring
+    description: >-
+      Single-arm phase II designs for a binary response: Simon's optimal,
+      minimax and admissible two-stage designs, the exact single-stage design,
+      Fleming's multistage test, and Bayesian monitoring with predictive (Lee &
+      Liu) or posterior probabilities. Exact operating characteristics, and
+      inference for observed data.
 usesNative: false
 minApp: 2.3.0
 

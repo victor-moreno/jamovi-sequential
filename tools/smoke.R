@@ -9,3 +9,8 @@ ev <- r$summary$getCell(rowKey = "events", "value")$value
 tm <- r$timing$asDF$timeH1[1]
 stopifnot(identical(ev, "353"), abs(tm - 16.62567) < 1e-4)
 cat(sprintf("   smoke test passed: %s events, first look at %.2f\n", ev, tm))
+
+# phase II: Simon optimal design for p0 = 0.2, p1 = 0.4, alpha 0.05, power 0.8 (clinfun::ph2simon)
+s <- jmsequential::phase2(data = data.frame())$stages$asDF
+stopifnot(identical(as.integer(s$n), c(13L, 43L)), identical(as.integer(s$fut), c(3L, 12L)))
+cat("   smoke test passed: Simon optimal 3/13, 12/43\n")

@@ -1,0 +1,176 @@
+---
+name:  phase2
+title: Phase II Multistage Design
+jrs: '1.1'
+
+items:
+    - name: summary
+      title: Design summary
+      type: Table
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: text
+
+    - name: stages
+      title: Stopping rules
+      type: Table
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
+      columns:
+        - name: stage
+          title: Look
+          type: integer
+        - name: n
+          title: Patients
+          type: integer
+        - name: fut
+          title: Stop, not promising, if responses ≤
+          type: integer
+        - name: eff
+          title: Stop, promising, if responses ≥
+          type: integer
+        - name: stop0
+          title: p0
+          superTitle: P(stop at this look)
+          type: number
+        - name: stop1
+          title: p1
+          superTitle: P(stop at this look)
+          type: number
+
+    - name: candidates
+      title: Candidate Simon designs
+      type: Table
+      visible: (candidates && design:simon)
+      clearWith: [ p0, p1, alpha, power, nMax ]
+      columns:
+        - name: r1
+          title: r1
+          type: integer
+        - name: n1
+          title: n1
+          type: integer
+        - name: r
+          title: r
+          type: integer
+        - name: n
+          title: n
+          type: integer
+        - name: en0
+          title: EN(p0)
+          type: number
+        - name: pet0
+          title: PET(p0)
+          type: number
+        - name: alpha
+          title: α
+          type: number
+        - name: power
+          title: Power
+          type: number
+        - name: qLo
+          title: From
+          superTitle: Admissible for q
+          type: number
+        - name: qHi
+          title: To
+          superTitle: Admissible for q
+          type: number
+
+    - name: oc
+      title: Operating characteristics
+      type: Table
+      visible: (ocTable)
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
+      columns:
+        - name: label
+          title: ''
+          type: text
+        - name: p
+          title: True response rate
+          type: number
+        - name: reject
+          title: P(promising)
+          type: number
+        - name: pet
+          title: P(early stop)
+          type: number
+        - name: en
+          title: Expected N
+          type: number
+
+    - name: observed
+      title: Observed data
+      type: Table
+      visible: (analyse)
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU, analyse, obsN, obsX, ciLevel ]
+      columns:
+        - name: n
+          title: Patients
+          type: integer
+        - name: x
+          title: Responses
+          type: integer
+        - name: decision
+          title: Decision
+          type: text
+        - name: naive
+          title: Observed rate
+          type: number
+        - name: umvue
+          title: UMVUE
+          type: number
+        - name: lower
+          title: Lower
+          superTitle: Confidence interval
+          type: number
+        - name: upper
+          title: Upper
+          superTitle: Confidence interval
+          type: number
+        - name: pvalue
+          title: p (H0 p ≤ p0)
+          type: number
+          format: zto,pvalue
+        - name: postMean
+          title: Mean
+          superTitle: Posterior
+          type: number
+        - name: crLower
+          title: Lower
+          superTitle: Posterior
+          type: number
+        - name: crUpper
+          title: Upper
+          superTitle: Posterior
+          type: number
+        - name: pGt0
+          title: P(p > p0)
+          superTitle: Posterior
+          type: number
+        - name: pp
+          title: Predictive probability
+          type: number
+
+    - name: ocPlot
+      title: Operating characteristics
+      type: Image
+      width: 550
+      height: 500
+      renderFun: .plotOC
+      visible: (ocPlot)
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
+
+    - name: boundPlot
+      title: Stopping boundaries
+      type: Image
+      width: 550
+      height: 400
+      renderFun: .plotBounds
+      visible: (boundPlot)
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU, analyse, obsN, obsX, ciLevel ]
+...

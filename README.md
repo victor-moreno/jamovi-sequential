@@ -4,7 +4,9 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.1.0: Group Sequential Design
+## Version 0.1.0
+
+### Group Sequential Design
 
 *Sequential → Group Sequential Design*.
 
@@ -46,8 +48,35 @@ The numerical engine is pure R: the recursive integration of Armitage, McPherson
 Sample sizes, events, accrual, follow-up and analysis times agree with rpact to within 10⁻⁶
 (relative).
 
-Planned next: interim monitoring and inference after stopping (0.2.0); SPRT and MaxSPRT
-(0.3.0); phase II multistage designs (0.4.0); Bayesian and anytime-valid monitoring (0.5.0).
+### Phase II Multistage Design
+
+*Sequential → Phase II Multistage Design*: single-arm designs for a binary response.
+
+**Designs**
+
+- Simon two-stage: optimal, minimax, or admissible for a chosen weight (Jung et al. 2004).
+- Exact single-stage design.
+- Fleming's multistage test.
+- Bayesian monitoring with Lee & Liu's predictive probability or with posterior probabilities
+  (Beta prior; futility, efficacy and final thresholds).
+
+**Output**
+
+- Operating characteristics, computed exactly from the binomial distribution: type I error,
+  power, expected sample size, and probability of early stopping.
+- For observed data: the decision, the Koyama & Chen p-value and exact interval, Jung & Kim's
+  UMVUE after a Simon design, and the posterior and predictive probabilities for the Bayesian
+  designs.
+
+**Validation**
+
+- The Simon optimal and minimax designs agree with clinfun in 56 scenarios.
+- The UMVUE and p-values agree with clinfun's `twostage.inference`.
+- The predictive probabilities and boundaries agree with ph2bayes.
+- Fleming's boundaries reproduce two published examples.
+
+Planned next: interim monitoring and inference after stopping; SPRT and MaxSPRT; Bayesian and
+anytime-valid monitoring; a classical fixed-sample size module.
 
 ## Installation
 

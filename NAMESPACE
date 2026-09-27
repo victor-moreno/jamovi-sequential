@@ -1,3 +1,4 @@
 # jmsequential: .() translates output strings inside the analyses
 importFrom(jmvcore, .)
 export(gsd)
+export(phase2)

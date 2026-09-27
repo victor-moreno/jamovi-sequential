@@ -1,0 +1,180 @@
+title: Phase II Multistage Design
+name: phase2
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        cell:
+          column: 0
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: ComboBox
+            name: design
+          - type: TextBox
+            name: p0
+            format: number
+          - type: TextBox
+            name: p1
+            format: number
+      - type: LayoutBox
+        cell:
+          column: 1
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: alpha
+            format: number
+          - type: TextBox
+            name: power
+            format: number
+  - type: CollapseBox
+    label: Frequentist designs
+    collapsed: false
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: Label
+                label: Simon two-stage
+                children:
+                  - type: ComboBox
+                    name: simonType
+                    enable: (design:simon)
+                  - type: TextBox
+                    name: admWeight
+                    format: number
+                    enable: (design:simon && simonType:admissible)
+                  - type: TextBox
+                    name: nMax
+                    format: number
+                    enable: (design:simon)
+                  - type: CheckBox
+                    name: candidates
+                    enable: (design:simon)
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: Label
+                label: Fleming multistage
+                children:
+                  - type: TextBox
+                    name: flemingStages
+                    format: number
+                    enable: (design:fleming)
+                  - type: TextBox
+                    name: flemingN
+                    format: string
+                    enable: (design:fleming)
+  - type: CollapseBox
+    label: Bayesian designs
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: ComboBox
+                name: prior
+                enable: (design:predictive || design:posterior)
+              - type: TextBox
+                name: priorA
+                format: number
+                enable: ((design:predictive || design:posterior) && prior:custom)
+              - type: TextBox
+                name: priorB
+                format: number
+                enable: ((design:predictive || design:posterior) && prior:custom)
+              - type: TextBox
+                name: bayesNmax
+                format: number
+                enable: (design:predictive || design:posterior)
+              - type: TextBox
+                name: bayesFirst
+                format: number
+                enable: (design:predictive || design:posterior)
+              - type: TextBox
+                name: bayesEvery
+                format: number
+                enable: (design:predictive || design:posterior)
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: thetaT
+                format: number
+                enable: (design:predictive || design:posterior)
+              - type: TextBox
+                name: thetaL
+                format: number
+                enable: (design:predictive || design:posterior)
+              - type: TextBox
+                name: thetaU
+                format: number
+                enable: (design:predictive || design:posterior)
+  - type: CollapseBox
+    label: Observed data
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: CheckBox
+            name: analyse
+            children:
+              - type: TextBox
+                name: obsN
+                format: number
+                enable: (analyse)
+              - type: TextBox
+                name: obsX
+                format: number
+                enable: (analyse)
+              - type: TextBox
+                name: ciLevel
+                format: number
+                enable: (analyse)
+  - type: CollapseBox
+    label: Output
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: CheckBox
+            name: ocTable
+          - type: CheckBox
+            name: ocPlot
+          - type: CheckBox
+            name: boundPlot
