@@ -1,0 +1,321 @@
+---
+name:  bayesmon
+title: Bayesian Sequential Monitoring
+menuGroup: Sequential
+menuTitle: Bayesian Sequential Monitoring
+menuSubtitle: Posterior, predictive probability, Bayes factor
+version: '0.5.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Bayesian monitoring rules at interim analyses: stop for efficacy when
+      the posterior probability of an effect beyond a threshold is high, and
+      for futility when the predictive probability of final success is low;
+      normal approximation (estimate and standard error per look) or two arms
+      with a binary outcome (beta-binomial). Sequential Bayes factor t-tests
+      (JZS) on raw data. Frequentist operating characteristics, exact or
+      simulated.
+
+options:
+    - name: data
+      type: Data
+
+    # --- normal approximation: one row per analysis, cumulative ---------------
+    - name: lookN
+      title: Cumulative N
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: estimate
+      title: Estimate
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: se
+      title: Standard error
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    # --- two arms, binary: one row per analysis, cumulative ---------------------
+    - name: xC
+      title: Control responses
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: nC
+      title: Control patients
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: xT
+      title: Treatment responses
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: nT
+      title: Treatment patients
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    # --- Bayes factor: raw data in arrival order -----------------------------------
+    - name: dep
+      title: Outcome (rows in arrival order)
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: group
+      title: Group (two samples)
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: model
+      title: Model
+      type: List
+      options:
+        - name: normal
+          title: Normal approximation (estimate and SE per look)
+        - name: binary
+          title: Two arms, binary outcome (beta-binomial)
+        - name: bf
+          title: Bayes factor t-test (JZS), raw data
+      default: normal
+
+    # --- design ----------------------------------------------------------------------
+    - name: nMax
+      title: Maximum N
+      type: Number
+      min: 2
+      default: 180
+
+    - name: nLooks
+      title: Number of analyses
+      type: Integer
+      min: 1
+      max: 20
+      default: 3
+
+    - name: timing
+      title: Information fractions (optional)
+      type: String
+      default: ''
+
+    - name: arms
+      title: Design
+      type: List
+      options:
+        - name: two
+          title: Two arms, 1:1 (N total)
+        - name: one
+          title: One arm
+      default: two
+
+    - name: sigma
+      title: SD of the outcome
+      type: Number
+      min: 0.000001
+      default: 1
+
+    - name: theta1
+      title: Effect under H1
+      type: Number
+      default: 0.5
+
+    - name: prior
+      title: Prior
+      type: List
+      options:
+        - name: flat
+          title: Flat (non-informative)
+        - name: sceptical
+          title: Sceptical (centred on 0, P(effect > H1) = 5 %)
+        - name: enthusiastic
+          title: Enthusiastic (centred on H1, P(effect < 0) = 5 %)
+        - name: custom
+          title: Normal (mean, SD)
+      default: sceptical
+
+    - name: priorMean
+      title: Prior mean
+      type: Number
+      default: 0
+
+    - name: priorSD
+      title: Prior SD
+      type: Number
+      min: 0.000001
+      default: 1
+
+    - name: pC
+      title: Control response rate
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.3
+
+    - name: pT
+      title: Treatment response rate under H1
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.5
+
+    - name: bNMax
+      title: Maximum patients per arm
+      type: Integer
+      min: 2
+      max: 1000
+      default: 60
+
+    - name: priorA
+      title: Beta prior a
+      type: Number
+      min: 0.0001
+      default: 1
+
+    - name: priorB
+      title: Beta prior b
+      type: Number
+      min: 0.0001
+      default: 1
+
+    # --- rules -------------------------------------------------------------------------
+    - name: delta
+      title: Effect threshold δ
+      type: Number
+      default: 0
+
+    - name: gammaE
+      title: Success if P(effect beyond δ) ≥
+      type: Number
+      min: 0.5
+      max: 0.99999
+      default: 0.975
+
+    - name: effInterim
+      title: Stop early for efficacy
+      type: Bool
+      default: true
+
+    - name: futility
+      title: Stop for futility
+      type: Bool
+      default: true
+
+    - name: gammaF
+      title: Futility if predictive probability <
+      type: Number
+      min: 0.0001
+      max: 0.5
+      default: 0.1
+
+    # --- Bayes factor ------------------------------------------------------------------
+    - name: bfSamples
+      title: Test
+      type: List
+      options:
+        - name: two
+          title: Two samples
+        - name: one
+          title: One sample
+      default: two
+
+    - name: mu0
+      title: Mean under H0 (one sample)
+      type: Number
+      default: 0
+
+    - name: rScale
+      title: Cauchy prior scale r
+      type: Number
+      min: 0.01
+      max: 10
+      default: 0.707
+
+    - name: bfK
+      title: Evidence threshold k (stop if BF ≥ k or ≤ 1/k)
+      type: Number
+      min: 1.01
+      default: 10
+
+    - name: bfNMin
+      title: Minimum n before the first test (per group)
+      type: Integer
+      min: 2
+      default: 10
+
+    - name: bfNMax
+      title: Maximum n (per group)
+      type: Integer
+      min: 3
+      max: 5000
+      default: 100
+
+    - name: d1
+      title: Standardised effect for the design
+      type: Number
+      default: 0.5
+
+    - name: nsim
+      title: Simulations
+      type: Integer
+      min: 100
+      max: 100000
+      default: 1000
+
+    - name: seed
+      title: Seed
+      type: Integer
+      default: 1
+
+    # --- output ------------------------------------------------------------------------
+    - name: level
+      title: Credible interval level
+      type: Number
+      min: 0.5
+      max: 0.999
+      default: 0.95
+
+    - name: ocTable
+      title: Operating characteristics
+      type: Bool
+      default: true
+
+    - name: boundPlot
+      title: Decision thresholds plot
+      type: Bool
+      default: true
+
+    - name: probPlot
+      title: Probabilities by look
+      type: Bool
+      default: true
+
+    - name: densityPlot
+      title: Prior and posterior
+      type: Bool
+      default: false
+
+    - name: ocPlot
+      title: Operating characteristics plot
+      type: Bool
+      default: false
+...

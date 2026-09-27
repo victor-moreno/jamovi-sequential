@@ -70,6 +70,34 @@ analyses:
       continuous or group monitoring, with an exact critical value, signalling
       thresholds, power, expected time to signal and expected length of
       surveillance, and the test applied to cumulative counts.
+  - title: Anytime-Valid Monitoring
+    name: anytime
+    ns: jmsequential
+    category: analyses
+    menuGroup: Sequential
+    menuTitle: Anytime-Valid Monitoring
+    menuSubtitle: E-values, confidence sequences
+    description: >-
+      Continuous monitoring with anytime-valid inference: Gaussian-mixture
+      e-values (the mixture SPRT for a known SD, the safe t-test for an unknown
+      SD), always-valid p-values and confidence sequences for a mean or a
+      difference in means, valid at every sample size and under optional
+      stopping. The design gives the sample size for a target power, exact for a
+      known SD and simulated otherwise.
+  - title: Bayesian Sequential Monitoring
+    name: bayesmon
+    ns: jmsequential
+    category: analyses
+    menuGroup: Sequential
+    menuTitle: Bayesian Sequential Monitoring
+    menuSubtitle: Posterior, predictive probability, Bayes factor
+    description: >-
+      Bayesian monitoring rules at interim analyses: stop for efficacy when the
+      posterior probability of an effect beyond a threshold is high, and for
+      futility when the predictive probability of final success is low; normal
+      approximation (estimate and standard error per look) or two arms with a
+      binary outcome (beta-binomial). Sequential Bayes factor t-tests (JZS) on
+      raw data. Frequentist operating characteristics, exact or simulated.
 datasets:
   - name: Interim analyses - difference in means
     path: gsd_interim_means.csv

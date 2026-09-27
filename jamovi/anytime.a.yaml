@@ -1,0 +1,138 @@
+---
+name:  anytime
+title: Anytime-Valid Monitoring
+menuGroup: Sequential
+menuTitle: Anytime-Valid Monitoring
+menuSubtitle: E-values, confidence sequences
+version: '0.5.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Continuous monitoring with anytime-valid inference: Gaussian-mixture
+      e-values (the mixture SPRT for a known SD, the safe t-test for an unknown
+      SD), always-valid p-values and confidence sequences for a mean or a
+      difference in means, valid at every sample size and under optional
+      stopping. The design gives the sample size for a target power, exact for
+      a known SD and simulated otherwise.
+
+options:
+    - name: data
+      type: Data
+
+    - name: dep
+      title: Outcome (rows in arrival order)
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: group
+      title: Group (two samples)
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: samples
+      title: Test
+      type: List
+      options:
+        - name: two
+          title: Difference in means (two samples)
+        - name: one
+          title: Mean (one sample)
+      default: two
+
+    - name: sdKnown
+      title: Known standard deviation
+      type: Bool
+      default: false
+
+    - name: sigma
+      title: SD
+      type: Number
+      min: 0.000001
+      default: 1
+
+    - name: mu0
+      title: Mean under H0 (one sample)
+      type: Number
+      default: 0
+
+    - name: alpha
+      title: Type I error (α)
+      type: Number
+      min: 0.0001
+      max: 0.5
+      default: 0.05
+
+    - name: delta
+      title: Standardised effect for the design
+      type: Number
+      min: 0.001
+      default: 0.5
+
+    - name: power
+      title: Power
+      type: Number
+      min: 0.5
+      max: 0.9999
+      default: 0.8
+
+    - name: mixing
+      title: Mixing variance g
+      type: List
+      options:
+        - name: delta
+          title: Square of the design effect
+        - name: custom
+          title: Custom
+      default: delta
+
+    - name: g
+      title: g
+      type: Number
+      min: 0.000001
+      default: 0.25
+
+    - name: nMax
+      title: Horizon for the design (0 = four times the fixed n)
+      type: Integer
+      min: 0
+      max: 100000
+      default: 0
+
+    - name: nsim
+      title: Simulations (unknown SD)
+      type: Integer
+      min: 100
+      max: 100000
+      default: 1000
+
+    - name: seed
+      title: Seed
+      type: Integer
+      default: 1
+
+    - name: every
+      title: Show every k-th observation (0 = about 20 rows)
+      type: Integer
+      min: 0
+      default: 0
+
+    - name: curvePlot
+      title: Probability of rejecting by n
+      type: Bool
+      default: true
+
+    - name: ePlot
+      title: E-process
+      type: Bool
+      default: true
+
+    - name: csPlot
+      title: Confidence sequence
+      type: Bool
+      default: true
+...

@@ -1,0 +1,246 @@
+---
+name:  bayesmon
+title: Bayesian Sequential Monitoring
+jrs: '1.1'
+
+items:
+    - name: summary
+      title: Design summary
+      type: Table
+      clearWith: [ model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, pC, pT, bNMax, priorA, priorB, delta, gammaE, effInterim, futility, gammaF, bfSamples, rScale, bfK, bfNMin, bfNMax, d1, nsim, seed ]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: text
+
+    - name: looks
+      title: Decision rules by look
+      type: Table
+      visible: (model:normal || model:binary)
+      clearWith: [ model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, pC, pT, bNMax, priorA, priorB, delta, gammaE, effInterim, futility, gammaF ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: n
+          title: N
+          type: number
+        - name: eff
+          title: Success if estimate
+          type: text
+        - name: fut
+          title: Futility if estimate
+          type: text
+        - name: stop0
+          title: No effect
+          superTitle: P(stop at this look)
+          type: number
+        - name: stop1
+          title: H1
+          superTitle: P(stop at this look)
+          type: number
+
+    - name: oc
+      title: Operating characteristics
+      type: Table
+      visible: (ocTable && (model:normal || model:binary))
+      clearWith: [ model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, pC, pT, bNMax, priorA, priorB, delta, gammaE, effInterim, futility, gammaF ]
+      columns:
+        - name: label
+          title: ''
+          type: text
+        - name: theta
+          title: True effect
+          type: number
+        - name: reject
+          title: P(success)
+          type: number
+        - name: futStop
+          title: P(futility stop)
+          type: number
+        - name: en
+          title: Expected N
+          type: number
+
+    - name: bfDesign
+      title: Bayes factor design analysis
+      type: Table
+      visible: (ocTable && model:bf)
+      clearWith: [ model, bfSamples, rScale, bfK, bfNMin, bfNMax, d1, nsim, seed ]
+      columns:
+        - name: label
+          title: ''
+          type: text
+        - name: d
+          title: True effect (d)
+          type: number
+        - name: pH1
+          title: Evidence for H1
+          type: number
+        - name: pH0
+          title: Evidence for H0
+          type: number
+        - name: pInc
+          title: Inconclusive at the maximum
+          type: number
+        - name: asn
+          title: Expected N
+          type: number
+        - name: median
+          title: Median N
+          type: number
+
+    - name: monitor
+      title: Interim analyses
+      type: Table
+      clearWith: [ lookN, estimate, se, model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, delta, gammaE, effInterim, futility, gammaF, level ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: n
+          title: N
+          type: number
+        - name: est
+          title: Estimate
+          type: number
+        - name: postMean
+          title: Mean
+          superTitle: Posterior
+          type: number
+        - name: lower
+          title: Lower
+          superTitle: Posterior
+          type: number
+        - name: upper
+          title: Upper
+          superTitle: Posterior
+          type: number
+        - name: pBenefit
+          title: P(benefit)
+          type: number
+        - name: pDelta
+          title: P(beyond δ)
+          type: number
+        - name: pp
+          title: Predictive probability
+          type: number
+        - name: decision
+          title: Decision
+          type: text
+
+    - name: monitorBin
+      title: Interim analyses
+      type: Table
+      clearWith: [ xC, nC, xT, nT, model, nLooks, timing, pC, pT, bNMax, priorA, priorB, delta, gammaE, effInterim, futility, gammaF, level ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: xC
+          title: Responses
+          superTitle: Control
+          type: integer
+        - name: nC
+          title: N
+          superTitle: Control
+          type: integer
+        - name: xT
+          title: Responses
+          superTitle: Treatment
+          type: integer
+        - name: nT
+          title: N
+          superTitle: Treatment
+          type: integer
+        - name: postMean
+          title: Mean
+          superTitle: Posterior difference
+          type: number
+        - name: lower
+          title: Lower
+          superTitle: Posterior difference
+          type: number
+        - name: upper
+          title: Upper
+          superTitle: Posterior difference
+          type: number
+        - name: pBenefit
+          title: P(benefit)
+          type: number
+        - name: pDelta
+          title: P(beyond δ)
+          type: number
+        - name: pp
+          title: Predictive probability
+          type: number
+        - name: decision
+          title: Decision
+          type: text
+
+    - name: bfTest
+      title: Sequential Bayes factor
+      type: Table
+      clearWith: [ dep, group, model, bfSamples, mu0, rScale, bfK, bfNMin, bfNMax ]
+      columns:
+        - name: n
+          title: n
+          type: integer
+        - name: bf
+          title: BF₁₀
+          type: number
+        - name: d
+          title: Effect (d)
+          type: number
+        - name: decision
+          title: Decision
+          type: text
+
+    - name: boundPlot
+      title: Decision thresholds
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotBounds
+      visible: (boundPlot && model:normal)
+      clearWith: [ lookN, estimate, se, model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, delta, gammaE, effInterim, futility, gammaF ]
+
+    - name: probPlot
+      title: Probabilities by look
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotProb
+      visible: (probPlot && (model:normal || model:binary))
+      clearWith: [ lookN, estimate, se, xC, nC, xT, nT, model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, pC, pT, bNMax, priorA, priorB, delta, gammaE, effInterim, futility, gammaF ]
+
+    - name: bfPlot
+      title: Bayes factor path
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotBF
+      visible: (probPlot && model:bf)
+      clearWith: [ dep, group, model, bfSamples, mu0, rScale, bfK, bfNMin, bfNMax ]
+
+    - name: densityPlot
+      title: Prior and posterior
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotDensity
+      visible: (densityPlot && (model:normal || model:binary))
+      clearWith: [ lookN, estimate, se, xC, nC, xT, nT, model, nMax, arms, sigma, theta1, prior, priorMean, priorSD, pC, pT, priorA, priorB ]
+
+    - name: ocPlot
+      title: Operating characteristics
+      type: Image
+      width: 550
+      height: 500
+      renderFun: .plotOC
+      visible: (ocPlot && (model:normal || model:binary))
+      clearWith: [ model, nMax, nLooks, timing, arms, sigma, theta1, prior, priorMean, priorSD, pC, pT, bNMax, priorA, priorB, delta, gammaE, effInterim, futility, gammaF ]
+...

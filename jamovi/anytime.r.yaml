@@ -1,0 +1,79 @@
+---
+name:  anytime
+title: Anytime-Valid Monitoring
+jrs: '1.1'
+
+items:
+    - name: summary
+      title: Design
+      type: Table
+      clearWith: [ samples, sdKnown, sigma, alpha, delta, power, mixing, g, nMax, nsim, seed ]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: text
+
+    - name: monitor
+      title: Monitoring
+      type: Table
+      visible: (dep)
+      clearWith: [ dep, group, samples, sdKnown, sigma, mu0, alpha, delta, mixing, g, every ]
+      columns:
+        - name: n
+          title: n
+          type: integer
+        - name: est
+          title: Estimate
+          type: number
+        - name: stat
+          title: Statistic
+          type: number
+        - name: e
+          title: E-value
+          type: number
+        - name: p
+          title: Always-valid p
+          type: number
+          format: zto,pvalue
+        - name: lower
+          title: Lower
+          superTitle: Confidence sequence
+          type: number
+        - name: upper
+          title: Upper
+          superTitle: Confidence sequence
+          type: number
+        - name: decision
+          title: Decision
+          type: text
+
+    - name: curvePlot
+      title: Probability of rejecting H0 by n
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotCurve
+      visible: (curvePlot)
+      clearWith: [ samples, sdKnown, sigma, alpha, delta, power, mixing, g, nMax, nsim, seed ]
+
+    - name: ePlot
+      title: E-process
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotE
+      visible: (ePlot)
+      clearWith: [ dep, group, samples, sdKnown, sigma, mu0, alpha, delta, mixing, g ]
+
+    - name: csPlot
+      title: Confidence sequence
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotCS
+      visible: (csPlot)
+      clearWith: [ dep, group, samples, sdKnown, sigma, mu0, alpha, delta, mixing, g ]
+...

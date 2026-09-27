@@ -185,3 +185,45 @@ plot_maxsprt <- function(st, cols, base, labels) {
     p + ggplot2::expand_limits(x = 0, y = 0) +
         ggplot2::labs(x = labels$x, y = labels$y, colour = NULL) + base + ggplot2::theme(legend.position = "top")
 }
+
+# Generic series plot. st$df: x, y, series, type ("line": line and points if st$points,
+# "point": points only); st$h: reference lines (y, label); st$logy: log10 y axis; st$mark:
+# a highlighted point (x, y).
+plot_series <- function(st, cols, base, labels) {
+    ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(ink)) ink <- "grey30"
+    df <- st$df
+    lev <- unique(df$series)
+    df$series <- factor(df$series, lev)
+    pal <- stats::setNames(rep_len(if (length(cols)) cols else "grey30", length(lev)), lev)
+    if (!is.null(st$inkSeries)) pal[st$inkSeries] <- ink
+    ln <- df[df$type != "point", ]
+    pts <- if (isTRUE(st$points)) df else df[df$type == "point", ]
+    p <- ggplot2::ggplot()
+    if (!is.null(st$h) && nrow(st$h))
+        p <- p + ggplot2::geom_hline(data = st$h, ggplot2::aes(yintercept = y), linetype = "22",
+                                     colour = "grey55", linewidth = 0.45)
+    if (nrow(ln)) p <- p + ggplot2::geom_line(data = ln, ggplot2::aes(x, y, colour = series), linewidth = 0.9)
+    if (nrow(pts)) p <- p + ggplot2::geom_point(data = pts, ggplot2::aes(x, y, colour = series), size = 2.2)
+    if (!is.null(st$mark))
+        p <- p + ggplot2::annotate("point", x = st$mark[["x"]], y = st$mark[["y"]], shape = 21, size = 3.8,
+                                   stroke = 1.2, colour = ink, fill = NA)
+    if (isTRUE(st$logy)) p <- p + ggplot2::scale_y_log10()
+    if (!is.null(st$ylim)) p <- p + ggplot2::coord_cartesian(ylim = st$ylim)
+    p + ggplot2::scale_colour_manual(values = pal) +
+        ggplot2::labs(x = labels$x, y = labels$y, colour = NULL) + base + ggplot2::theme(legend.position = "top")
+}
+
+# Confidence sequence: band of the anytime-valid interval against n, with the estimate and the
+# null value.
+plot_cs <- function(st, cols, base, labels) {
+    ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(ink)) ink <- "grey30"
+    df <- st$df
+    ggplot2::ggplot(df, ggplot2::aes(n)) +
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = lower, ymax = upper), fill = cols[1], alpha = 0.25) +
+        ggplot2::geom_hline(yintercept = st$null, linetype = "22", colour = "grey55", linewidth = 0.45) +
+        ggplot2::geom_line(ggplot2::aes(y = est), colour = ink, linewidth = 0.7) +
+        ggplot2::coord_cartesian(ylim = st$ylim) +
+        ggplot2::labs(x = labels$x, y = labels$y) + base
+}
