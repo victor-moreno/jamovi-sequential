@@ -93,7 +93,7 @@ options:
       type: List
       options:
         - name: normal
-          title: Normal approximation (estimate and SE per look)
+          title: Normal approximation (estimate, SE)
         - name: binary
           title: Two arms, binary outcome (beta-binomial)
         - name: bf
@@ -147,9 +147,9 @@ options:
         - name: flat
           title: Flat (non-informative)
         - name: sceptical
-          title: Sceptical (centred on 0, P(effect > H1) = 5 %)
+          title: Sceptical (centred on 0)
         - name: enthusiastic
-          title: Enthusiastic (centred on H1, P(effect < 0) = 5 %)
+          title: Enthusiastic (centred on H1)
         - name: custom
           title: Normal (mean, SD)
       default: sceptical
@@ -252,13 +252,13 @@ options:
       default: 0.707
 
     - name: bfK
-      title: Evidence threshold k (stop if BF ≥ k or ≤ 1/k)
+      title: Evidence threshold k
       type: Number
       min: 1.01
       default: 10
 
     - name: bfNMin
-      title: Minimum n before the first test (per group)
+      title: Minimum n (per group)
       type: Integer
       min: 2
       default: 10

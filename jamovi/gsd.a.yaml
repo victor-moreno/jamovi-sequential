@@ -112,7 +112,7 @@ options:
       default: ''
 
     - name: ratio
-      title: 'Allocation ratio (treatment : control)'
+      title: 'Allocation (treatment : control)'
       type: Number
       min: 0.01
       max: 100
@@ -215,11 +215,11 @@ options:
       type: List
       options:
         - name: n
-          title: Sample size (accrual and follow-up given)
+          title: Sample size
         - name: accrual
-          title: Accrual duration (accrual rate and follow-up given)
+          title: Accrual duration
         - name: followup
-          title: Follow-up (sample size and accrual given)
+          title: Follow-up
       default: n
 
     - name: accrualTime
@@ -229,7 +229,7 @@ options:
       default: 24
 
     - name: accrualRate
-      title: Accrual rate (patients per time unit)
+      title: Accrual rate (per time unit)
       type: Number
       min: 0
       default: 20

@@ -236,8 +236,9 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
         .plotBounds = function(image, ggtheme, theme, ...) {
             st <- image$state
             if (is.null(st)) return(FALSE)
-            labels <- list(fut = .("Stop: not promising"), eff = .("Stop: promising"),
-                           obs = .("Observed"), x = .("Patients"), y = .("Responses"))
+            labels <- list(fut = .("Not promising"), eff = .("Promising"), cont = .("Continue"),
+                           obs = .("Observed"), reach = .("Possible trajectories"),
+                           x = .("Patients"), y = .("Responses"))
             print(plot_ph2_bounds(st, theme$color, list(theme_only(ggtheme)), labels))
             TRUE
         })

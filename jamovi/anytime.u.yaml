@@ -4,116 +4,92 @@ jus: '3.0'
 stage: 0
 compilerMode: tame
 children:
-  - type: VariableSupplier
-    persistentItems: false
-    stretchFactor: 1
+- type: VariableSupplier
+  persistentItems: false
+  stretchFactor: 1
+  children:
+  - type: TargetLayoutBox
+    label: Outcome (rows in arrival order)
     children:
-      - type: TargetLayoutBox
-        label: Outcome (rows in arrival order)
-        children:
-          - type: VariablesListBox
-            name: dep
-            maxItemCount: 1
-            isTarget: true
-      - type: TargetLayoutBox
-        label: Group (two samples)
-        children:
-          - type: VariablesListBox
-            name: group
-            maxItemCount: 1
-            isTarget: true
-            enable: (samples:two)
+    - type: VariablesListBox
+      name: dep
+      maxItemCount: 1
+      isTarget: true
+  - type: TargetLayoutBox
+    label: Group (two samples)
+    children:
+    - type: VariablesListBox
+      name: group
+      maxItemCount: 1
+      isTarget: true
+      enable: (samples:two)
+- type: LayoutBox
+  margin: large
+  stretchFactor: 1
+  children:
+  - type: ComboBox
+    name: samples
+  - type: TextBox
+    name: mu0
+    format: number
+    enable: (samples:one)
+  - type: CheckBox
+    name: sdKnown
+    children:
+    - type: TextBox
+      name: sigma
+      format: number
+      enable: (sdKnown)
+  - type: TextBox
+    name: alpha
+    format: number
+  - type: TextBox
+    name: delta
+    format: number
+  - type: TextBox
+    name: power
+    format: number
+- type: CollapseBox
+  label: Mixture and design
+  collapsed: true
+  stretchFactor: 1
+  children:
   - type: LayoutBox
     margin: large
     stretchFactor: 1
     children:
-      - type: LayoutBox
-        cell:
-          column: 0
-          row: 0
-        stretchFactor: 1
-        children:
-          - type: ComboBox
-            name: samples
-          - type: TextBox
-            name: mu0
-            format: number
-            enable: (samples:one)
-          - type: CheckBox
-            name: sdKnown
-            children:
-              - type: TextBox
-                name: sigma
-                format: number
-                enable: (sdKnown)
-      - type: LayoutBox
-        cell:
-          column: 1
-          row: 0
-        stretchFactor: 1
-        children:
-          - type: TextBox
-            name: alpha
-            format: number
-          - type: TextBox
-            name: delta
-            format: number
-          - type: TextBox
-            name: power
-            format: number
-  - type: CollapseBox
-    label: Mixture and design
-    collapsed: true
+    - type: ComboBox
+      name: mixing
+    - type: TextBox
+      name: g
+      format: number
+      enable: (mixing:custom)
+    - type: TextBox
+      name: nMax
+      format: number
+    - type: TextBox
+      name: nsim
+      format: number
+      enable: (!sdKnown)
+    - type: TextBox
+      name: seed
+      format: number
+      enable: (!sdKnown)
+- type: CollapseBox
+  label: Output
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: LayoutBox
+    margin: large
     stretchFactor: 1
     children:
-      - type: LayoutBox
-        margin: large
-        stretchFactor: 1
-        children:
-          - type: LayoutBox
-            cell:
-              column: 0
-              row: 0
-            stretchFactor: 1
-            children:
-              - type: ComboBox
-                name: mixing
-              - type: TextBox
-                name: g
-                format: number
-                enable: (mixing:custom)
-              - type: TextBox
-                name: nMax
-                format: number
-          - type: LayoutBox
-            cell:
-              column: 1
-              row: 0
-            stretchFactor: 1
-            children:
-              - type: TextBox
-                name: nsim
-                format: number
-                enable: (!sdKnown)
-              - type: TextBox
-                name: seed
-                format: number
-                enable: (!sdKnown)
-  - type: CollapseBox
-    label: Output
-    collapsed: true
-    stretchFactor: 1
-    children:
-      - type: LayoutBox
-        margin: large
-        stretchFactor: 1
-        children:
-          - type: TextBox
-            name: every
-            format: number
-          - type: CheckBox
-            name: curvePlot
-          - type: CheckBox
-            name: ePlot
-          - type: CheckBox
-            name: csPlot
+    - type: TextBox
+      name: every
+      format: number
+    - type: CheckBox
+      name: curvePlot
+    - type: CheckBox
+      name: ePlot
+    - type: CheckBox
+      name: csPlot

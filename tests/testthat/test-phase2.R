@@ -99,3 +99,17 @@ test_that("the outcome map describes two-stage designs and is refused for other 
     r <- phase2(data = data.frame(), design = "fleming", outcomePlot = TRUE)
     expect_false(r$outcomePlot$visible)
 })
+
+test_that("the stopping-boundary plot shades the decisions per look and the reachable cone", {
+    r <- phase2(data = data.frame(), analyse = TRUE, obsN = 13, obsX = 5)
+    st <- r$boundPlot$state
+    lab <- list(fut = "no", eff = "yes", cont = "cont", obs = "obs", reach = "reach", x = "x", y = "y")
+    p <- plot_ph2_bounds(st, c("blue", "red"), list(ggplot2::theme_minimal()), lab)
+    reg <- p$layers[[1]]$data
+    # look 1 (13 patients): stop if <= 3 responses, else continue; look 2: promising if >= 13 of 43
+    expect_setequal(unique(as.character(reg$what)), c("no", "cont", "yes"))
+    expect_true(all(reg$y <= reg$x + 0.5 + 1e-9))
+    cone <- Filter(function(l) inherits(l$geom, "GeomPolygon") && is.null(l$mapping$group), p$layers)
+    expect_length(cone, 1)
+    expect_equal(max(cone[[1]]$data$y), 5 + 43 - 13)
+})

@@ -98,7 +98,7 @@ options:
       default: 0.25
 
     - name: nMax
-      title: Horizon for the design (0 = four times the fixed n)
+      title: Design horizon N (0 = automatic)
       type: Integer
       min: 0
       max: 100000
@@ -117,7 +117,7 @@ options:
       default: 1
 
     - name: every
-      title: Show every k-th observation (0 = about 20 rows)
+      title: Show every k-th row (0 = auto)
       type: Integer
       min: 0
       default: 0

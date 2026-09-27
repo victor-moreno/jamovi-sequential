@@ -87,31 +87,78 @@ plot_ph2_oc <- function(st, cols, base, labels) {
         ggplot2::labs(x = labels$x, y = NULL) + base
 }
 
-# Phase II stopping boundaries: responses against patients at each look.
+# Phase II stopping boundaries: responses against patients. Shaded regions give the decision
+# that the next look would take (for patients in (n[k-1], n[k]], the rule at look k), clipped so
+# that responses never exceed patients; region edges lie half-way between response counts. With
+# observed data, the cone of counts still reachable from the current status is shaded and the
+# reachable range at each later look is drawn, so the possible trajectories are visible.
 plot_ph2_bounds <- function(st, cols, base, labels) {
+    ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(ink)) ink <- "grey30"
     s <- st$stages
+    K <- length(s$nk); N <- s$nk[K]
+    # keep the part of a polygon with f(x, y) <= 0 (Sutherland-Hodgman, one half-plane)
+    clip <- function(px, py, f) {
+        ox <- oy <- numeric(0)
+        for (i in seq_along(px)) {
+            j <- if (i == length(px)) 1 else i + 1
+            a <- f(px[i], py[i]); b <- f(px[j], py[j])
+            if (a <= 0) { ox <- c(ox, px[i]); oy <- c(oy, py[i]) }
+            if ((a <= 0) != (b <= 0)) {
+                t <- a / (a - b)
+                ox <- c(ox, px[i] + t * (px[j] - px[i])); oy <- c(oy, py[i] + t * (py[j] - py[i]))
+            }
+        }
+        list(x = ox, y = oy)
+    }
+    lev <- c(fut = labels$fut, cont = labels$cont, eff = labels$eff)
+    reg <- list(); id <- 0
+    add <- function(x0, x1, y0, y1, what) {
+        if (y1 <= y0) return(invisible())
+        p <- clip(c(x0, x1, x1, x0), c(y0, y0, y1, y1), function(x, y) y - x - 0.5)
+        if (length(p$x) < 3) return(invisible())
+        id <<- id + 1
+        reg[[id]] <<- data.frame(x = p$x, y = p$y, id = id, what = lev[[what]])
+    }
+    for (k in seq_len(K)) {
+        x0 <- if (k == 1) 0 else s$nk[k - 1]; x1 <- s$nk[k]
+        f <- s$fut[k]; e <- s$eff[k]
+        if (f >= 0) add(x0, x1, -0.5, f + 0.5, "fut")
+        if (e <= x1) add(x0, x1, e - 0.5, x1 + 0.5, "eff")
+        add(x0, x1, max(f, -1) + 0.5, min(e, x1 + 1) - 0.5, "cont")
+    }
+    reg <- do.call(rbind, reg)
+    present <- lev[names(lev) %in% names(lev)[match(unique(reg$what), lev)]]
+    reg$what <- factor(reg$what, present)
+    fills <- stats::setNames(c(cols[2], ink, cols[1]), lev)[present]
+    alphas <- stats::setNames(c(0.28, 0.08, 0.28), lev)[present]
     ok_f <- s$fut >= 0
     ok_e <- s$eff <= s$nk
-    df <- rbind(data.frame(n = s$nk[ok_f], y = s$fut[ok_f], what = labels$fut),
-                data.frame(n = s$nk[ok_e], y = s$eff[ok_e], what = labels$eff))
-    df$what <- factor(df$what, c(labels$eff, labels$fut))
-    p <- ggplot2::ggplot(df, ggplot2::aes(n, y, colour = what, linetype = what)) +
-        ggplot2::geom_step(linewidth = 0.8, direction = "hv") +
-        ggplot2::geom_point(size = 2.8) +
-        ggplot2::scale_colour_manual(values = stats::setNames(cols[1:2], c(labels$eff, labels$fut))) +
-        ggplot2::scale_linetype_manual(values = stats::setNames(c("solid", "22"), c(labels$eff, labels$fut))) +
-        ggplot2::expand_limits(x = 0, y = 0) +
-        ggplot2::labs(x = labels$x, y = labels$y, colour = NULL, linetype = NULL)
+    pts <- rbind(data.frame(n = s$nk[ok_f], y = s$fut[ok_f], what = lev[["fut"]]),
+                 data.frame(n = s$nk[ok_e], y = s$eff[ok_e], what = lev[["eff"]]))
+    p <- ggplot2::ggplot() +
+        ggplot2::geom_polygon(data = reg, ggplot2::aes(x, y, group = id, fill = what, alpha = what), colour = NA) +
+        ggplot2::scale_fill_manual(values = fills, name = NULL) +
+        ggplot2::scale_alpha_manual(values = alphas, name = NULL) +
+        ggplot2::geom_vline(xintercept = s$nk, colour = "grey60", linewidth = 0.3, linetype = "dotted") +
+        ggplot2::geom_point(data = pts, ggplot2::aes(n, y, colour = what), size = 2.8, show.legend = FALSE) +
+        ggplot2::scale_colour_manual(values = stats::setNames(c(cols[2], cols[1]), c(lev[["fut"]], lev[["eff"]])))
     if (!is.null(st$obs)) {
-        # geom_text ignores the theme: take the theme's own text colour (dark mode)
-        ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
-        if (is.null(ink)) ink <- "grey30"
-        p <- p + ggplot2::annotate("point", x = st$obs[["n"]], y = st$obs[["x"]], shape = 4, size = 4, stroke = 1.3,
-                                   colour = if (length(cols) >= 3) cols[3] else ink) +
-            ggplot2::annotate("text", x = st$obs[["n"]], y = st$obs[["x"]], label = labels$obs, vjust = -1.2,
-                              size = 3.5, colour = ink)
+        n0 <- st$obs[["n"]]; x0 <- st$obs[["x"]]
+        if (n0 < N) {
+            later <- s$nk[s$nk > n0]
+            p <- p + ggplot2::annotate("polygon", x = c(n0, N, N), y = c(x0, x0, x0 + N - n0),
+                                       fill = ink, alpha = 0.10, colour = ink, linetype = "22", linewidth = 0.4) +
+                ggplot2::annotate("segment", x = later, xend = later, y = x0, yend = x0 + later - n0,
+                                  colour = ink, linewidth = 1.1) +
+                ggplot2::annotate("text", x = N, y = x0 + N - n0, label = labels$reach, hjust = 1.05, vjust = -0.6,
+                                  size = 3.3, colour = ink)
+        }
+        p <- p + ggplot2::annotate("point", x = n0, y = x0, shape = 4, size = 4, stroke = 1.3, colour = ink) +
+            ggplot2::annotate("text", x = n0, y = x0, label = labels$obs, vjust = -1.2, size = 3.5, colour = ink)
     }
-    p + base + ggplot2::theme(legend.position = "top")
+    p + ggplot2::coord_cartesian(xlim = c(0, N + max(0.8, N / 60)), ylim = c(-0.8, N + 0.8), expand = FALSE) +
+        ggplot2::labs(x = labels$x, y = labels$y) + base + ggplot2::theme(legend.position = "top")
 }
 
 # Interim monitoring: boundaries at the observed (and remaining planned) looks, with the
