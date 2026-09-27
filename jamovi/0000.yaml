@@ -1,7 +1,7 @@
 ---
 title: Sequential Designs
 name: jmsequential
-version: 0.5.9
+version: 0.5.10
 jms: '1.0'
 authors:
   - V. Moreno
@@ -103,38 +103,28 @@ datasets:
   - name: Interim analyses - difference in means
     path: gsd_interim_means.csv
     description: >-
-      Fabricated cumulative results of a two-arm trial (difference in means, SD
-      1) at two interim analyses: N, estimate and standard error. Use with Group
-      Sequential Design, default design (effect 0.5): the trial stops for
-      efficacy at the second look.
+      Fabricated two-arm trial (difference in means, SD 1) at two interim looks.
+      Group Sequential Design, defaults: stops for efficacy at look 2.
   - name: Interim analyses - survival
     path: gsd_interim_survival.csv
     description: >-
-      Fabricated cumulative results of a survival trial at two interim analyses:
-      events, log hazard ratio and standard error. Use with Group Sequential
-      Design, endpoint time to event (hazard ratio 0.7).
+      Fabricated survival trial at two interim looks: events, log hazard ratio,
+      SE. Group Sequential Design, time to event (hazard ratio 0.7).
   - name: Sequential outcomes - patients in arrival order
     path: sprt_sequential.csv
     description: >-
-      Fabricated outcomes of 80 patients in arrival order: a binary response, a
-      continuous score and the arm. Use with Sequential Probability Ratio Test:
-      the default proportion SPRT (0.2 against 0.4) on response accepts H1 after
-      30 patients; the two-sample t-test on score by arm (d = 0.5) accepts H1
-      after 41.
+      Fabricated response, score and arm of 80 patients. SPRT: the default test
+      accepts H1 after 30 patients; the two-sample t-test on score, after 41.
   - name: Safety surveillance - weekly counts
     path: maxsprt_surveillance.csv
     description: >-
-      Fabricated weekly cumulative counts of an adverse event after a
-      vaccination campaign, with the counts expected under H0. Use with Safety
-      Surveillance (MaxSPRT), default Poisson design (T = 20): the MaxSPRT
-      signals in week 12.
+      Fabricated weekly counts of an adverse event, and those expected under H0.
+      Safety Surveillance (MaxSPRT), defaults: signal in week 12.
   - name: Interim analyses - two arms, binary outcome
     path: bayes_binary_interim.csv
     description: >-
-      Fabricated cumulative responses and patients per arm at two interim
-      analyses of a trial with a binary outcome. Use with Bayesian Sequential
-      Monitoring, model two arms binary (control 0.3, treatment 0.5, 60 per
-      arm): the trial stops for efficacy at the second look.
+      Fabricated responses per arm at two interim looks. Bayesian Sequential
+      Monitoring, two arms binary (0.3 vs 0.5): stops for efficacy at look 2.
 usesNative: false
 minApp: 2.3.0
 

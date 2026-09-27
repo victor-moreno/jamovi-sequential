@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.9
+## Version 0.5.10
 
 Every analysis works in the same order: the design options come first, and the data go in the
 **Analysis of observed data** box at the end of the options panel (variables, or patients and
@@ -219,8 +219,9 @@ Releases page, then *Modules → jamovi library → Sideload*:
 
 `tutorial/` is a Quarto website that introduces sequential methods — boundaries, spending,
 futility, triangular tests, sample size, monitoring, inference, SPRT, MaxSPRT, phase II,
-Bayesian and anytime-valid designs — with examples computed by this module.
-See `tutorial/README.md` to build it.
+Bayesian and anytime-valid designs — with examples computed by this module. Each method page
+ends with its example worked in jamovi, with a screenshot of the options and the results
+(captured by `tutorial/screenshots/capture.py`). See `tutorial/README.md` to build it.
 
 ## Development
 

@@ -10,6 +10,14 @@ theme_only <- function(ggtheme) {
     if (length(parts) == 0L) NULL else parts[[1L]]
 }
 
+# Size (mm) of text drawn inside a plot, as a fraction of the theme's text size: fixed sizes
+# that suit a 12 pt theme came out at 60 % of the axis text in jamovi, whose theme uses 16 pt.
+ann_size <- function(base, rel = 0.8) {
+    sz <- tryCatch(ggplot2::calc_element("text", base[[1]])$size, error = function(e) NULL)
+    if (!is.numeric(sz)) sz <- 12
+    rel * sz / ggplot2::.pt
+}
+
 # scale: z, b (B-value Z*sqrt(t): Whitehead's score up to a constant, so triangular
 # boundaries are straight lines), p or effect; xvar: "n" (sample size / events) or "t".
 plot_bounds <- function(st, scale, cols, base, labels, xvar = "n") {
@@ -134,7 +142,8 @@ plot_ph2_outcomes <- function(st, cols, base, labels) {
     p + ggplot2::scale_x_continuous(breaks = seq(0, st$n1, by = step(st$n1)), expand = c(0, 0.3)) +
         ggplot2::scale_y_continuous(breaks = seq(0, st$n2, by = step(st$n2)), expand = c(0, 0.3)) +
         ggplot2::labs(x = labels$x, y = labels$y, fill = NULL, colour = NULL) + base +
-        ggplot2::theme(legend.position = "top", panel.grid.major = ggplot2::element_blank(),
+        # the current-status key on a line of its own: beside the decisions it overflowed jamovi's plot
+        ggplot2::theme(legend.position = "top", legend.box = "vertical", panel.grid.major = ggplot2::element_blank(),
                        panel.grid.minor = ggplot2::element_blank()) +
         ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE, order = 1),
                         colour = ggplot2::guide_legend(order = 2))
@@ -196,8 +205,8 @@ plot_ph2_bounds <- function(st, cols, base, labels) {
         ggplot2::geom_vline(xintercept = s$nk, colour = "grey55", linewidth = 0.3, linetype = "dotted") +
         ggplot2::geom_point(data = pts, ggplot2::aes(n, y), size = 2.6,
                             colour = ifelse(pts$what == "fut", pal[["noInk"]], pal[["yesInk"]]))
-    lab_at_end <- function(y, text, colour) ggplot2::annotate("text", x = N, y = y, label = text, hjust = 1.03,
-                                                               vjust = -0.5, size = 3.2, colour = colour)
+    lab_at_end <- function(y, text, colour, vjust = -0.5) ggplot2::annotate("text", x = N, y = y, label = text, hjust = 1.03,
+                                                               vjust = vjust, size = ann_size(base, 0.75), colour = colour)
     if ("hyp" %in% show && !is.null(st$p0)) {
         p <- p + ggplot2::annotate("segment", x = 0, xend = N, y = 0, yend = st$p0 * N, colour = pal[["noInk"]],
                                    linetype = "42", linewidth = 0.5) +
@@ -214,7 +223,8 @@ plot_ph2_bounds <- function(st, cols, base, labels) {
                                        fill = ink, alpha = 0.05, colour = ink, linetype = "22", linewidth = 0.4) +
                 ggplot2::annotate("segment", x = later, xend = later, y = x0, yend = x0 + later - n0,
                                   colour = ink, linewidth = 1) +
-                lab_at_end(x0 + N - n0, labels$reach, ink)
+                # below the apex: above it, the label ran into the status text in wider fonts
+                lab_at_end(x0 + N - n0, labels$reach, ink, vjust = 1.6)
         }
         # the rate is the slope: project the current status with the observed rate and the limits
         # of its interval, a fan inside the triangle of possible trajectories
@@ -231,7 +241,7 @@ plot_ph2_bounds <- function(st, cols, base, labels) {
         }
         # responses cannot exceed patients, so the top-left corner is always empty: the status goes there
         p <- p + ggplot2::annotate("point", x = n0, y = x0, shape = 4, size = 4, stroke = 1.5, colour = pal[["now"]]) +
-            ggplot2::annotate("text", x = 0.02 * N, y = 0.98 * N, label = status, hjust = 0, vjust = 1, size = 3.4,
+            ggplot2::annotate("text", x = 0.02 * N, y = 0.98 * N, label = status, hjust = 0, vjust = 1, size = ann_size(base),
                               colour = pal[["now"]], lineheight = 1.1)
     }
     p + ggplot2::coord_cartesian(xlim = c(0, N + max(0.8, N / 60)), ylim = c(-0.8, N + 0.8), expand = FALSE) +
@@ -251,7 +261,7 @@ plot_monitor <- function(st, cols, base, labels, xvar = "n") {
     plot_bounds(st, "z", cols, base, labels, xvar) +
         ggplot2::geom_line(data = ob, ggplot2::aes(x, z), inherit.aes = FALSE, colour = obsCol, linewidth = 0.8) +
         ggplot2::geom_point(data = ob, ggplot2::aes(x, z), inherit.aes = FALSE, colour = obsCol, size = 3.2, shape = 17) +
-        ggplot2::annotate("text", x = last$x, y = last$z, label = labels$obs, vjust = -1.3, size = 3.5, colour = ink)
+        ggplot2::annotate("text", x = last$x, y = last$z, label = labels$obs, vjust = -1.3, size = ann_size(base), colour = ink)
 }
 
 # SPRT: boundaries (LLR against n, or Z against V for the triangular test) with the observed
@@ -304,7 +314,7 @@ plot_maxsprt <- function(st, cols, base, labels) {
             p <- p + ggplot2::annotate("point", x = st$signal[["x"]], y = st$signal[["y"]], shape = 21, size = 3.8,
                                        stroke = 1.2, colour = pc, fill = NA) +
                 ggplot2::annotate("text", x = st$signal[["x"]], y = st$signal[["y"]], label = labels$signalled,
-                                  vjust = -1.3, size = 3.5, colour = ink)
+                                  vjust = -1.3, size = ann_size(base), colour = ink)
     }
     p + ggplot2::expand_limits(x = 0, y = 0) +
         ggplot2::labs(x = labels$x, y = labels$y, colour = NULL) + base + ggplot2::theme(legend.position = "top")
