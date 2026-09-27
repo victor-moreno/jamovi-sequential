@@ -32,7 +32,8 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             candidates = FALSE,
             ocTable = TRUE,
             ocPlot = TRUE,
-            boundPlot = FALSE, ...) {
+            boundPlot = FALSE,
+            outcomePlot = FALSE, ...) {
 
             super$initialize(
                 package="jmsequential",
@@ -193,6 +194,10 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "boundPlot",
                 boundPlot,
                 default=FALSE)
+            private$..outcomePlot <- jmvcore::OptionBool$new(
+                "outcomePlot",
+                outcomePlot,
+                default=FALSE)
 
             self$.addOption(private$..design)
             self$.addOption(private$..p0)
@@ -221,6 +226,7 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..ocTable)
             self$.addOption(private$..ocPlot)
             self$.addOption(private$..boundPlot)
+            self$.addOption(private$..outcomePlot)
         }),
     active = list(
         design = function() private$..design$value,
@@ -249,7 +255,8 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         candidates = function() private$..candidates$value,
         ocTable = function() private$..ocTable$value,
         ocPlot = function() private$..ocPlot$value,
-        boundPlot = function() private$..boundPlot$value),
+        boundPlot = function() private$..boundPlot$value,
+        outcomePlot = function() private$..outcomePlot$value),
     private = list(
         ..design = NA,
         ..p0 = NA,
@@ -277,7 +284,8 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..candidates = NA,
         ..ocTable = NA,
         ..ocPlot = NA,
-        ..boundPlot = NA)
+        ..boundPlot = NA,
+        ..outcomePlot = NA)
 )
 
 phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -290,6 +298,7 @@ phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         oc = function() private$.items[["oc"]],
         observed = function() private$.items[["observed"]],
         ocPlot = function() private$.items[["ocPlot"]],
+        outcomePlot = function() private$.items[["outcomePlot"]],
         boundPlot = function() private$.items[["boundPlot"]]),
     private = list(),
     public=list(
@@ -601,6 +610,34 @@ phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "thetaU")))
             self$add(jmvcore::Image$new(
                 options=options,
+                name="outcomePlot",
+                title="Outcome map",
+                width=550,
+                height=520,
+                renderFun=".plotOutcomes",
+                visible="(outcomePlot)",
+                clearWith=list(
+                    "design",
+                    "p0",
+                    "p1",
+                    "alpha",
+                    "power",
+                    "simonType",
+                    "admWeight",
+                    "nMax",
+                    "flemingStages",
+                    "flemingN",
+                    "prior",
+                    "priorA",
+                    "priorB",
+                    "bayesNmax",
+                    "bayesFirst",
+                    "bayesEvery",
+                    "thetaT",
+                    "thetaL",
+                    "thetaU")))
+            self$add(jmvcore::Image$new(
+                options=options,
                 name="boundPlot",
                 title="Stopping boundaries",
                 width=550,
@@ -688,6 +725,7 @@ phase2Base <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param ocTable .
 #' @param ocPlot .
 #' @param boundPlot .
+#' @param outcomePlot .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$summary} \tab \tab \tab \tab \tab a table \cr
@@ -696,6 +734,7 @@ phase2Base <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$oc} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$observed} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$ocPlot} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$outcomePlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$boundPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
@@ -734,7 +773,8 @@ phase2 <- function(
     candidates = FALSE,
     ocTable = TRUE,
     ocPlot = TRUE,
-    boundPlot = FALSE) {
+    boundPlot = FALSE,
+    outcomePlot = FALSE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("phase2 requires jmvcore to be installed (restart may be required)")
@@ -771,7 +811,8 @@ phase2 <- function(
         candidates = candidates,
         ocTable = ocTable,
         ocPlot = ocPlot,
-        boundPlot = boundPlot)
+        boundPlot = boundPlot,
+        outcomePlot = outcomePlot)
 
     analysis <- phase2Class$new(
         options = options,

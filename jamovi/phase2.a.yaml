@@ -2,6 +2,7 @@
 name:  phase2
 title: Phase II Multistage Design
 menuGroup: Sequential
+menuSubgroup: Design
 menuTitle: Phase II Multistage Design
 menuSubtitle: Simon, Fleming, Bayesian monitoring
 version: '0.1.0'
@@ -208,6 +209,11 @@ options:
 
     - name: boundPlot
       title: Stopping boundaries plot
+      type: Bool
+      default: false
+
+    - name: outcomePlot
+      title: Outcome map (two-stage designs)
       type: Bool
       default: false
 ...

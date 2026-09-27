@@ -165,6 +165,15 @@ items:
       visible: (ocPlot)
       clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
 
+    - name: outcomePlot
+      title: Outcome map
+      type: Image
+      width: 550
+      height: 520
+      renderFun: .plotOutcomes
+      visible: (outcomePlot)
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
+
     - name: boundPlot
       title: Stopping boundaries
       type: Image

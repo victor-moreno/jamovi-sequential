@@ -178,3 +178,5 @@ children:
             name: ocPlot
           - type: CheckBox
             name: boundPlot
+          - type: CheckBox
+            name: outcomePlot

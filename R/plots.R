@@ -227,3 +227,26 @@ plot_cs <- function(st, cols, base, labels) {
         ggplot2::coord_cartesian(ylim = st$ylim) +
         ggplot2::labs(x = labels$x, y = labels$y) + base
 }
+
+# Phase II outcome map for a two-stage design: every (stage-1, stage-2) response count and the
+# decision it leads to. Columns stopped after stage 1 are drawn whole (stage 2 never happens).
+plot_ph2_outcomes <- function(st, cols, base, labels) {
+    g <- expand.grid(x1 = 0:st$n1, x2 = 0:st$n2)
+    what <- ifelse(g$x1 <= st$fut1, "stop0", ifelse(g$x1 >= st$eff1, "stop1",
+                   ifelse(g$x1 + g$x2 >= st$eff2, "yes", "no")))
+    lev <- c(stop0 = labels$stop0, no = labels$no, yes = labels$yes, stop1 = labels$stop1)
+    keep <- names(lev)[names(lev) %in% what]
+    g$what <- factor(lev[what], lev[keep])
+    fills <- c(stop0 = grDevices::adjustcolor(cols[2], alpha.f = 0.3), no = cols[2], yes = cols[1],
+               stop1 = grDevices::adjustcolor(cols[1], alpha.f = 0.45))
+    step <- function(n) max(1, ceiling(n / 10))
+    ggplot2::ggplot(g, ggplot2::aes(x1, x2, fill = what)) +
+        ggplot2::geom_tile(width = 0.9, height = 0.9) +
+        ggplot2::scale_fill_manual(values = stats::setNames(fills[keep], lev[keep])) +
+        ggplot2::scale_x_continuous(breaks = seq(0, st$n1, by = step(st$n1)), expand = c(0, 0.3)) +
+        ggplot2::scale_y_continuous(breaks = seq(0, st$n2, by = step(st$n2)), expand = c(0, 0.3)) +
+        ggplot2::labs(x = labels$x, y = labels$y, fill = NULL) + base +
+        ggplot2::theme(legend.position = "top", panel.grid.major = ggplot2::element_blank(),
+                       panel.grid.minor = ggplot2::element_blank()) +
+        ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE))
+}

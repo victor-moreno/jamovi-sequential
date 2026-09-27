@@ -2,6 +2,7 @@
 name:  anytime
 title: Anytime-Valid Monitoring
 menuGroup: Sequential
+menuSubgroup: Analysis
 menuTitle: Anytime-Valid Monitoring
 menuSubtitle: E-values, confidence sequences
 version: '0.5.0'

@@ -85,3 +85,17 @@ test_that("the two-stage UMVUE is exactly unbiased (and the observed rate is not
     expect_equal(eu, p, tolerance = 1e-10)
     expect_lt(en, p - 0.03)
 })
+
+test_that("the outcome map describes two-stage designs and is refused for other designs", {
+    r <- phase2(data = data.frame(), outcomePlot = TRUE)
+    st <- r$outcomePlot$state
+    expect_equal(unlist(st[c("n1", "n2", "fut1", "eff2")]), c(n1 = 13, n2 = 30, fut1 = 3, eff2 = 13))
+    p <- plot_ph2_outcomes(st, c("blue", "red"), list(ggplot2::theme_minimal()),
+                           list(stop0 = "s0", stop1 = "s1", no = "no", yes = "yes", x = "x", y = "y"))
+    d <- p$data
+    expect_equal(nrow(d), 14 * 31)
+    expect_true(all(d$what[d$x1 <= 3] == "s0"))
+    expect_true(all((d$what == "yes") == (d$x1 > 3 & d$x1 + d$x2 >= 13)))
+    r <- phase2(data = data.frame(), design = "fleming", outcomePlot = TRUE)
+    expect_false(r$outcomePlot$visible)
+})

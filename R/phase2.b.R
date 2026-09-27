@@ -99,6 +99,17 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             img <- self$results$boundPlot
             if (is.null(img$state))
                 img$setState(list(stages = st, obs = if (is.null(obs)) NULL else c(n = obs$n, x = obs$x)))
+            # outcome map: every (stage-1, stage-2) outcome of a two-stage design and its decision
+            img <- self$results$outcomePlot
+            if (o$outcomePlot) {
+                if (K != 2) {
+                    private$.notice(.("The outcome map needs a two-stage design (Simon, or two stages or looks)."),
+                                    "outcomeMap", jmvcore::NoticeType$INFO)
+                    img$setVisible(FALSE)
+                } else if (is.null(img$state))
+                    img$setState(list(n1 = st$nk[1], n2 = st$nk[2] - st$nk[1], fut1 = st$fut[1],
+                                      eff1 = st$eff[1], eff2 = st$eff[2]))
+            }
         },
 
         .fail = function(text) {
@@ -208,6 +219,17 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             labels <- list(reject = .("P(declared promising)"), en = .("Expected sample size"),
                            x = .("True response rate"))
             print(plot_ph2_oc(st, theme$color, list(theme_only(ggtheme)), labels))
+            TRUE
+        },
+
+        .plotOutcomes = function(image, ggtheme, theme, ...) {
+            st <- image$state
+            if (is.null(st)) return(FALSE)
+            labels <- list(stop0 = .("Stopped after stage 1: not promising"), stop1 = .("Stopped after stage 1: promising"),
+                           no = .("Not promising"), yes = .("Promising"),
+                           x = sprintf(.("Responses in stage 1 (of %d)"), st$n1),
+                           y = sprintf(.("Responses in stage 2 (of %d)"), st$n2))
+            print(plot_ph2_outcomes(st, theme$color, list(theme_only(ggtheme)), labels))
             TRUE
         },
 

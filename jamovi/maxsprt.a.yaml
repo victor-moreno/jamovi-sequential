@@ -2,6 +2,7 @@
 name:  maxsprt
 title: Safety Surveillance (MaxSPRT)
 menuGroup: Sequential
+menuSubgroup: Analysis
 menuTitle: Safety Surveillance (MaxSPRT)
 menuSubtitle: Poisson and binomial MaxSPRT
 version: '0.3.0'

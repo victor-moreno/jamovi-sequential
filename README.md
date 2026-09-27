@@ -4,7 +4,13 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.0
+## Version 0.5.1
+
+In jamovi the *Sequential* menu has two headings. **Design**: Group Sequential Design and Phase II
+Multistage Design. **Analysis**: Sequential Probability Ratio Test, Safety Surveillance (MaxSPRT),
+Bayesian Sequential Monitoring and Anytime-Valid Monitoring. Each analysis also keeps the options
+of the other kind, such as interim monitoring in the group sequential design or observed data in
+phase II.
 
 ### Group Sequential Design
 
@@ -85,6 +91,8 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
 - For observed data: the decision, the Koyama & Chen p-value and exact interval, Jung & Kim's
   UMVUE after a Simon design, and the posterior and predictive probabilities for the Bayesian
   designs.
+- Outcome map for two-stage designs: every combination of stage-1 and stage-2 responses, coloured
+  by the decision it leads to.
 
 **Validation**
 

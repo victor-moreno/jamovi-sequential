@@ -2,6 +2,7 @@
 name:  gsd
 title: Group Sequential Design
 menuGroup: Sequential
+menuSubgroup: Design
 menuTitle: Group Sequential Design
 menuSubtitle: Boundaries, futility, sample size
 version: '0.1.0'
