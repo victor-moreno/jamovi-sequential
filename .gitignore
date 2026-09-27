@@ -22,3 +22,8 @@ inst/i18n
 # local only, never pushed: survey report, implementation plan, fixture generator
 docs
 dev
+# tutorial: rendered site and Quarto caches are rebuilt; _freeze/ is tracked
+tutorial/_site
+tutorial/.quarto
+tutorial/**/*_files
+tutorial/_freeze

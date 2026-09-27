@@ -50,6 +50,9 @@ test_that("triangular tests follow Whitehead's formulas and attain alpha and pow
     expect_equal(unname(d$triangle["c"]), 1 / (2 * k))
     expect_lt(abs(d$alphaBinding - .025), .003)
     expect_lt(abs(d$power - .9), .01)
+    # the corrected boundaries close exactly at the last look, so no look is unreachable
+    expect_true(all(d$lo[-5] < d$up[-5]))
+    expect_equal(d$lo[5], d$up[5])
     d40 <- tri_design(40, sided = 1, alpha = .025, beta = .1)
     expect_lt(abs(d40$alphaBinding - .025), 5e-4)
     dd <- tri_design(5, sided = 2, alpha = .05, beta = .1)

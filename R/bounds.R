@@ -208,8 +208,9 @@ gs_finish <- function(d, eta, etaFix, spec) {
 #   k = 1 + z_{1-beta} / z_{1-alpha1},  a = k ln(1/(2 alpha1)),  c = 1/(2k),  V_max = a/c
 #   reject H0: Z_score >= a + cV;  accept H0: Z_score <= -a + 3cV
 # (alpha1 = alpha one-sided, alpha/2 per tail two-sided). Discrete looks use the
-# "Christmas-tree" correction a - 0.583 sqrt(V_k - V_{k-1}) (Whitehead 1997); the
-# final look rejects when Z_score >= 2cV. Attained alpha and power are computed
+# "Christmas-tree" correction a - 0.583 sqrt(V_k - V_{k-1}) (Whitehead 1997), and
+# V_max is chosen so that the corrected lines meet at the final look, where the
+# test rejects when Z_score >= 2cV. Attained alpha and power are computed
 # exactly by gs_finish, not taken from the approximations.
 tri_design <- function(K = 5, timing = NULL, sided = 1, alpha = 0.025, beta = 0.1,
                        correction = TRUE) {
@@ -217,7 +218,13 @@ tri_design <- function(K = 5, timing = NULL, sided = 1, alpha = 0.025, beta = 0.
     K <- length(t)
     a1 <- alpha / sided
     k <- 1 + stats::qnorm(1 - beta) / stats::qnorm(1 - a1)
-    a <- k * log(1 / (2 * a1)); cc <- 1 / (2 * k); Vmax <- a / cc
+    a <- k * log(1 / (2 * a1)); cc <- 1 / (2 * k)
+    # the corrected boundaries must meet at the last look (as in SAS PROC SEQDESIGN),
+    # so every planned look is reachable: solve c V_K = a - 0.583 sqrt(V_K - V_{K-1})
+    dK <- t[K] - (if (K > 1) t[K - 1] else 0)
+    Vmax <- if (correction)
+        stats::uniroot(function(v) cc * v - a + 0.583 * sqrt(v * dK), c(0, a / cc), tol = 1e-12)$root
+    else a / cc
     V <- t * Vmax
     ak <- if (correction) a - 0.583 * sqrt(diff(c(0, V))) else rep(a, K)
     up <- (ak + cc * V) / sqrt(V)
@@ -235,6 +242,6 @@ tri_design <- function(K = 5, timing = NULL, sided = 1, alpha = 0.025, beta = 0.
     d <- list(t = t, up = up, lo = lo, wedge = wedge, C = NA)
     etaFix <- stats::qnorm(1 - a1) + stats::qnorm(1 - beta)
     out <- gs_finish(d, sqrt(Vmax), etaFix, spec)
-    out$triangle <- c(a = a, c = cc, Vmax = Vmax)
+    out$triangle <- c(a = a, c = cc, Vmax = Vmax, Vapex = a / cc)
     out
 }
