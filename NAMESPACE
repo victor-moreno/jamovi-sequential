@@ -1,1 +1,3 @@
-# jmsequential: analyses are reached through jmvcore::create; exports added per analysis
+# jmsequential: .() translates output strings inside the analyses
+importFrom(jmvcore, .)
+export(gsd)

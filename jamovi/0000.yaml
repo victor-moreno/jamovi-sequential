@@ -1,0 +1,32 @@
+---
+title: Sequential Designs
+name: jmsequential
+version: 0.1.0
+jms: '1.0'
+authors:
+  - V. Moreno
+maintainer: V. Moreno <v.moreno@iconcologia.net>
+date: '2026-09-27'
+type: R
+description: >-
+  Design and monitoring of studies analysed repeatedly as data accumulate, with
+  control of type I and type II errors: group sequential boundaries (classical
+  and error spending, with futility), Whitehead's triangular tests, and sample
+  size for means, proportions and survival (accrual, follow-up, dropout).
+analyses:
+  - title: Group Sequential Design
+    name: gsd
+    ns: jmsequential
+    menuGroup: Sequential
+    menuTitle: Group Sequential Design
+    menuSubtitle: Boundaries, futility, sample size
+    category: analyses
+    description: >-
+      Design of a group sequential study: efficacy boundaries (classical,
+      error-spending or Whitehead's triangular test), optional futility
+      boundaries, operating characteristics and the sample size or number of
+      events, including survival designs with accrual, follow-up and dropout.
+usesNative: false
+minApp: 2.3.0
+
+...

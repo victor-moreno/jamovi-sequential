@@ -11,6 +11,6 @@ Description: Design and interim monitoring of studies analysed repeatedly as dat
     monitoring. Pure R numerical engine (recursive integration).
 License: GPL (>= 3)
 Encoding: UTF-8
-Imports: jmvcore (>= 2.4), R6
+Imports: jmvcore (>= 2.4), R6, ggplot2
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3

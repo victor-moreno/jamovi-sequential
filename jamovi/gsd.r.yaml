@@ -1,0 +1,143 @@
+---
+name:  gsd
+title: Group Sequential Design
+jrs: '1.1'
+
+items:
+    - name: summary
+      title: Design summary
+      type: Table
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: text
+
+    - name: bounds
+      title: Boundaries
+      type: Table
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: t
+          title: Information
+          type: number
+        - name: n
+          title: N
+          type: number
+        - name: effZ
+          title: Z
+          superTitle: Efficacy
+          type: number
+        - name: effP
+          title: Nominal p
+          superTitle: Efficacy
+          type: number
+          format: zto,pvalue
+        - name: effEst
+          title: Effect
+          superTitle: Efficacy
+          type: number
+        - name: futZ
+          title: Z
+          superTitle: Futility
+          type: number
+        - name: futEst
+          title: Effect
+          superTitle: Futility
+          type: number
+        - name: cumAlpha
+          title: Cumulative α
+          type: number
+        - name: stopH0
+          title: H0
+          superTitle: P(stop)
+          type: number
+        - name: stopH1
+          title: H1
+          superTitle: P(stop)
+          type: number
+
+    - name: oc
+      title: Operating characteristics
+      type: Table
+      visible: (ocTable)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+      columns:
+        - name: hyp
+          title: True effect
+          type: text
+        - name: effect
+          title: Effect
+          type: number
+        - name: reject
+          title: P(reject H0)
+          type: number
+        - name: earlyEff
+          title: Efficacy
+          superTitle: Early stop
+          type: number
+        - name: earlyFut
+          title: Futility
+          superTitle: Early stop
+          type: number
+        - name: en
+          title: Expected N
+          type: number
+
+    - name: timing
+      title: Timing of the analyses
+      type: Table
+      visible: (endpoint:surv)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: events
+          title: Events
+          type: number
+        - name: timeH1
+          title: Under H1
+          superTitle: Expected time
+          type: number
+        - name: timeH0
+          title: Under H0
+          superTitle: Expected time
+          type: number
+        - name: enrolled
+          title: Enrolled (H1)
+          type: number
+
+    - name: boundPlot
+      title: Boundaries
+      type: Image
+      width: 550
+      height: 400
+      renderFun: .plotBounds
+      visible: (boundPlot)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding, boundScale ]
+
+    - name: spendPlot
+      title: Error spending
+      type: Image
+      width: 550
+      height: 400
+      renderFun: .plotSpend
+      visible: (spendPlot)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+
+    - name: powerPlot
+      title: Power and expected sample size
+      type: Image
+      width: 550
+      height: 550
+      renderFun: .plotPower
+      visible: (powerPlot)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+...

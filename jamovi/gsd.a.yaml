@@ -1,0 +1,401 @@
+---
+name:  gsd
+title: Group Sequential Design
+menuGroup: Sequential
+menuTitle: Group Sequential Design
+menuSubtitle: Boundaries, futility, sample size
+version: '0.1.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Design of a group sequential study: efficacy boundaries (classical,
+      error-spending or Whitehead's triangular test), optional futility
+      boundaries, operating characteristics and the sample size or number of
+      events, including survival designs with accrual, follow-up and dropout.
+
+options:
+    - name: data
+      type: Data
+
+    # --- design -------------------------------------------------------------
+    - name: endpoint
+      title: Endpoint
+      type: List
+      options:
+        - name: means
+          title: Means (two groups)
+        - name: props
+          title: Proportions (two groups)
+        - name: surv
+          title: Time to event
+        - name: generic
+          title: Generic effect
+      default: means
+
+    - name: sided
+      title: Test
+      type: List
+      options:
+        - name: one
+          title: One-sided
+        - name: two
+          title: Two-sided (symmetric)
+      default: one
+
+    - name: alpha
+      title: Type I error (α)
+      type: Number
+      min: 0.0001
+      max: 0.5
+      default: 0.025
+
+    - name: power
+      title: Power
+      type: Number
+      min: 0.5
+      max: 0.9999
+      default: 0.9
+
+    - name: nLooks
+      title: Number of analyses
+      type: Integer
+      min: 1
+      max: 50
+      default: 3
+
+    - name: timing
+      title: Information fractions
+      type: String
+      default: ''
+
+    - name: ratio
+      title: 'Allocation ratio (treatment : control)'
+      type: Number
+      min: 0.01
+      max: 100
+      default: 1
+
+    # --- effect size ---------------------------------------------------------
+    - name: meanDiff
+      title: Difference in means
+      type: Number
+      default: 0.5
+
+    - name: sd
+      title: Standard deviation
+      type: Number
+      min: 0
+      default: 1
+
+    - name: p0
+      title: Control proportion
+      type: Number
+      min: 0.0001
+      max: 0.9999
+      default: 0.3
+
+    - name: p1
+      title: Treatment proportion
+      type: Number
+      min: 0.0001
+      max: 0.9999
+      default: 0.45
+
+    - name: genEffect
+      title: Effect
+      type: Number
+      default: 0.5
+
+    - name: genSd
+      title: SD per observation
+      type: Number
+      min: 0
+      default: 1
+
+    # --- survival design ------------------------------------------------------
+    - name: hr
+      title: Hazard ratio
+      type: Number
+      min: 0.01
+      max: 100
+      default: 0.7
+
+    - name: ctrlSpec
+      title: Control survival given as
+      type: List
+      options:
+        - name: median
+          title: Median
+        - name: hazard
+          title: Hazard rate
+        - name: survival
+          title: Survival at a time
+      default: median
+
+    - name: ctrlMedian
+      title: Median survival
+      type: Number
+      min: 0
+      default: 12
+
+    - name: ctrlHazard
+      title: Hazard rate
+      type: Number
+      min: 0
+      default: 0.0578
+
+    - name: survTime
+      title: Time
+      type: Number
+      min: 0
+      default: 12
+
+    - name: survProb
+      title: Survival probability
+      type: Number
+      min: 0.0001
+      max: 0.9999
+      default: 0.5
+
+    - name: eventsMethod
+      title: Events formula
+      type: List
+      options:
+        - name: schoenfeld
+          title: Schoenfeld
+        - name: freedman
+          title: Freedman
+      default: schoenfeld
+
+    - name: solveFor
+      title: Calculate
+      type: List
+      options:
+        - name: n
+          title: Sample size (accrual and follow-up given)
+        - name: accrual
+          title: Accrual duration (accrual rate and follow-up given)
+        - name: followup
+          title: Follow-up (sample size and accrual given)
+      default: n
+
+    - name: accrualTime
+      title: Accrual duration
+      type: Number
+      min: 0
+      default: 24
+
+    - name: accrualRate
+      title: Accrual rate (patients per time unit)
+      type: Number
+      min: 0
+      default: 20
+
+    - name: followUp
+      title: Minimum follow-up
+      type: Number
+      min: 0
+      default: 12
+
+    - name: nTotal
+      title: Total sample size
+      type: Number
+      min: 0
+      default: 600
+
+    - name: dropoutProb
+      title: Dropout probability
+      type: Number
+      min: 0
+      max: 0.9999
+      default: 0
+
+    - name: dropoutTime
+      title: by time
+      type: Number
+      min: 0
+      default: 12
+
+    # --- efficacy boundary -----------------------------------------------------
+    - name: efficacy
+      title: Efficacy boundary
+      type: List
+      options:
+        - name: ldof
+          title: Lan-DeMets O'Brien-Fleming spending
+        - name: ldpocock
+          title: Lan-DeMets Pocock spending
+        - name: kd
+          title: Kim-DeMets power spending (ρ)
+        - name: hsd
+          title: Hwang-Shih-DeCani spending (γ)
+        - name: exponential
+          title: Exponential spending (ν)
+        - name: user
+          title: User-defined spending
+        - name: obf
+          title: O'Brien-Fleming
+        - name: pocock
+          title: Pocock
+        - name: wt
+          title: Wang-Tsiatis (Δ)
+        - name: hp
+          title: Haybittle-Peto
+        - name: pt
+          title: Pampallona-Tsiatis (Δ), with futility
+        - name: triangular
+          title: Triangular test (Whitehead)
+      default: ldof
+
+    - name: effRho
+      title: ρ
+      type: Number
+      min: 0.01
+      default: 3
+
+    - name: effGamma
+      title: γ
+      type: Number
+      default: -4
+
+    - name: effNu
+      title: ν
+      type: Number
+      min: 0.01
+      default: 0.75
+
+    - name: effUser
+      title: Cumulative proportions of α
+      type: String
+      default: ''
+
+    - name: wtDelta
+      title: Δ
+      type: Number
+      default: 0.25
+
+    - name: hpZ
+      title: Interim z
+      type: Number
+      min: 0
+      default: 3
+
+    - name: ptDelta1
+      title: Δ efficacy
+      type: Number
+      default: 0
+
+    - name: ptDelta0
+      title: Δ futility
+      type: Number
+      default: 0
+
+    # --- futility boundary ------------------------------------------------------
+    - name: futility
+      title: Futility boundary
+      type: List
+      options:
+        - name: none
+          title: None
+        - name: spending
+          title: Beta spending
+        - name: fixedz
+          title: Fixed z-values
+        - name: cp
+          title: Conditional power
+      default: none
+
+    - name: futSf
+      title: Beta-spending function
+      type: List
+      options:
+        - name: ldof
+          title: Lan-DeMets O'Brien-Fleming
+        - name: ldpocock
+          title: Lan-DeMets Pocock
+        - name: kd
+          title: Kim-DeMets (ρ)
+        - name: hsd
+          title: Hwang-Shih-DeCani (γ)
+        - name: exponential
+          title: Exponential (ν)
+      default: hsd
+
+    - name: futRho
+      title: ρ
+      type: Number
+      min: 0.01
+      default: 2
+
+    - name: futGamma
+      title: γ
+      type: Number
+      default: -2
+
+    - name: futNu
+      title: ν
+      type: Number
+      min: 0.01
+      default: 0.75
+
+    - name: futZ
+      title: z-values at the interim analyses
+      type: String
+      default: '0'
+
+    - name: futCp
+      title: Stop if conditional power below
+      type: Number
+      min: 0.0001
+      max: 0.9999
+      default: 0.2
+
+    - name: futCpUnder
+      title: Conditional power under
+      type: List
+      options:
+        - name: trend
+          title: Current trend
+        - name: H1
+          title: Design effect
+      default: trend
+
+    - name: binding
+      title: Binding futility
+      type: Bool
+      default: false
+
+    # --- output ------------------------------------------------------------------
+    - name: ocTable
+      title: Operating characteristics
+      type: Bool
+      default: true
+
+    - name: boundPlot
+      title: Boundary plot
+      type: Bool
+      default: true
+
+    - name: boundScale
+      title: Boundary scale
+      type: List
+      options:
+        - name: z
+          title: Z statistic
+        - name: p
+          title: Nominal p-value
+        - name: effect
+          title: Effect
+      default: z
+
+    - name: spendPlot
+      title: Error spending plot
+      type: Bool
+      default: false
+
+    - name: powerPlot
+      title: Power and expected sample size
+      type: Bool
+      default: false
+...

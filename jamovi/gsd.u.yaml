@@ -1,0 +1,306 @@
+title: Group Sequential Design
+name: gsd
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        cell:
+          column: 0
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: ComboBox
+            name: endpoint
+          - type: ComboBox
+            name: sided
+          - type: TextBox
+            name: alpha
+            format: number
+          - type: TextBox
+            name: power
+            format: number
+      - type: LayoutBox
+        cell:
+          column: 1
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: nLooks
+            format: number
+          - type: TextBox
+            name: timing
+            format: string
+            width: large
+          - type: TextBox
+            name: ratio
+            format: number
+  - type: CollapseBox
+    label: Effect size
+    collapsed: false
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: Label
+                label: Means
+                children:
+                  - type: TextBox
+                    name: meanDiff
+                    format: number
+                    enable: (endpoint:means)
+                  - type: TextBox
+                    name: sd
+                    format: number
+                    enable: (endpoint:means)
+              - type: Label
+                label: Generic
+                children:
+                  - type: TextBox
+                    name: genEffect
+                    format: number
+                    enable: (endpoint:generic)
+                  - type: TextBox
+                    name: genSd
+                    format: number
+                    enable: (endpoint:generic)
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: Label
+                label: Proportions
+                children:
+                  - type: TextBox
+                    name: p0
+                    format: number
+                    enable: (endpoint:props)
+                  - type: TextBox
+                    name: p1
+                    format: number
+                    enable: (endpoint:props)
+              - type: Label
+                label: Time to event
+                children:
+                  - type: TextBox
+                    name: hr
+                    format: number
+                    enable: (endpoint:surv)
+  - type: CollapseBox
+    label: Survival design
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: ComboBox
+                name: ctrlSpec
+                enable: (endpoint:surv)
+              - type: TextBox
+                name: ctrlMedian
+                format: number
+                enable: (endpoint:surv && ctrlSpec:median)
+              - type: TextBox
+                name: ctrlHazard
+                format: number
+                enable: (endpoint:surv && ctrlSpec:hazard)
+              - type: TextBox
+                name: survTime
+                format: number
+                enable: (endpoint:surv && ctrlSpec:survival)
+              - type: TextBox
+                name: survProb
+                format: number
+                enable: (endpoint:surv && ctrlSpec:survival)
+              - type: ComboBox
+                name: eventsMethod
+                enable: (endpoint:surv)
+              - type: Label
+                label: Dropout
+                children:
+                  - type: TextBox
+                    name: dropoutProb
+                    format: number
+                    enable: (endpoint:surv)
+                  - type: TextBox
+                    name: dropoutTime
+                    format: number
+                    enable: (endpoint:surv)
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: ComboBox
+                name: solveFor
+                enable: (endpoint:surv)
+              - type: TextBox
+                name: accrualTime
+                format: number
+                enable: (endpoint:surv && (solveFor:n || solveFor:followup))
+              - type: TextBox
+                name: accrualRate
+                format: number
+                enable: (endpoint:surv && solveFor:accrual)
+              - type: TextBox
+                name: followUp
+                format: number
+                enable: (endpoint:surv && (solveFor:n || solveFor:accrual))
+              - type: TextBox
+                name: nTotal
+                format: number
+                enable: (endpoint:surv && solveFor:followup)
+  - type: CollapseBox
+    label: Efficacy boundary
+    collapsed: false
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: ComboBox
+            name: efficacy
+          - type: TextBox
+            name: effRho
+            format: number
+            enable: (efficacy:kd)
+          - type: TextBox
+            name: effGamma
+            format: number
+            enable: (efficacy:hsd)
+          - type: TextBox
+            name: effNu
+            format: number
+            enable: (efficacy:exponential)
+          - type: TextBox
+            name: effUser
+            format: string
+            width: large
+            enable: (efficacy:user)
+          - type: TextBox
+            name: wtDelta
+            format: number
+            enable: (efficacy:wt)
+          - type: TextBox
+            name: hpZ
+            format: number
+            enable: (efficacy:hp)
+          - type: TextBox
+            name: ptDelta1
+            format: number
+            enable: (efficacy:pt)
+          - type: TextBox
+            name: ptDelta0
+            format: number
+            enable: (efficacy:pt)
+  - type: CollapseBox
+    label: Futility boundary
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: ComboBox
+                name: futility
+                enable: (!efficacy:pt && !efficacy:triangular)
+              - type: CheckBox
+                name: binding
+                enable: (!efficacy:triangular && (efficacy:pt || !futility:none))
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: ComboBox
+                name: futSf
+                enable: (futility:spending && !efficacy:pt && !efficacy:triangular)
+              - type: TextBox
+                name: futRho
+                format: number
+                enable: (futility:spending && futSf:kd && !efficacy:pt && !efficacy:triangular)
+              - type: TextBox
+                name: futGamma
+                format: number
+                enable: (futility:spending && futSf:hsd && !efficacy:pt && !efficacy:triangular)
+              - type: TextBox
+                name: futNu
+                format: number
+                enable: (futility:spending && futSf:exponential && !efficacy:pt && !efficacy:triangular)
+              - type: TextBox
+                name: futZ
+                format: string
+                enable: (futility:fixedz && !efficacy:pt && !efficacy:triangular)
+              - type: TextBox
+                name: futCp
+                format: number
+                enable: (futility:cp && !efficacy:pt && !efficacy:triangular)
+              - type: ComboBox
+                name: futCpUnder
+                enable: (futility:cp && !efficacy:pt && !efficacy:triangular)
+  - type: CollapseBox
+    label: Output
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: ocTable
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: boundPlot
+                children:
+                  - type: ComboBox
+                    name: boundScale
+                    enable: (boundPlot)
+              - type: CheckBox
+                name: spendPlot
+              - type: CheckBox
+                name: powerPlot
