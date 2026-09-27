@@ -35,6 +35,24 @@ surveillance — with control of the type I and type II errors.
   minimum follow-up with uniform accrual and dropout, and the expected calendar time of each
   analysis under H1 and H0.
 
+**Interim monitoring**
+
+A dataset with one row per analysis holds:
+
+- the cumulative N or events;
+- the estimate and its standard error (log hazard ratio for survival), or a Z statistic;
+- optionally, the information fraction.
+
+From it the analysis gives:
+
+- the boundaries recomputed at the observed information, and the decision;
+- repeated confidence intervals;
+- conditional power (under the design effect and under the current trend) and predictive power;
+- once a boundary is crossed or the final analysis is reached, the stagewise-ordering p-value,
+  median-unbiased estimate and interval.
+
+For one-sided designs these results agree with rpact's `getAnalysisResults` to 10⁻⁶.
+
 **Output**
 
 - A design summary, the boundaries (Z, nominal p, effect scale) and the stopping
@@ -75,8 +93,8 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
 - The predictive probabilities and boundaries agree with ph2bayes.
 - Fleming's boundaries reproduce two published examples.
 
-Planned next: interim monitoring and inference after stopping; SPRT and MaxSPRT; Bayesian and
-anytime-valid monitoring; a classical fixed-sample size module.
+Planned next: SPRT and MaxSPRT; Bayesian and anytime-valid monitoring; individual-level data;
+a classical fixed-sample size module.
 
 ## Installation
 

@@ -113,3 +113,19 @@ plot_ph2_bounds <- function(st, cols, base, labels) {
     }
     p + base + ggplot2::theme(legend.position = "top")
 }
+
+# Interim monitoring: boundaries at the observed (and remaining planned) looks, with the
+# observed Z path on top.
+plot_monitor <- function(st, cols, base, labels, xvar = "n") {
+    ob <- st$obs
+    ob$x <- if (xvar == "t") ob$t else ob$n
+    obsCol <- if (length(cols) >= 3) cols[3] else "grey30"
+    # geom_text ignores the theme: take the theme's own text colour (dark mode)
+    ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(ink)) ink <- "grey30"
+    last <- ob[nrow(ob), ]
+    plot_bounds(st, "z", cols, base, labels, xvar) +
+        ggplot2::geom_line(data = ob, ggplot2::aes(x, z), inherit.aes = FALSE, colour = obsCol, linewidth = 0.8) +
+        ggplot2::geom_point(data = ob, ggplot2::aes(x, z), inherit.aes = FALSE, colour = obsCol, size = 3.2, shape = 17) +
+        ggplot2::annotate("text", x = last$x, y = last$z, label = labels$obs, vjust = -1.3, size = 3.5, colour = ink)
+}

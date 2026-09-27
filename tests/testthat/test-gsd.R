@@ -1,6 +1,7 @@
 skip_if_not_installed("jmvcore")
 
 run_gsd <- function(...) gsd(data = data.frame(), ...)
+run_gsd_data <- function(data, ...) gsd(data = data, ...)
 cell <- function(tbl, key, col) tbl$getCell(rowKey = key, col)$value
 
 test_that("the default design (means) matches rpact's normal-approximation sample size", {
@@ -65,4 +66,32 @@ test_that("B-value scale makes triangular boundaries straight lines in informati
     x <- gsd_compute(utils::modifyList(opts, list(efficacy = "triangular", nLooks = 6)))
     b <- x$looks$effZ * sqrt(x$looks$t)
     expect_lt(max(abs(diff(diff(b)))), 1e-8)
+})
+
+test_that("interim data: monitoring table, decision and inference after stopping", {
+    dat <- data.frame(n = c(57, 114, 171), est = c(0.5, 0.55, 0.52), se = 2 / sqrt(c(57, 114, 171)))
+    r <- run_gsd_data(dat, lookN = "n", estimate = "est", se = "se")
+    m <- r$monitor$asDF
+    expect_equal(m$decision[2], "Stop: reject H0")
+    d <- gsd_compute(utils::modifyList(lapply(formals(gsd)[names(formals(gsd)) != "data"], eval), list()))
+    ref <- gs_monitor(d$d, monitor_looks(dat$n, dat$est, dat$se, Nmax = d$size$Nmax, Imax = d$size$Imax))
+    expect_equal(m$rciLo, ref$looks$rciLo, tolerance = 1e-10)
+    f <- r$final$asDF
+    expect_equal(f$p, ref$inference$p.value, tolerance = 1e-10)
+    expect_equal(f$mue, ref$inference$mue, tolerance = 1e-10)
+})
+
+test_that("survival interim data are oriented (HR < 1 favours H1) and shown as hazard ratios", {
+    dat <- data.frame(n = c(118, 235), lhr = log(c(0.72, 0.68)), se = 2 / sqrt(c(118, 235)))
+    r <- run_gsd_data(dat, endpoint = "surv", lookN = "n", estimate = "lhr", se = "se")
+    m <- r$monitor$asDF
+    expect_true(all(m$z > 0))
+    expect_equal(m$est, c(0.72, 0.68), tolerance = 1e-10)
+    expect_true(all(m$rciLo < m$est & m$est < m$rciHi))
+})
+
+test_that("inconsistent interim data give a notice and keep the design", {
+    r <- run_gsd_data(data.frame(n = c(57, 57), est = c(.1, .2), se = c(.3, .2)), lookN = "n", estimate = "est", se = "se")
+    expect_match(r$get("monitorProblem")$content, "increase from row to row")
+    expect_true(r$bounds$visible)
 })

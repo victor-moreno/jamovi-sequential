@@ -14,3 +14,9 @@ cat(sprintf("   smoke test passed: %s events, first look at %.2f\n", ev, tm))
 s <- jmsequential::phase2(data = data.frame())$stages$asDF
 stopifnot(identical(as.integer(s$n), c(13L, 43L)), identical(as.integer(s$fut), c(3L, 12L)))
 cat("   smoke test passed: Simon optimal 3/13, 12/43\n")
+
+# interim monitoring: stop for efficacy at the second look
+dat <- data.frame(n = c(57, 114), est = c(0.5, 0.55), se = 2 / sqrt(c(57, 114)))
+m <- jmsequential::gsd(data = dat, lookN = "n", estimate = "est", se = "se")
+stopifnot(identical(m$monitor$asDF$decision[2], "Stop: reject H0"), m$final$asDF$p < 0.01)
+cat("   smoke test passed: monitoring stops at look 2, p =", signif(m$final$asDF$p, 3), "\n")

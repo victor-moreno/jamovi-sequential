@@ -18,6 +18,47 @@ options:
     - name: data
       type: Data
 
+    # --- interim data (one row per analysis, cumulative) ----------------------
+    - name: lookN
+      title: Cumulative N or events
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: estimate
+      title: Estimate
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: se
+      title: Standard error
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: zStat
+      title: Z (instead of estimate and SE)
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: infoFrac
+      title: Information fraction (optional)
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: finalLook
+      title: The last row is the final analysis
+      type: Bool
+      default: false
+
     # --- design -------------------------------------------------------------
     - name: endpoint
       title: Endpoint

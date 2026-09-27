@@ -143,9 +143,11 @@ gs_design <- function(K = 3, timing = NULL, sided = 1, alpha = 0.025, beta = 0.1
     t <- if (is.null(timing)) seq_len(K) / K else timing / timing[length(timing)]
     K <- length(t)
     if (K > 1 && any(diff(t) <= 0)) stop("information fractions must increase")
+    # keep the futility rule as given: monitoring re-derives the timing-dependent parts
+    fut0 <- fut
     if (eff$type == "PT") fut <- list(type = "pt")
     if (sided == 2 && fut$type == "spending") fut <- gs_twosided_beta(t, alpha, beta, eff, fut, binding)
-    spec <- list(sided = sided, alpha = alpha, beta = beta, eff = eff, fut = fut,
+    spec <- list(sided = sided, alpha = alpha, beta = beta, eff = eff, fut = fut, fut0 = fut0,
                  binding = binding && fut$type != "none")
     etaFix <- stats::qnorm(1 - alpha / sided) + stats::qnorm(1 - beta)
 
@@ -225,6 +227,18 @@ tri_design <- function(K = 5, timing = NULL, sided = 1, alpha = 0.025, beta = 0.
     Vmax <- if (correction)
         stats::uniroot(function(v) cc * v - a + 0.583 * sqrt(v * dK), c(0, a / cc), tol = 1e-12)$root
     else a / cc
+    spec <- list(sided = sided, alpha = alpha, beta = beta, eff = list(type = "triangular"),
+                 fut = list(type = "triangular"), binding = TRUE)
+    d <- c(list(t = t, C = NA), tri_bounds(t, Vmax, a, cc, sided, correction))
+    etaFix <- stats::qnorm(1 - a1) + stats::qnorm(1 - beta)
+    out <- gs_finish(d, sqrt(Vmax), etaFix, spec)
+    out$triangle <- c(a = a, c = cc, Vmax = Vmax, Vapex = a / cc, correction = correction)
+    out
+}
+
+# Triangular boundaries on the Z scale at looks t (fractions of Vmax; the last is final).
+tri_bounds <- function(t, Vmax, a, cc, sided, correction = TRUE) {
+    K <- length(t)
     V <- t * Vmax
     ak <- if (correction) a - 0.583 * sqrt(diff(c(0, V))) else rep(a, K)
     up <- (ak + cc * V) / sqrt(V)
@@ -237,11 +251,5 @@ tri_design <- function(K = 5, timing = NULL, sided = 1, alpha = 0.025, beta = 0.
     } else {
         lo <- -up; wedge <- pmax(0, inner); wedge[K] <- up[K]
     }
-    spec <- list(sided = sided, alpha = alpha, beta = beta, eff = list(type = "triangular"),
-                 fut = list(type = "triangular"), binding = TRUE)
-    d <- list(t = t, up = up, lo = lo, wedge = wedge, C = NA)
-    etaFix <- stats::qnorm(1 - a1) + stats::qnorm(1 - beta)
-    out <- gs_finish(d, sqrt(Vmax), etaFix, spec)
-    out$triangle <- c(a = a, c = cc, Vmax = Vmax, Vapex = a / cc)
-    out
+    list(up = up, lo = lo, wedge = wedge)
 }

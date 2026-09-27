@@ -35,6 +35,18 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
 
             if (surv)
                 for (k in seq_len(K)) r$timing$addRow(rowKey = k, values = list(look = k))
+
+            # interim data: one row per analysis (.init sees only the header, so read the rows)
+            if (!is.null(o$lookN)) {
+                dat <- if (nrow(self$data) > 0) self$data else self$readDataset()
+                nr <- sum(!is.na(jmvcore::toNumeric(dat[[o$lookN]])))
+                m <- r$monitor
+                for (k in seq_len(nr)) m$addRow(rowKey = k, values = list(look = k))
+                m$getColumn("n")$setTitle(if (surv) .("Events") else .("N"))
+                m$getColumn("est")$setTitle(effTitle)
+                m$getColumn("fut")$setVisible(fut)
+                r$final$addRow(rowKey = 1, values = list())
+            }
         },
 
         .run = function() {
@@ -97,6 +109,14 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                 img$setState(list(t = d$t, cumAlpha = d$cumAlpha, alpha = d$spec$alpha,
                                   cumBeta = cumBeta, beta = d$spec$beta))
             }
+            if (!is.null(o$lookN)) {
+                mon <- tryCatch(private$.monitor(res), error = function(e) e)
+                if (inherits(mon, "error")) {
+                    private$.notice(conditionMessage(mon), "monitorProblem", jmvcore::NoticeType$WARNING)
+                    for (nm in c("monitor", "final", "monitorPlot")) self$results[[nm]]$setVisible(FALSE)
+                }
+            }
+
             img <- self$results$powerPlot
             if (is.null(img$state) && o$powerPlot) {
                 g <- seq(if (res$sided == 2) -1.5 else -0.5, 1.5, by = 0.05)
@@ -108,10 +128,70 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             }
         },
 
+        # Interim data: boundaries at the observed information, decisions, repeated CIs,
+        # conditional and predictive power, and stagewise inference once the trial stops.
+        .monitor = function(res) {
+            o <- self$options
+            dat <- self$data
+            num <- function(v) if (is.null(v)) NULL else jmvcore::toNumeric(dat[[v]])
+            dir <- if (res$theta1 < 0) -1 else 1
+            looks <- monitor_looks(n = num(o$lookN), est = num(o$estimate), se = num(o$se), z = num(o$zStat),
+                                   frac = num(o$infoFrac), Nmax = res$size$Nmax, Imax = res$size$Imax, dir = dir)
+            m <- gs_monitor(res$d, looks, final = o$finalLook, dir = dir)
+            nat <- if (o$endpoint == "surv") exp else identity
+            tb <- self$results$monitor
+            lk <- m$looks
+            for (k in seq_len(nrow(lk))) {
+                if (k > tb$rowCount) tb$addRow(rowKey = k, values = list(look = k))
+                x <- lk[k, ]
+                tb$setRow(rowKey = k, values = blank_na(list(
+                    n = looks$n[k], t = x$t, est = nat(looks$est[k]), z = x$z, bval = x$b, up = x$up, fut = x$fut,
+                    decision = private$.decisionLabel(x$decision, k == nrow(lk) && m$final),
+                    rciLo = nat(x$rciLo), rciHi = nat(x$rciHi), cpH1 = x$cpH1, cpTrend = x$cpTrend, pp = x$pp)))
+            }
+            tb$setNote("scale", sprintf(.("Boundaries recomputed at the observed information. Z is oriented so that positive values favour H1. Repeated CIs at %s%%; conditional power under the design effect (H1) and the current trend; predictive power with a flat prior."),
+                                        format(round(100 * m$level, 1))), init = FALSE)
+            ft <- self$results$final
+            if (is.null(m$inference)) {
+                ft$setVisible(FALSE)
+            } else {
+                fi <- m$inference
+                lo <- nat(fi$lower); hi <- nat(fi$upper)
+                ft$setRow(rowKey = 1, values = blank_na(list(
+                    look = fi$stage, naive = nat(fi$naive), naiveLo = nat(fi$naiveLower), naiveHi = nat(fi$naiveUpper),
+                    mue = nat(fi$mue), lower = min(lo, hi), upper = max(lo, hi), p = fi$p.value)))
+                ft$setNote("ord", sprintf(.("Stagewise ordering (Tsiatis, Rosner & Mehta 1984): %s p-value, median-unbiased estimate and %s%% interval that account for the stopping rule."),
+                                          if (res$sided == 2) .("two-sided") else .("one-sided"),
+                                          format(round(100 * m$level, 1))), init = FALSE)
+            }
+            img <- self$results$monitorPlot
+            if (is.null(img$state)) {
+                b <- m$bounds
+                futb <- if (res$sided == 2) b$wedge else b$lo
+                # the final look closes the continuation region; it is not a futility boundary
+                futb[length(futb)] <- NA
+                img$setState(list(
+                    looks = data.frame(n = m$tt * res$size$Nmax, t = m$tt, effZ = b$up, effP = NA, effEst = NA,
+                                       futZ = ifelse(is.finite(futb) & (res$sided == 1 | futb > 1e-5), futb, NA), futEst = NA),
+                    obs = data.frame(n = looks$n, t = looks$t, z = looks$z),
+                    sided = res$sided, endpoint = o$endpoint))
+            }
+            m
+        },
+
+        .decisionLabel = function(dec, last) {
+            switch(dec,
+                efficacy = if (last) .("Final: reject H0") else .("Stop: reject H0"),
+                accept = .("Final: H0 not rejected"),
+                futility = .("Stop: futility"),
+                futilityNB = .("Futility boundary crossed (non-binding)"),
+                continue = .("Continue"),
+                after = .("(after stopping)"))
+        },
+
         # Notice, not `type: Notice` in the yaml, which does not compile (jamovi skill)
-        .notice = function(text) {
-            n <- jmvcore::Notice$new(options = self$options, name = "inputProblem",
-                                     type = jmvcore::NoticeType$ERROR)
+        .notice = function(text, name = "inputProblem", type = jmvcore::NoticeType$ERROR) {
+            n <- jmvcore::Notice$new(options = self$options, name = name, type = type)
             n$setContent(text)
             self$results$insert(1, n)
         },
@@ -246,6 +326,18 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                            y = switch(scale, z = .("Z boundary"), b = .("B-value (Z·√t)"), p = .("Nominal p-value"),
                                       effect = if (surv) .("Hazard ratio") else .("Effect")))
             print(plot_bounds(st, scale, theme$color, list(theme_only(ggtheme)), labels, xvar))
+            TRUE
+        },
+
+        .plotMonitor = function(image, ggtheme, theme, ...) {
+            st <- image$state
+            if (is.null(st)) return(FALSE)
+            surv <- st$endpoint == "surv"
+            xvar <- self$options$boundX
+            labels <- list(eff = .("Efficacy"), fut = .("Futility"), obs = .("Observed"),
+                           x = if (xvar == "t") .("Information fraction") else if (surv) .("Events") else .("Sample size"),
+                           y = .("Z"))
+            print(plot_monitor(st, theme$color, list(theme_only(ggtheme)), labels, xvar))
             TRUE
         },
 

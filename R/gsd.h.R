@@ -6,6 +6,12 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Options,
     public = list(
         initialize = function(
+            lookN = NULL,
+            estimate = NULL,
+            se = NULL,
+            zStat = NULL,
+            infoFrac = NULL,
+            finalLook = FALSE,
             endpoint = "means",
             sided = "one",
             alpha = 0.025,
@@ -64,6 +70,50 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 requiresData=TRUE,
                 ...)
 
+            private$..lookN <- jmvcore::OptionVariable$new(
+                "lookN",
+                lookN,
+                default=NULL,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..estimate <- jmvcore::OptionVariable$new(
+                "estimate",
+                estimate,
+                default=NULL,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..se <- jmvcore::OptionVariable$new(
+                "se",
+                se,
+                default=NULL,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..zStat <- jmvcore::OptionVariable$new(
+                "zStat",
+                zStat,
+                default=NULL,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..infoFrac <- jmvcore::OptionVariable$new(
+                "infoFrac",
+                infoFrac,
+                default=NULL,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..finalLook <- jmvcore::OptionBool$new(
+                "finalLook",
+                finalLook,
+                default=FALSE)
             private$..endpoint <- jmvcore::OptionList$new(
                 "endpoint",
                 endpoint,
@@ -358,6 +408,12 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 powerPlot,
                 default=FALSE)
 
+            self$.addOption(private$..lookN)
+            self$.addOption(private$..estimate)
+            self$.addOption(private$..se)
+            self$.addOption(private$..zStat)
+            self$.addOption(private$..infoFrac)
+            self$.addOption(private$..finalLook)
             self$.addOption(private$..endpoint)
             self$.addOption(private$..sided)
             self$.addOption(private$..alpha)
@@ -411,6 +467,12 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..powerPlot)
         }),
     active = list(
+        lookN = function() private$..lookN$value,
+        estimate = function() private$..estimate$value,
+        se = function() private$..se$value,
+        zStat = function() private$..zStat$value,
+        infoFrac = function() private$..infoFrac$value,
+        finalLook = function() private$..finalLook$value,
         endpoint = function() private$..endpoint$value,
         sided = function() private$..sided$value,
         alpha = function() private$..alpha$value,
@@ -463,6 +525,12 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         spendPlot = function() private$..spendPlot$value,
         powerPlot = function() private$..powerPlot$value),
     private = list(
+        ..lookN = NA,
+        ..estimate = NA,
+        ..se = NA,
+        ..zStat = NA,
+        ..infoFrac = NA,
+        ..finalLook = NA,
         ..endpoint = NA,
         ..sided = NA,
         ..alpha = NA,
@@ -526,7 +594,10 @@ gsdResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         timing = function() private$.items[["timing"]],
         boundPlot = function() private$.items[["boundPlot"]],
         spendPlot = function() private$.items[["spendPlot"]],
-        powerPlot = function() private$.items[["powerPlot"]]),
+        powerPlot = function() private$.items[["powerPlot"]],
+        monitor = function() private$.items[["monitor"]],
+        final = function() private$.items[["final"]],
+        monitorPlot = function() private$.items[["monitorPlot"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -1011,7 +1082,286 @@ gsdResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "futZ",
                     "futCp",
                     "futCpUnder",
-                    "binding")))}))
+                    "binding")))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="monitor",
+                title="Interim analyses",
+                visible="(lookN)",
+                clearWith=list(
+                    "endpoint",
+                    "sided",
+                    "alpha",
+                    "power",
+                    "nLooks",
+                    "timing",
+                    "ratio",
+                    "meanDiff",
+                    "sd",
+                    "p0",
+                    "p1",
+                    "genEffect",
+                    "genSd",
+                    "hr",
+                    "ctrlSpec",
+                    "ctrlMedian",
+                    "ctrlHazard",
+                    "survTime",
+                    "survProb",
+                    "eventsMethod",
+                    "solveFor",
+                    "accrualTime",
+                    "accrualRate",
+                    "followUp",
+                    "nTotal",
+                    "dropoutProb",
+                    "dropoutTime",
+                    "efficacy",
+                    "effRho",
+                    "effGamma",
+                    "effNu",
+                    "effUser",
+                    "wtDelta",
+                    "hpZ",
+                    "ptDelta1",
+                    "ptDelta0",
+                    "futility",
+                    "futSf",
+                    "futRho",
+                    "futGamma",
+                    "futNu",
+                    "futZ",
+                    "futCp",
+                    "futCpUnder",
+                    "binding",
+                    "lookN",
+                    "estimate",
+                    "se",
+                    "zStat",
+                    "infoFrac",
+                    "finalLook"),
+                columns=list(
+                    list(
+                        `name`="look", 
+                        `title`="Look", 
+                        `type`="integer"),
+                    list(
+                        `name`="n", 
+                        `title`="N", 
+                        `type`="number"),
+                    list(
+                        `name`="t", 
+                        `title`="Information", 
+                        `type`="number"),
+                    list(
+                        `name`="est", 
+                        `title`="Estimate", 
+                        `type`="number"),
+                    list(
+                        `name`="z", 
+                        `title`="Z", 
+                        `type`="number"),
+                    list(
+                        `name`="bval", 
+                        `title`="B-value", 
+                        `type`="number"),
+                    list(
+                        `name`="up", 
+                        `title`="Efficacy", 
+                        `superTitle`="Boundary (Z)", 
+                        `type`="number"),
+                    list(
+                        `name`="fut", 
+                        `title`="Futility", 
+                        `superTitle`="Boundary (Z)", 
+                        `type`="number"),
+                    list(
+                        `name`="decision", 
+                        `title`="Decision", 
+                        `type`="text"),
+                    list(
+                        `name`="rciLo", 
+                        `title`="Lower", 
+                        `superTitle`="Repeated CI", 
+                        `type`="number"),
+                    list(
+                        `name`="rciHi", 
+                        `title`="Upper", 
+                        `superTitle`="Repeated CI", 
+                        `type`="number"),
+                    list(
+                        `name`="cpH1", 
+                        `title`="H1", 
+                        `superTitle`="Conditional power", 
+                        `type`="number"),
+                    list(
+                        `name`="cpTrend", 
+                        `title`="Trend", 
+                        `superTitle`="Conditional power", 
+                        `type`="number"),
+                    list(
+                        `name`="pp", 
+                        `title`="Predictive power", 
+                        `type`="number"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="final",
+                title="Inference after stopping",
+                visible="(lookN)",
+                clearWith=list(
+                    "endpoint",
+                    "sided",
+                    "alpha",
+                    "power",
+                    "nLooks",
+                    "timing",
+                    "ratio",
+                    "meanDiff",
+                    "sd",
+                    "p0",
+                    "p1",
+                    "genEffect",
+                    "genSd",
+                    "hr",
+                    "ctrlSpec",
+                    "ctrlMedian",
+                    "ctrlHazard",
+                    "survTime",
+                    "survProb",
+                    "eventsMethod",
+                    "solveFor",
+                    "accrualTime",
+                    "accrualRate",
+                    "followUp",
+                    "nTotal",
+                    "dropoutProb",
+                    "dropoutTime",
+                    "efficacy",
+                    "effRho",
+                    "effGamma",
+                    "effNu",
+                    "effUser",
+                    "wtDelta",
+                    "hpZ",
+                    "ptDelta1",
+                    "ptDelta0",
+                    "futility",
+                    "futSf",
+                    "futRho",
+                    "futGamma",
+                    "futNu",
+                    "futZ",
+                    "futCp",
+                    "futCpUnder",
+                    "binding",
+                    "lookN",
+                    "estimate",
+                    "se",
+                    "zStat",
+                    "infoFrac",
+                    "finalLook"),
+                columns=list(
+                    list(
+                        `name`="look", 
+                        `title`="Look", 
+                        `type`="integer"),
+                    list(
+                        `name`="naive", 
+                        `title`="Estimate", 
+                        `superTitle`="Naive", 
+                        `type`="number"),
+                    list(
+                        `name`="naiveLo", 
+                        `title`="Lower", 
+                        `superTitle`="Naive", 
+                        `type`="number"),
+                    list(
+                        `name`="naiveHi", 
+                        `title`="Upper", 
+                        `superTitle`="Naive", 
+                        `type`="number"),
+                    list(
+                        `name`="mue", 
+                        `title`="Median unbiased", 
+                        `superTitle`="Stagewise ordering", 
+                        `type`="number"),
+                    list(
+                        `name`="lower", 
+                        `title`="Lower", 
+                        `superTitle`="Stagewise ordering", 
+                        `type`="number"),
+                    list(
+                        `name`="upper", 
+                        `title`="Upper", 
+                        `superTitle`="Stagewise ordering", 
+                        `type`="number"),
+                    list(
+                        `name`="p", 
+                        `title`="p", 
+                        `superTitle`="Stagewise ordering", 
+                        `type`="number", 
+                        `format`="zto,pvalue"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="monitorPlot",
+                title="Interim analyses",
+                width=550,
+                height=400,
+                renderFun=".plotMonitor",
+                visible="(lookN)",
+                clearWith=list(
+                    "endpoint",
+                    "sided",
+                    "alpha",
+                    "power",
+                    "nLooks",
+                    "timing",
+                    "ratio",
+                    "meanDiff",
+                    "sd",
+                    "p0",
+                    "p1",
+                    "genEffect",
+                    "genSd",
+                    "hr",
+                    "ctrlSpec",
+                    "ctrlMedian",
+                    "ctrlHazard",
+                    "survTime",
+                    "survProb",
+                    "eventsMethod",
+                    "solveFor",
+                    "accrualTime",
+                    "accrualRate",
+                    "followUp",
+                    "nTotal",
+                    "dropoutProb",
+                    "dropoutTime",
+                    "efficacy",
+                    "effRho",
+                    "effGamma",
+                    "effNu",
+                    "effUser",
+                    "wtDelta",
+                    "hpZ",
+                    "ptDelta1",
+                    "ptDelta0",
+                    "futility",
+                    "futSf",
+                    "futRho",
+                    "futGamma",
+                    "futNu",
+                    "futZ",
+                    "futCp",
+                    "futCpUnder",
+                    "binding",
+                    "lookN",
+                    "estimate",
+                    "se",
+                    "zStat",
+                    "infoFrac",
+                    "finalLook",
+                    "boundX")))}))
 
 gsdBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "gsdBase",
@@ -1041,6 +1391,12 @@ gsdBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' boundaries, operating characteristics and the sample size or number of 
 #' events, including survival designs with accrual, follow-up and dropout.
 #' @param data .
+#' @param lookN .
+#' @param estimate .
+#' @param se .
+#' @param zStat .
+#' @param infoFrac .
+#' @param finalLook .
 #' @param endpoint .
 #' @param sided .
 #' @param alpha .
@@ -1101,6 +1457,9 @@ gsdBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$boundPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$spendPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$powerPlot} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$monitor} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$final} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$monitorPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
@@ -1112,6 +1471,12 @@ gsdBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @export
 gsd <- function(
     data,
+    lookN = NULL,
+    estimate = NULL,
+    se = NULL,
+    zStat = NULL,
+    infoFrac = NULL,
+    finalLook = FALSE,
     endpoint = "means",
     sided = "one",
     alpha = 0.025,
@@ -1167,12 +1532,28 @@ gsd <- function(
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("gsd requires jmvcore to be installed (restart may be required)")
 
+    if ( ! missing(lookN)) lookN <- jmvcore::resolveQuo(jmvcore::enquo(lookN))
+    if ( ! missing(estimate)) estimate <- jmvcore::resolveQuo(jmvcore::enquo(estimate))
+    if ( ! missing(se)) se <- jmvcore::resolveQuo(jmvcore::enquo(se))
+    if ( ! missing(zStat)) zStat <- jmvcore::resolveQuo(jmvcore::enquo(zStat))
+    if ( ! missing(infoFrac)) infoFrac <- jmvcore::resolveQuo(jmvcore::enquo(infoFrac))
     if (missing(data))
         data <- jmvcore::marshalData(
-            parent.frame())
+            parent.frame(),
+            `if`( ! missing(lookN), lookN, NULL),
+            `if`( ! missing(estimate), estimate, NULL),
+            `if`( ! missing(se), se, NULL),
+            `if`( ! missing(zStat), zStat, NULL),
+            `if`( ! missing(infoFrac), infoFrac, NULL))
 
 
     options <- gsdOptions$new(
+        lookN = lookN,
+        estimate = estimate,
+        se = se,
+        zStat = zStat,
+        infoFrac = infoFrac,
+        finalLook = finalLook,
         endpoint = endpoint,
         sided = sided,
         alpha = alpha,

@@ -140,4 +140,107 @@ items:
       renderFun: .plotPower
       visible: (powerPlot)
       clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding ]
+
+    - name: monitor
+      title: Interim analyses
+      type: Table
+      visible: (lookN)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding, lookN, estimate, se, zStat, infoFrac, finalLook ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: n
+          title: N
+          type: number
+        - name: t
+          title: Information
+          type: number
+        - name: est
+          title: Estimate
+          type: number
+        - name: z
+          title: Z
+          type: number
+        - name: bval
+          title: B-value
+          type: number
+        - name: up
+          title: Efficacy
+          superTitle: Boundary (Z)
+          type: number
+        - name: fut
+          title: Futility
+          superTitle: Boundary (Z)
+          type: number
+        - name: decision
+          title: Decision
+          type: text
+        - name: rciLo
+          title: Lower
+          superTitle: Repeated CI
+          type: number
+        - name: rciHi
+          title: Upper
+          superTitle: Repeated CI
+          type: number
+        - name: cpH1
+          title: H1
+          superTitle: Conditional power
+          type: number
+        - name: cpTrend
+          title: Trend
+          superTitle: Conditional power
+          type: number
+        - name: pp
+          title: Predictive power
+          type: number
+
+    - name: final
+      title: Inference after stopping
+      type: Table
+      visible: (lookN)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding, lookN, estimate, se, zStat, infoFrac, finalLook ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: naive
+          title: Estimate
+          superTitle: Naive
+          type: number
+        - name: naiveLo
+          title: Lower
+          superTitle: Naive
+          type: number
+        - name: naiveHi
+          title: Upper
+          superTitle: Naive
+          type: number
+        - name: mue
+          title: Median unbiased
+          superTitle: Stagewise ordering
+          type: number
+        - name: lower
+          title: Lower
+          superTitle: Stagewise ordering
+          type: number
+        - name: upper
+          title: Upper
+          superTitle: Stagewise ordering
+          type: number
+        - name: p
+          title: p
+          superTitle: Stagewise ordering
+          type: number
+          format: zto,pvalue
+
+    - name: monitorPlot
+      title: Interim analyses
+      type: Image
+      width: 550
+      height: 400
+      renderFun: .plotMonitor
+      visible: (lookN)
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding, lookN, estimate, se, zStat, infoFrac, finalLook, boundX ]
 ...
