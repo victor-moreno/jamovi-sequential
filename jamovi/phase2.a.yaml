@@ -216,4 +216,19 @@ options:
       title: Outcome map (two-stage designs)
       type: Bool
       default: false
+
+    - name: boundTraj
+      title: Possible trajectories
+      type: Bool
+      default: true
+
+    - name: boundProj
+      title: Projection at the observed rate
+      type: Bool
+      default: true
+
+    - name: boundHyp
+      title: Expected responses under p0 and p1
+      type: Bool
+      default: true
 ...

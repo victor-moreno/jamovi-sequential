@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.2
+## Version 0.5.3
 
 In jamovi the *Sequential* menu has two headings. **Design**: Group Sequential Design and Phase II
 Multistage Design. **Analysis**: Sequential Probability Ratio Test, Safety Surveillance (MaxSPRT),
@@ -92,10 +92,12 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
   UMVUE after a Simon design, and the posterior and predictive probabilities for the Bayesian
   designs.
 - Stopping boundaries plot: shaded decision regions (not promising, continue, promising) at each
-  look; with observed data, the cone of response counts still reachable and their range at each
-  later look, so the possible trajectories from the current status are visible.
+  look and the responses expected under p0 and p1. With observed data it also shows the current
+  status, the triangle of trajectories still possible, and the projection at the observed rate
+  with its interval (a fan of slopes). Each layer can be switched on or off.
 - Outcome map for two-stage designs: every combination of stage-1 and stage-2 responses, coloured
-  by the decision it leads to.
+  by the decision it leads to (promising in green). With observed data, the current status is
+  outlined in red and the outcomes that can no longer be reached are faded.
 
 **Validation**
 

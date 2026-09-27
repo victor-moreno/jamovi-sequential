@@ -100,16 +100,43 @@ test_that("the outcome map describes two-stage designs and is refused for other 
     expect_false(r$outcomePlot$visible)
 })
 
-test_that("the stopping-boundary plot shades the decisions per look and the reachable cone", {
-    r <- phase2(data = data.frame(), analyse = TRUE, obsN = 13, obsX = 5)
+test_that("the stopping-boundary plot shades the decisions per look; trajectories and projection toggle", {
+    r <- phase2(data = data.frame(), analyse = TRUE, obsN = 11, obsX = 6)
     st <- r$boundPlot$state
-    lab <- list(fut = "no", eff = "yes", cont = "cont", obs = "obs", reach = "reach", x = "x", y = "y")
-    p <- plot_ph2_bounds(st, c("blue", "red"), list(ggplot2::theme_minimal()), lab)
+    lab <- list(fut = "no", eff = "yes", cont = "cont", now = "Now: %d of %d (rate %.2f)", reach = "reach",
+                proj = "fan %s%% %.2f-%.2f", x = "x", y = "y")
+    base <- list(ggplot2::theme_minimal())
+    p <- plot_ph2_bounds(st, NULL, base, lab)
     reg <- p$layers[[1]]$data
     # look 1 (13 patients): stop if <= 3 responses, else continue; look 2: promising if >= 13 of 43
     expect_setequal(unique(as.character(reg$what)), c("no", "cont", "yes"))
     expect_true(all(reg$y <= reg$x + 0.5 + 1e-9))
-    cone <- Filter(function(l) inherits(l$geom, "GeomPolygon") && is.null(l$mapping$group), p$layers)
+    polys <- function(p) Filter(function(l) inherits(l$geom, "GeomPolygon") && is.null(l$mapping$group), p$layers)
+    expect_length(polys(p), 2)
+    # the fan spans the slopes of the interval shown in the observed-data table
+    fan <- polys(p)[[2]]$data
+    ob <- r$observed$asDF
+    expect_equal(fan$y[2:3], 6 + c(ob$lower, ob$upper) * (43 - 11), tolerance = 1e-10)
+    st$show <- "traj"
+    cone <- polys(plot_ph2_bounds(st, NULL, base, lab))
     expect_length(cone, 1)
-    expect_equal(max(cone[[1]]$data$y), 5 + 43 - 13)
+    expect_equal(max(cone[[1]]$data$y), 6 + 43 - 11)
+    st$show <- character(0)
+    expect_length(polys(plot_ph2_bounds(st, NULL, base, lab)), 0)
+})
+
+test_that("the outcome map marks the current status and fades what can no longer be reached", {
+    r <- phase2(data = data.frame(), analyse = TRUE, obsN = 11, obsX = 6, outcomePlot = TRUE)
+    lab <- list(stop0 = "s0", stop1 = "s1", no = "no", yes = "yes", now = "now", x = "x", y = "y")
+    p <- plot_ph2_outcomes(r$outcomePlot$state, NULL, list(ggplot2::theme_minimal()), lab)
+    d <- p$data
+    expect_equal(sort(unique(d$x1[d$reach])), 6:8)
+    now <- p$layers[[2]]$data
+    expect_equal(unlist(now), c(x1 = 6, x2 = 0))
+    r <- phase2(data = data.frame(), analyse = TRUE, obsN = 25, obsX = 8, outcomePlot = TRUE)
+    p <- plot_ph2_outcomes(r$outcomePlot$state, NULL, list(ggplot2::theme_minimal()), lab)
+    now <- p$layers[[2]]$data
+    # in stage 2 the split is unknown: every stage-1 count that passed (> 3) and fits 8 of 25
+    expect_equal(now$x1, 4:8)
+    expect_true(all(now$x1 + now$x2 == 8))
 })

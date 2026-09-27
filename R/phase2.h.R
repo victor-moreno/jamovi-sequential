@@ -33,7 +33,10 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             ocTable = TRUE,
             ocPlot = TRUE,
             boundPlot = FALSE,
-            outcomePlot = FALSE, ...) {
+            outcomePlot = FALSE,
+            boundTraj = TRUE,
+            boundProj = TRUE,
+            boundHyp = TRUE, ...) {
 
             super$initialize(
                 package="jmsequential",
@@ -198,6 +201,18 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "outcomePlot",
                 outcomePlot,
                 default=FALSE)
+            private$..boundTraj <- jmvcore::OptionBool$new(
+                "boundTraj",
+                boundTraj,
+                default=TRUE)
+            private$..boundProj <- jmvcore::OptionBool$new(
+                "boundProj",
+                boundProj,
+                default=TRUE)
+            private$..boundHyp <- jmvcore::OptionBool$new(
+                "boundHyp",
+                boundHyp,
+                default=TRUE)
 
             self$.addOption(private$..design)
             self$.addOption(private$..p0)
@@ -227,6 +242,9 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..ocPlot)
             self$.addOption(private$..boundPlot)
             self$.addOption(private$..outcomePlot)
+            self$.addOption(private$..boundTraj)
+            self$.addOption(private$..boundProj)
+            self$.addOption(private$..boundHyp)
         }),
     active = list(
         design = function() private$..design$value,
@@ -256,7 +274,10 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ocTable = function() private$..ocTable$value,
         ocPlot = function() private$..ocPlot$value,
         boundPlot = function() private$..boundPlot$value,
-        outcomePlot = function() private$..outcomePlot$value),
+        outcomePlot = function() private$..outcomePlot$value,
+        boundTraj = function() private$..boundTraj$value,
+        boundProj = function() private$..boundProj$value,
+        boundHyp = function() private$..boundHyp$value),
     private = list(
         ..design = NA,
         ..p0 = NA,
@@ -285,7 +306,10 @@ phase2Options <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..ocTable = NA,
         ..ocPlot = NA,
         ..boundPlot = NA,
-        ..outcomePlot = NA)
+        ..outcomePlot = NA,
+        ..boundTraj = NA,
+        ..boundProj = NA,
+        ..boundHyp = NA)
 )
 
 phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -635,7 +659,10 @@ phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "bayesEvery",
                     "thetaT",
                     "thetaL",
-                    "thetaU")))
+                    "thetaU",
+                    "analyse",
+                    "obsN",
+                    "obsX")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="boundPlot",
@@ -667,7 +694,10 @@ phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "analyse",
                     "obsN",
                     "obsX",
-                    "ciLevel")))}))
+                    "ciLevel",
+                    "boundTraj",
+                    "boundProj",
+                    "boundHyp")))}))
 
 phase2Base <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "phase2Base",
@@ -726,6 +756,9 @@ phase2Base <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param ocPlot .
 #' @param boundPlot .
 #' @param outcomePlot .
+#' @param boundTraj .
+#' @param boundProj .
+#' @param boundHyp .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$summary} \tab \tab \tab \tab \tab a table \cr
@@ -774,7 +807,10 @@ phase2 <- function(
     ocTable = TRUE,
     ocPlot = TRUE,
     boundPlot = FALSE,
-    outcomePlot = FALSE) {
+    outcomePlot = FALSE,
+    boundTraj = TRUE,
+    boundProj = TRUE,
+    boundHyp = TRUE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("phase2 requires jmvcore to be installed (restart may be required)")
@@ -812,7 +848,10 @@ phase2 <- function(
         ocTable = ocTable,
         ocPlot = ocPlot,
         boundPlot = boundPlot,
-        outcomePlot = outcomePlot)
+        outcomePlot = outcomePlot,
+        boundTraj = boundTraj,
+        boundProj = boundProj,
+        boundHyp = boundHyp)
 
     analysis <- phase2Class$new(
         options = options,

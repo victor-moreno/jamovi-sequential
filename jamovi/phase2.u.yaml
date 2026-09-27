@@ -142,5 +142,15 @@ children:
       name: ocPlot
     - type: CheckBox
       name: boundPlot
+      children:
+      - type: CheckBox
+        name: boundTraj
+        enable: (boundPlot)
+      - type: CheckBox
+        name: boundProj
+        enable: (boundPlot)
+      - type: CheckBox
+        name: boundHyp
+        enable: (boundPlot)
     - type: CheckBox
       name: outcomePlot

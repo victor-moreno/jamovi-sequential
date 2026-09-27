@@ -87,18 +87,73 @@ plot_ph2_oc <- function(st, cols, base, labels) {
         ggplot2::labs(x = labels$x, y = NULL) + base
 }
 
-# Phase II stopping boundaries: responses against patients. Shaded regions give the decision
-# that the next look would take (for patients in (n[k-1], n[k]], the rule at look k), clipped so
-# that responses never exceed patients; region edges lie half-way between response counts. With
-# observed data, the cone of counts still reachable from the current status is shaded and the
-# reachable range at each later look is drawn, so the possible trajectories are visible.
+# Phase II plots share fixed colours with a meaning (the theme palette starts with black):
+# promising green, not promising blue, continue grey, the current status red.
+ph2_palette <- function() {
+    c(yes = "#8FD18E", yesEarly = "#CFEBCD", no = "#7FA3E0", stop0 = "#D5E1F6", cont = "#BDBDBD",
+      yesInk = "#2E8B3A", noInk = "#3B6FC4", now = "#D62728")
+}
+
+# Outcome map for a two-stage design: every (stage-1, stage-2) response count and the decision it
+# leads to; columns stopped after stage 1 are drawn whole. With observed data (st$obs: n, x) the
+# cells matching the current status are outlined in red and the final outcomes that can no longer
+# be reached are faded.
+plot_ph2_outcomes <- function(st, cols, base, labels) {
+    pal <- ph2_palette()
+    g <- expand.grid(x1 = 0:st$n1, x2 = 0:st$n2)
+    what <- ifelse(g$x1 <= st$fut1, "stop0", ifelse(g$x1 >= st$eff1, "stop1",
+                   ifelse(g$x1 + g$x2 >= st$eff2, "yes", "no")))
+    lev <- c(stop0 = labels$stop0, no = labels$no, yes = labels$yes, stop1 = labels$stop1)
+    keep <- names(lev)[names(lev) %in% what]
+    g$what <- factor(lev[what], lev[keep])
+    fills <- c(stop0 = pal[["stop0"]], no = pal[["no"]], yes = pal[["yes"]], stop1 = pal[["yesEarly"]])
+    g$reach <- TRUE
+    now <- NULL
+    if (!is.null(st$obs)) {
+        n <- st$obs[["n"]]; x <- st$obs[["x"]]; N <- st$n1 + st$n2
+        if (n <= st$n1) {
+            # still in stage 1: x responses so far, n1 - n patients to go in stage 1
+            now <- data.frame(x1 = x, x2 = 0)
+            g$reach <- g$x1 >= x & g$x1 <= x + st$n1 - n
+        } else if (n <= N) {
+            # in stage 2: the split of the x responses between the stages is not known
+            x1 <- max(st$fut1 + 1, x - (n - st$n1)):min(st$n1, x)
+            now <- data.frame(x1 = x1, x2 = x - x1)
+            g$reach <- g$x1 %in% x1 & g$x2 >= x - g$x1 & g$x2 <= x - g$x1 + N - n
+        }
+    }
+    step <- function(n) max(1, ceiling(n / 10))
+    p <- ggplot2::ggplot(g, ggplot2::aes(x1, x2)) +
+        ggplot2::geom_tile(ggplot2::aes(fill = what, alpha = reach), width = 0.9, height = 0.9) +
+        ggplot2::scale_fill_manual(values = stats::setNames(fills[keep], lev[keep])) +
+        ggplot2::scale_alpha_manual(values = c(`TRUE` = 1, `FALSE` = 0.3), guide = "none")
+    if (!is.null(now))
+        p <- p + ggplot2::geom_tile(data = now, ggplot2::aes(colour = labels$now), fill = NA,
+                                    width = 0.9, height = 0.9, linewidth = 1.2) +
+            ggplot2::scale_colour_manual(values = stats::setNames(pal[["now"]], labels$now))
+    p + ggplot2::scale_x_continuous(breaks = seq(0, st$n1, by = step(st$n1)), expand = c(0, 0.3)) +
+        ggplot2::scale_y_continuous(breaks = seq(0, st$n2, by = step(st$n2)), expand = c(0, 0.3)) +
+        ggplot2::labs(x = labels$x, y = labels$y, fill = NULL, colour = NULL) + base +
+        ggplot2::theme(legend.position = "top", panel.grid.major = ggplot2::element_blank(),
+                       panel.grid.minor = ggplot2::element_blank()) +
+        ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE, order = 1),
+                        colour = ggplot2::guide_legend(order = 2))
+}
+
+# Phase II stopping boundaries: responses against patients. Shaded regions give the decision that
+# the next look would take (for patients in (n[k-1], n[k]], the rule at look k), clipped so that
+# responses never exceed patients; region edges lie half-way between response counts. Layers
+# (st$show): "hyp" expected responses under p0 and p1 (slopes from the origin); with observed data
+# (st$obs: n, x), "traj" the triangle of trajectories still possible and their range at each later
+# look, "proj" the projection at the observed rate with its interval (st$rate, st$ci) as slopes.
 plot_ph2_bounds <- function(st, cols, base, labels) {
+    pal <- ph2_palette()
     ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
     if (is.null(ink)) ink <- "grey30"
+    show <- if (is.null(st$show)) c("traj", "proj", "hyp") else st$show
     s <- st$stages
     K <- length(s$nk); N <- s$nk[K]
-    # keep the part of a polygon with f(x, y) <= 0 (Sutherland-Hodgman, one half-plane)
-    clip <- function(px, py, f) {
+    clip <- function(px, py, f) {                  # keep f(x, y) <= 0 (one half-plane)
         ox <- oy <- numeric(0)
         for (i in seq_along(px)) {
             j <- if (i == length(px)) 1 else i + 1
@@ -128,34 +183,56 @@ plot_ph2_bounds <- function(st, cols, base, labels) {
         add(x0, x1, max(f, -1) + 0.5, min(e, x1 + 1) - 0.5, "cont")
     }
     reg <- do.call(rbind, reg)
-    present <- lev[names(lev) %in% names(lev)[match(unique(reg$what), lev)]]
+    present <- lev[lev %in% unique(reg$what)]
     reg$what <- factor(reg$what, present)
-    fills <- stats::setNames(c(cols[2], ink, cols[1]), lev)[present]
-    alphas <- stats::setNames(c(0.28, 0.08, 0.28), lev)[present]
+    fills <- stats::setNames(c(pal[["no"]], pal[["cont"]], pal[["yes"]]), lev)[present]
     ok_f <- s$fut >= 0
     ok_e <- s$eff <= s$nk
-    pts <- rbind(data.frame(n = s$nk[ok_f], y = s$fut[ok_f], what = lev[["fut"]]),
-                 data.frame(n = s$nk[ok_e], y = s$eff[ok_e], what = lev[["eff"]]))
+    pts <- rbind(data.frame(n = s$nk[ok_f], y = s$fut[ok_f], what = "fut"),
+                 data.frame(n = s$nk[ok_e], y = s$eff[ok_e], what = "eff"))
     p <- ggplot2::ggplot() +
-        ggplot2::geom_polygon(data = reg, ggplot2::aes(x, y, group = id, fill = what, alpha = what), colour = NA) +
+        ggplot2::geom_polygon(data = reg, ggplot2::aes(x, y, group = id, fill = what), alpha = 0.45, colour = NA) +
         ggplot2::scale_fill_manual(values = fills, name = NULL) +
-        ggplot2::scale_alpha_manual(values = alphas, name = NULL) +
-        ggplot2::geom_vline(xintercept = s$nk, colour = "grey60", linewidth = 0.3, linetype = "dotted") +
-        ggplot2::geom_point(data = pts, ggplot2::aes(n, y, colour = what), size = 2.8, show.legend = FALSE) +
-        ggplot2::scale_colour_manual(values = stats::setNames(c(cols[2], cols[1]), c(lev[["fut"]], lev[["eff"]])))
+        ggplot2::geom_vline(xintercept = s$nk, colour = "grey55", linewidth = 0.3, linetype = "dotted") +
+        ggplot2::geom_point(data = pts, ggplot2::aes(n, y), size = 2.6,
+                            colour = ifelse(pts$what == "fut", pal[["noInk"]], pal[["yesInk"]]))
+    lab_at_end <- function(y, text, colour) ggplot2::annotate("text", x = N, y = y, label = text, hjust = 1.03,
+                                                               vjust = -0.5, size = 3.2, colour = colour)
+    if ("hyp" %in% show && !is.null(st$p0)) {
+        p <- p + ggplot2::annotate("segment", x = 0, xend = N, y = 0, yend = st$p0 * N, colour = pal[["noInk"]],
+                                   linetype = "42", linewidth = 0.5) +
+            ggplot2::annotate("segment", x = 0, xend = N, y = 0, yend = st$p1 * N, colour = pal[["yesInk"]],
+                              linetype = "42", linewidth = 0.5) +
+            lab_at_end(st$p0 * N, sprintf("p0 = %s", st$p0), pal[["noInk"]]) +
+            lab_at_end(st$p1 * N, sprintf("p1 = %s", st$p1), pal[["yesInk"]])
+    }
     if (!is.null(st$obs)) {
         n0 <- st$obs[["n"]]; x0 <- st$obs[["x"]]
-        if (n0 < N) {
+        if (n0 < N && "traj" %in% show) {
             later <- s$nk[s$nk > n0]
             p <- p + ggplot2::annotate("polygon", x = c(n0, N, N), y = c(x0, x0, x0 + N - n0),
-                                       fill = ink, alpha = 0.10, colour = ink, linetype = "22", linewidth = 0.4) +
+                                       fill = ink, alpha = 0.05, colour = ink, linetype = "22", linewidth = 0.4) +
                 ggplot2::annotate("segment", x = later, xend = later, y = x0, yend = x0 + later - n0,
-                                  colour = ink, linewidth = 1.1) +
-                ggplot2::annotate("text", x = N, y = x0 + N - n0, label = labels$reach, hjust = 1.05, vjust = -0.6,
-                                  size = 3.3, colour = ink)
+                                  colour = ink, linewidth = 1) +
+                lab_at_end(x0 + N - n0, labels$reach, ink)
         }
-        p <- p + ggplot2::annotate("point", x = n0, y = x0, shape = 4, size = 4, stroke = 1.3, colour = ink) +
-            ggplot2::annotate("text", x = n0, y = x0, label = labels$obs, vjust = -1.2, size = 3.5, colour = ink)
+        # the rate is the slope: project the current status with the observed rate and the limits
+        # of its interval, a fan inside the triangle of possible trajectories
+        status <- sprintf(labels$now, x0, n0, st$rate)
+        if (n0 < N && "proj" %in% show && !is.null(st$ci)) {
+            lo <- st$ci[1]; hi <- st$ci[2]
+            p <- p + ggplot2::annotate("polygon", x = c(n0, N, N), y = c(x0, x0 + lo * (N - n0), x0 + hi * (N - n0)),
+                                       fill = pal[["now"]], alpha = 0.10, colour = NA) +
+                ggplot2::annotate("segment", x = n0, xend = N, y = x0, yend = x0 + c(lo, hi) * (N - n0),
+                                  colour = pal[["now"]], linewidth = 0.45) +
+                ggplot2::annotate("segment", x = n0, xend = N, y = x0, yend = x0 + st$rate * (N - n0),
+                                  colour = pal[["now"]], linetype = "42", linewidth = 0.6)
+            status <- paste0(status, "\n", sprintf(labels$proj, format(100 * st$level), lo, hi))
+        }
+        # responses cannot exceed patients, so the top-left corner is always empty: the status goes there
+        p <- p + ggplot2::annotate("point", x = n0, y = x0, shape = 4, size = 4, stroke = 1.5, colour = pal[["now"]]) +
+            ggplot2::annotate("text", x = 0.02 * N, y = 0.98 * N, label = status, hjust = 0, vjust = 1, size = 3.4,
+                              colour = pal[["now"]], lineheight = 1.1)
     }
     p + ggplot2::coord_cartesian(xlim = c(0, N + max(0.8, N / 60)), ylim = c(-0.8, N + 0.8), expand = FALSE) +
         ggplot2::labs(x = labels$x, y = labels$y) + base + ggplot2::theme(legend.position = "top")
@@ -273,27 +350,4 @@ plot_cs <- function(st, cols, base, labels) {
         ggplot2::geom_line(ggplot2::aes(y = est), colour = ink, linewidth = 0.7) +
         ggplot2::coord_cartesian(ylim = st$ylim) +
         ggplot2::labs(x = labels$x, y = labels$y) + base
-}
-
-# Phase II outcome map for a two-stage design: every (stage-1, stage-2) response count and the
-# decision it leads to. Columns stopped after stage 1 are drawn whole (stage 2 never happens).
-plot_ph2_outcomes <- function(st, cols, base, labels) {
-    g <- expand.grid(x1 = 0:st$n1, x2 = 0:st$n2)
-    what <- ifelse(g$x1 <= st$fut1, "stop0", ifelse(g$x1 >= st$eff1, "stop1",
-                   ifelse(g$x1 + g$x2 >= st$eff2, "yes", "no")))
-    lev <- c(stop0 = labels$stop0, no = labels$no, yes = labels$yes, stop1 = labels$stop1)
-    keep <- names(lev)[names(lev) %in% what]
-    g$what <- factor(lev[what], lev[keep])
-    fills <- c(stop0 = grDevices::adjustcolor(cols[2], alpha.f = 0.3), no = cols[2], yes = cols[1],
-               stop1 = grDevices::adjustcolor(cols[1], alpha.f = 0.45))
-    step <- function(n) max(1, ceiling(n / 10))
-    ggplot2::ggplot(g, ggplot2::aes(x1, x2, fill = what)) +
-        ggplot2::geom_tile(width = 0.9, height = 0.9) +
-        ggplot2::scale_fill_manual(values = stats::setNames(fills[keep], lev[keep])) +
-        ggplot2::scale_x_continuous(breaks = seq(0, st$n1, by = step(st$n1)), expand = c(0, 0.3)) +
-        ggplot2::scale_y_continuous(breaks = seq(0, st$n2, by = step(st$n2)), expand = c(0, 0.3)) +
-        ggplot2::labs(x = labels$x, y = labels$y, fill = NULL) + base +
-        ggplot2::theme(legend.position = "top", panel.grid.major = ggplot2::element_blank(),
-                       panel.grid.minor = ggplot2::element_blank()) +
-        ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE))
 }

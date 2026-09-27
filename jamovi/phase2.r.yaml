@@ -172,7 +172,7 @@ items:
       height: 520
       renderFun: .plotOutcomes
       visible: (outcomePlot)
-      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU ]
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU, analyse, obsN, obsX ]
 
     - name: boundPlot
       title: Stopping boundaries
@@ -181,5 +181,5 @@ items:
       height: 400
       renderFun: .plotBounds
       visible: (boundPlot)
-      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU, analyse, obsN, obsX, ciLevel ]
+      clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU, analyse, obsN, obsX, ciLevel, boundTraj, boundProj, boundHyp ]
 ...

@@ -97,8 +97,14 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                                   en = vapply(oc, `[[`, 0, "en"), p0 = o$p0, p1 = o$p1))
             }
             img <- self$results$boundPlot
-            if (is.null(img$state))
-                img$setState(list(stages = st, obs = if (is.null(obs)) NULL else c(n = obs$n, x = obs$x)))
+            if (is.null(img$state)) {
+                # the interval of the observed rate is drawn as slopes from the current status
+                show <- c("traj", "proj", "hyp")[c(o$boundTraj, o$boundProj, o$boundHyp)]
+                img$setState(list(stages = st, obs = if (is.null(obs)) NULL else c(n = obs$n, x = obs$x),
+                                  rate = if (is.null(obs)) NULL else obs$naive,
+                                  ci = if (is.null(obs)) NULL else c(obs$lower, obs$upper),
+                                  level = o$ciLevel, p0 = o$p0, p1 = o$p1, show = show))
+            }
             # outcome map: every (stage-1, stage-2) outcome of a two-stage design and its decision
             img <- self$results$outcomePlot
             if (o$outcomePlot) {
@@ -108,13 +114,14 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                     img$setVisible(FALSE)
                 } else if (is.null(img$state))
                     img$setState(list(n1 = st$nk[1], n2 = st$nk[2] - st$nk[1], fut1 = st$fut[1],
-                                      eff1 = st$eff[1], eff2 = st$eff[2]))
+                                      eff1 = st$eff[1], eff2 = st$eff[2],
+                                      obs = if (is.null(obs)) NULL else c(n = obs$n, x = obs$x)))
             }
         },
 
         .fail = function(text) {
             private$.notice(text, "inputProblem", jmvcore::NoticeType$ERROR)
-            for (nm in c("summary", "stages", "candidates", "oc", "observed", "ocPlot", "boundPlot"))
+            for (nm in c("summary", "stages", "candidates", "oc", "observed", "ocPlot", "boundPlot", "outcomePlot"))
                 self$results[[nm]]$setVisible(FALSE)
             invisible(NULL)
         },
@@ -226,7 +233,7 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             st <- image$state
             if (is.null(st)) return(FALSE)
             labels <- list(stop0 = .("Stopped after stage 1: not promising"), stop1 = .("Stopped after stage 1: promising"),
-                           no = .("Not promising"), yes = .("Promising"),
+                           no = .("Not promising"), yes = .("Promising"), now = .("Current status"),
                            x = sprintf(.("Responses in stage 1 (of %d)"), st$n1),
                            y = sprintf(.("Responses in stage 2 (of %d)"), st$n2))
             print(plot_ph2_outcomes(st, theme$color, list(theme_only(ggtheme)), labels))
@@ -237,7 +244,8 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             st <- image$state
             if (is.null(st)) return(FALSE)
             labels <- list(fut = .("Not promising"), eff = .("Promising"), cont = .("Continue"),
-                           obs = .("Observed"), reach = .("Possible trajectories"),
+                           now = .("Now: %d of %d (rate %.2f)"), reach = .("Possible trajectories"),
+                           proj = .("Red fan: projection with the %s%% interval %.2f–%.2f"),
                            x = .("Patients"), y = .("Responses"))
             print(plot_ph2_bounds(st, theme$color, list(theme_only(ggtheme)), labels))
             TRUE
