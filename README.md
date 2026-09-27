@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.3.0
+## Version 0.5.0
 
 ### Group Sequential Design
 
@@ -141,13 +141,55 @@ with the Sequential package (Silva & Kulldorff) to 10⁻⁶ in 10 designs. Seque
 lower end of the interval of critical values that give the same discrete design; so does
 jmsequential.
 
+### Bayesian Sequential Monitoring
+
+*Sequential → Bayesian Sequential Monitoring*: Bayesian stopping rules with their frequentist
+operating characteristics.
+
+- **Models:** normal approximation (estimate and standard error per look; flat, sceptical,
+  enthusiastic or custom normal prior); two arms with a binary outcome (Beta priors); JZS Bayes
+  factor t-test on raw data (one or two samples).
+- **Rules:** success when P(effect beyond δ | data) reaches a threshold, at every look or only at
+  the end; futility when the predictive probability of final success is low; for the Bayes factor,
+  stop when BF₁₀ ≥ k or ≤ 1/k between a minimum and a maximum n.
+- **Operating characteristics:** exact for the normal model (the rules are thresholds on the
+  estimate, handled by the group sequential engine) and for two arms (dynamic programming over the
+  responses in both arms); seeded Bayes factor design analysis for the Bayes factor.
+- **Monitoring:** posterior mean and interval, P(benefit), P(beyond δ), predictive probability and
+  decision at each look, or the Bayes factor path; plots of the thresholds, the probabilities, the
+  prior and posterior, and the operating characteristics.
+
+**Validation:** the Bayes factor agrees with BayesFactor's `ttest.tstat` (to 2·10⁻⁵ on the log
+scale, BayesFactor's own accuracy; to 10⁻⁹ against adaptive integration). The two-arm posterior
+probability agrees with the exact formula to 10⁻¹². The exact operating characteristics agree with
+simulation.
+
+### Anytime-Valid Monitoring
+
+*Sequential → Anytime-Valid Monitoring*: e-values and confidence sequences, valid at every sample
+size and under optional stopping.
+
+- **Tests:** mean or difference in means. With a known SD the test is the normal-mixture mSPRT
+  (Robbins 1970; Johari et al. 2022); with an unknown SD it is the safe t-test (Grünwald, de Heide
+  & Koolen 2024). Both are two-sided, with a Gaussian mixing variance (default δ²).
+- **Design:** the N for a target power when testing after every observation (exact for a known
+  SD, simulated otherwise), the expected and median stopping N, the type I error by the horizon,
+  and the N for one analysis with the e-value and for the fixed-sample test.
+- **Data:** outcome in arrival order, with a group variable for two samples. The analysis gives
+  the e-value, the always-valid p-value, the confidence sequence and the decision, with plots of
+  the e-process and of the confidence sequence.
+
+**Validation:** the e-values equal safestats' `eGauss` e-values; the single-analysis sample sizes
+are identical to safestats' designs, and the continuous-monitoring sample sizes agree within
+simulation error.
+
 ### Example data
 
-*Data library → jmsequential*: interim results of a trial (difference in means, survival), patients
-in arrival order (binary and continuous outcomes, two arms), and weekly surveillance counts.
+*Data library → jmsequential*: interim results of a trial (difference in means, survival, two arms
+binary), patients in arrival order (binary and continuous outcomes, two arms), and weekly
+surveillance counts.
 
-Planned next: Bayesian and anytime-valid monitoring; individual-level data; a classical
-fixed-sample size module.
+Planned next: individual-level data for interim analyses; a classical fixed-sample size module.
 
 ## Installation
 
@@ -169,8 +211,8 @@ See `tutorial/README.md` to build it.
 ## Development
 
 - **Tests:** `Rscript -e 'testthat::test_local(".")'`. The reference values under
-  `tests/testthat/fixtures/` were generated from rpact, gsDesign, clinfun, ph2bayes, SPRT, sprtt
-  and Sequential.
+  `tests/testthat/fixtures/` were generated from rpact, gsDesign, clinfun, ph2bayes, SPRT, sprtt,
+  Sequential, BayesFactor and safestats.
 - **Build:** `bash tools/build-jmo.sh {current|solid}` writes `dist/`.
 - **Install:** `bash tools/install.sh [desktop|docker|both]`, which runs `tools/smoke.R` against
   the installed module.
@@ -184,11 +226,15 @@ Methods follow the publications cited in the tutorial, in particular:
 - Lan & DeMets (1983);
 - Lachin & Foulkes (1986);
 - Wald, *Sequential Analysis* (1947);
-- Kulldorff, Davis, Kolczak, Lewis, Lieu & Platt (2011).
+- Kulldorff, Davis, Kolczak, Lewis, Lieu & Platt (2011);
+- Spiegelhalter, Freedman & Parmar (1994); Rouder, Speckman, Sun, Morey & Iverson (2009);
+- Robbins (1970); Grünwald, de Heide & Koolen (2024).
 
 The R packages [rpact](https://www.rpact.org) (G. Wassmer, F. Pahlke),
 [gsDesign](https://keaven.github.io/gsDesign/) (K. Anderson), ldbounds, seqtest, clinfun,
-ph2bayes, SPRT, sprtt and Sequential served as references and test oracles. No code was copied from packages whose licences are incompatible
+ph2bayes, SPRT, sprtt, Sequential, BayesFactor and
+[safestats](https://github.com/AlexanderLyNL/safestats) (A. Ly, R. Turner, J. ter Schure) served as
+references and test oracles. No code was copied from packages whose licences are incompatible
 with GPL-3.
 
 ## Licence

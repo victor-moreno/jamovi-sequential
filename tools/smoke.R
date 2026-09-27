@@ -36,3 +36,15 @@ mx <- jmsequential::maxsprt(data = sv, cases = "cases", expected = "expected")
 stopifnot(identical(mx$summary$getCell(rowKey = "cv", "value")$value, "3.628123"),
           which(mx$monitor$asDF$decision == "Signal: reject H0")[1] == 12)
 cat("   smoke test passed: MaxSPRT cv 3.628123, signal at look 12\n")
+
+# Bayesian monitoring: sceptical prior stops for efficacy at look 2; exact two-arm type I error
+r <- jmsequential::bayesmon(data = data.frame(n = c(57, 114), est = c(0.5, 0.55), se = 2 / sqrt(c(57, 114))),
+                            lookN = "n", estimate = "est", se = "se")
+b <- jmsequential::bayesmon(data = data.frame(), model = "binary")$oc$asDF$reject[1]
+stopifnot(identical(r$monitor$asDF$decision[2], "Stop: efficacy"), abs(b - 0.04835856) < 1e-6)
+cat(sprintf("   smoke test passed: Bayesian stop at look 2, two-arm alpha %.4f\n", b))
+
+# anytime-valid: exact n for 80 % power with continuous monitoring (safestats: 55 +- 3 by simulation)
+a <- jmsequential::anytime(data = data.frame(), sdKnown = TRUE, samples = "one")$summary$asDF$value[4]
+stopifnot(identical(a, "54"))
+cat("   smoke test passed: anytime-valid n =", a, "\n")
