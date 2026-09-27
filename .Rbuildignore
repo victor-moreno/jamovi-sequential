@@ -1,0 +1,11 @@
+^\.tmp$
+^\.R$
+^docs$
+^dev$
+^tools$
+^build$
+^dist$
+^.*\.jmo$
+^task_plan\.md$
+^findings\.md$
+^progress\.md$
