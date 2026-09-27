@@ -43,3 +43,26 @@ test_that("unequal timing given as cumulative sizes, and proportions", {
     r <- run_gsd(timing = "100, 250, 400", endpoint = "props", p0 = 0.3, p1 = 0.45)
     expect_equal(r$bounds$asDF$t, c(0.25, 0.625, 1))
 })
+
+test_that("incomplete input gives a notice, not an error, and hides the results", {
+    r <- run_gsd(efficacy = "user")
+    expect_match(r$get("inputProblem")$content, "cumulative proportions")
+    expect_false(r$bounds$visible)
+    r <- run_gsd(efficacy = "user", effUser = "0.1, 0.4")
+    expect_match(r$get("inputProblem")$content, "2 proportions were given for 3 analyses")
+    r <- run_gsd(endpoint = "surv", solveFor = "followup", nTotal = 50)
+    expect_match(r$get("inputProblem")$content, "sample size too small")
+})
+
+test_that("cells without a value are blank, not NaN", {
+    r <- run_gsd(futility = "spending")
+    expect_identical(r$bounds$getCell(rowKey = 3L, "futZ")$value, "")
+    expect_identical(r$bounds$getCell(rowKey = 3L, "futEst")$value, "")
+})
+
+test_that("B-value scale makes triangular boundaries straight lines in information", {
+    opts <- lapply(formals(gsd)[names(formals(gsd)) != "data"], eval)
+    x <- gsd_compute(utils::modifyList(opts, list(efficacy = "triangular", nLooks = 6)))
+    b <- x$looks$effZ * sqrt(x$looks$t)
+    expect_lt(max(abs(diff(diff(b)))), 1e-8)
+})

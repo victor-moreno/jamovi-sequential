@@ -2,20 +2,25 @@
 # jamovi's self$options) to every number the results show. No jmvcore here, so
 # it is testable without jamovi and reused by the tutorial.
 
+# jamovi shows NA in a number column as NaN; an empty string leaves the cell blank.
+blank_na <- function(values) lapply(values, function(x) if (is.numeric(x) && length(x) == 1 && is.na(x)) "" else x)
+
 # "0.3, 0.6, 1" or cumulative sizes "100, 200, 300" -> information fractions.
-parse_numbers <- function(x) {
+parse_numbers <- function(x, what = "") {
     x <- trimws(unlist(strsplit(as.character(x), "[,; ]+")))
     x <- x[nzchar(x)]
     v <- suppressWarnings(as.numeric(x))
-    if (any(is.na(v))) stop("could not read the numbers in '", paste(x, collapse = ", "), "'")
+    if (any(is.na(v)))
+        stop(what, ": could not read '", paste(x, collapse = ", "), "'; use numbers separated by commas.")
     v
 }
 
 gsd_timing <- function(timing, K) {
-    v <- parse_numbers(timing)
+    v <- parse_numbers(timing, "Information fractions")
     if (length(v) == 0) return(seq_len(K) / K)
     if (any(v <= 0) || (length(v) > 1 && any(diff(v) <= 0)))
-        stop("information fractions must be positive and increasing")
+        stop("Information fractions: the values must be positive and increasing ",
+             "(e.g. 0.3, 0.6, 1, or cumulative sizes such as 100, 200, 300).")
     v / v[length(v)]
 }
 
@@ -28,10 +33,16 @@ gsd_eff <- function(o, K) {
         hsd = list(type = "spending", sf = "HSD", param = o$effGamma),
         exponential = list(type = "spending", sf = "exponential", param = o$effNu),
         user = {
-            p <- parse_numbers(o$effUser)
-            if (length(p) != K) stop("give one cumulative proportion of alpha per analysis (", K, ")")
+            p <- parse_numbers(o$effUser, "Cumulative proportions of α")
+            if (length(p) == 0)
+                stop("User-defined spending: enter the cumulative proportions of α, one per analysis and ",
+                     "ending in 1, in 'Cumulative proportions of α' (for ", K, " analyses, e.g. ",
+                     paste(format(round(seq_len(K)^2 / K^2, 2)), collapse = ", "), ").")
+            if (length(p) != K)
+                stop("User-defined spending: ", length(p), " proportions were given for ", K,
+                     " analyses; give one per analysis.")
             if (any(diff(c(0, p)) < 0) || abs(p[K] - 1) > 1e-8)
-                stop("cumulative proportions of alpha must increase and end at 1")
+                stop("User-defined spending: the cumulative proportions of α must increase and end at 1.")
             list(type = "spending", sf = "user", param = list(t = NULL, p = p))
         },
         obf = list(type = "WT", delta = 0),
@@ -51,8 +62,9 @@ gsd_fut <- function(o, K) {
             hsd = list(type = "spending", sf = "HSD", param = o$futGamma),
             exponential = list(type = "spending", sf = "exponential", param = o$futNu)),
         fixedz = {
-            z <- parse_numbers(o$futZ)
-            if (length(z) == 0) stop("give the futility z-values for the interim analyses")
+            z <- parse_numbers(o$futZ, "Futility z-values")
+            if (length(z) == 0)
+                stop("Fixed z-values: enter the futility z-values, one for all interim analyses or one for each.")
             list(type = "fixedz", z = rep_len(z, max(K - 1, 1)))
         },
         cp = list(type = "cp", cp = o$futCp, under = o$futCpUnder))
@@ -68,8 +80,10 @@ gsd_compute <- function(o) {
     } else {
         eff <- gsd_eff(o, K)
         if (identical(eff$sf, "user")) eff$param$t <- tt
-        d <- gs_design(timing = tt, sided = sided, alpha = o$alpha, beta = beta,
-                       eff = eff, fut = gsd_fut(o, K), binding = isTRUE(o$binding))
+        d <- tryCatch(gs_design(timing = tt, sided = sided, alpha = o$alpha, beta = beta,
+                                eff = eff, fut = gsd_fut(o, K), binding = isTRUE(o$binding)),
+                      error = function(e) stop("The boundaries cannot be computed for these settings (",
+                                               conditionMessage(e), "). Check α, power and the boundary parameters."))
     }
     d$K <- K
     r <- o$ratio

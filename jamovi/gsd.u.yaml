@@ -300,6 +300,9 @@ children:
                   - type: ComboBox
                     name: boundScale
                     enable: (boundPlot)
+                  - type: ComboBox
+                    name: boundX
+                    enable: (boundPlot)
               - type: CheckBox
                 name: spendPlot
               - type: CheckBox

@@ -54,6 +54,7 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             ocTable = TRUE,
             boundPlot = TRUE,
             boundScale = "z",
+            boundX = "n",
             spendPlot = FALSE,
             powerPlot = FALSE, ...) {
 
@@ -337,9 +338,17 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 boundScale,
                 options=list(
                     "z",
+                    "b",
                     "p",
                     "effect"),
                 default="z")
+            private$..boundX <- jmvcore::OptionList$new(
+                "boundX",
+                boundX,
+                options=list(
+                    "n",
+                    "t"),
+                default="n")
             private$..spendPlot <- jmvcore::OptionBool$new(
                 "spendPlot",
                 spendPlot,
@@ -397,6 +406,7 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..ocTable)
             self$.addOption(private$..boundPlot)
             self$.addOption(private$..boundScale)
+            self$.addOption(private$..boundX)
             self$.addOption(private$..spendPlot)
             self$.addOption(private$..powerPlot)
         }),
@@ -449,6 +459,7 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ocTable = function() private$..ocTable$value,
         boundPlot = function() private$..boundPlot$value,
         boundScale = function() private$..boundScale$value,
+        boundX = function() private$..boundX$value,
         spendPlot = function() private$..spendPlot$value,
         powerPlot = function() private$..powerPlot$value),
     private = list(
@@ -500,6 +511,7 @@ gsdOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..ocTable = NA,
         ..boundPlot = NA,
         ..boundScale = NA,
+        ..boundX = NA,
         ..spendPlot = NA,
         ..powerPlot = NA)
 )
@@ -890,7 +902,8 @@ gsdResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "futCp",
                     "futCpUnder",
                     "binding",
-                    "boundScale")))
+                    "boundScale",
+                    "boundX")))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="spendPlot",
@@ -1076,6 +1089,7 @@ gsdBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param ocTable .
 #' @param boundPlot .
 #' @param boundScale .
+#' @param boundX .
 #' @param spendPlot .
 #' @param powerPlot .
 #' @return A results object containing:
@@ -1146,6 +1160,7 @@ gsd <- function(
     ocTable = TRUE,
     boundPlot = TRUE,
     boundScale = "z",
+    boundX = "n",
     spendPlot = FALSE,
     powerPlot = FALSE) {
 
@@ -1206,6 +1221,7 @@ gsd <- function(
         ocTable = ocTable,
         boundPlot = boundPlot,
         boundScale = boundScale,
+        boundX = boundX,
         spendPlot = spendPlot,
         powerPlot = powerPlot)
 

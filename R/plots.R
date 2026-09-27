@@ -10,23 +10,27 @@ theme_only <- function(ggtheme) {
     if (length(parts) == 0L) NULL else parts[[1L]]
 }
 
-plot_bounds <- function(st, scale, cols, base, labels) {
+# scale: z, b (B-value Z*sqrt(t): Whitehead's score up to a constant, so triangular
+# boundaries are straight lines), p or effect; xvar: "n" (sample size / events) or "t".
+plot_bounds <- function(st, scale, cols, base, labels, xvar = "n") {
     K <- nrow(st$looks)
     lk <- st$looks
-    y_eff <- switch(scale, z = lk$effZ, p = lk$effP, effect = lk$effEst)
+    lk$x <- if (xvar == "t") lk$t else lk$n
+    y_eff <- switch(scale, z = lk$effZ, b = lk$effZ * sqrt(lk$t), p = lk$effP, effect = lk$effEst)
     y_fut <- switch(scale,
-        z = lk$futZ,
+        z = lk$futZ, b = lk$futZ * sqrt(lk$t),
         p = (if (st$sided == 2) 2 * stats::pnorm(lk$futZ, lower.tail = FALSE) else stats::pnorm(lk$futZ, lower.tail = FALSE)),
         effect = lk$futEst)
-    df <- data.frame(x = lk$n, y = y_eff, what = labels$eff, grp = "e1")
-    if (st$sided == 2 && scale == "z")
-        df <- rbind(df, data.frame(x = lk$n, y = -lk$effZ, what = labels$eff, grp = "e2"))
+    mirror <- st$sided == 2 && scale %in% c("z", "b")
+    df <- data.frame(x = lk$x, y = y_eff, what = labels$eff, grp = "e1")
+    if (mirror)
+        df <- rbind(df, data.frame(x = lk$x, y = -y_eff, what = labels$eff, grp = "e2"))
     ok <- !is.na(y_fut)
     if (any(ok)) {
         # the futility line ends where it meets the efficacy boundary at the last look
-        fx <- c(lk$n[ok], lk$n[K]); fy <- c(y_fut[ok], y_eff[K])
+        fx <- c(lk$x[ok], lk$x[K]); fy <- c(y_fut[ok], y_eff[K])
         df <- rbind(df, data.frame(x = fx, y = fy, what = labels$fut, grp = "f1"))
-        if (st$sided == 2 && scale == "z")
+        if (mirror)
             df <- rbind(df, data.frame(x = fx, y = -fy, what = labels$fut, grp = "f2"))
     }
     df$what <- factor(df$what, c(labels$eff, labels$fut))
@@ -36,7 +40,8 @@ plot_bounds <- function(st, scale, cols, base, labels) {
         ggplot2::scale_colour_manual(values = stats::setNames(cols[1:2], c(labels$eff, labels$fut)), drop = TRUE) +
         ggplot2::scale_linetype_manual(values = stats::setNames(c("solid", "22"), c(labels$eff, labels$fut)), drop = TRUE) +
         ggplot2::labs(x = labels$x, y = labels$y, colour = NULL, linetype = NULL)
-    if (scale == "z") p <- p + ggplot2::geom_hline(yintercept = 0, linewidth = 0.3, colour = "grey60")
+    if (scale %in% c("z", "b")) p <- p + ggplot2::geom_hline(yintercept = 0, linewidth = 0.3, colour = "grey60")
+    if (xvar == "t") p <- p + ggplot2::scale_x_continuous(limits = c(0, 1))
     if (scale == "p" || (scale == "effect" && st$endpoint == "surv")) p <- p + ggplot2::scale_y_log10()
     p + base + ggplot2::theme(legend.position = "top")
 }

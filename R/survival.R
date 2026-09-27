@@ -39,12 +39,12 @@ surv_plan <- function(D, lam0, hr, gam = 0, r = 1, solve = "n",
     } else if (solve == "accrual") {
         f <- function(a) ev(rate * a, a, F) - D
         hi <- 1
-        while (f(hi) < 0) { hi <- hi * 2; if (hi > 1e6) stop("accrual rate too low for the required events") }
+        while (f(hi) < 0) { hi <- hi * 2; if (hi > 1e6) stop("Accrual rate too low: the required number of events can never be reached.") }
         A <- stats::uniroot(f, c(1e-9, hi), tol = 1e-10)$root
         N <- rate * A
     } else {
         f <- function(fu) ev(N, A, fu) - D
-        if (f(1e6) < 0) stop("sample size too small: the required events can never be observed")
+        if (f(1e6) < 0) stop("Total sample size too small: the required number of events can never be observed; increase it.")
         hi <- 1
         while (f(hi) < 0) hi <- hi * 2
         F <- if (f(0) >= 0) 0 else stats::uniroot(f, c(0, hi), tol = 1e-10)$root

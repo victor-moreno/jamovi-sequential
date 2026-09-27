@@ -383,11 +383,23 @@ options:
       options:
         - name: z
           title: Z statistic
+        - name: b
+          title: B-value (Z·√t)
         - name: p
           title: Nominal p-value
         - name: effect
           title: Effect
       default: z
+
+    - name: boundX
+      title: Horizontal axis
+      type: List
+      options:
+        - name: n
+          title: Sample size / events
+        - name: t
+          title: Information fraction
+      default: n
 
     - name: spendPlot
       title: Error spending plot

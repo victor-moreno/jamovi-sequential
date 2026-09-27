@@ -121,7 +121,7 @@ items:
       height: 400
       renderFun: .plotBounds
       visible: (boundPlot)
-      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding, boundScale ]
+      clearWith: [ endpoint, sided, alpha, power, nLooks, timing, ratio, meanDiff, sd, p0, p1, genEffect, genSd, hr, ctrlSpec, ctrlMedian, ctrlHazard, survTime, survProb, eventsMethod, solveFor, accrualTime, accrualRate, followUp, nTotal, dropoutProb, dropoutTime, efficacy, effRho, effGamma, effNu, effUser, wtDelta, hpZ, ptDelta1, ptDelta0, futility, futSf, futRho, futGamma, futNu, futZ, futCp, futCpUnder, binding, boundScale, boundX ]
 
     - name: spendPlot
       title: Error spending

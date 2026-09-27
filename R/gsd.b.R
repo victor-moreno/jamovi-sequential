@@ -39,8 +39,15 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
 
         .run = function() {
             o <- self$options
-            res <- tryCatch(gsd_compute(private$.optionList()),
-                            error = function(e) jmvcore::reject(conditionMessage(e)))
+            res <- tryCatch(gsd_compute(private$.optionList()), error = function(e) e)
+            # an incomplete or inconsistent input is a message for the user, not an
+            # analysis error with a stack trace: say what to fix and show nothing else
+            if (inherits(res, "error")) {
+                private$.notice(conditionMessage(res))
+                for (nm in c("summary", "bounds", "oc", "timing", "boundPlot", "spendPlot", "powerPlot"))
+                    self$results[[nm]]$setVisible(FALSE)
+                return()
+            }
             d <- res$d
             K <- d$K
             surv <- o$endpoint == "surv"
@@ -56,7 +63,7 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             for (k in seq_len(K)) {
                 row <- as.list(lk[k, ])
                 row$n <- ceiling(row$n - 1e-9)
-                b$setRow(rowKey = k, values = row)
+                b$setRow(rowKey = k, values = blank_na(row))
             }
             private$.boundNotes(res)
 
@@ -65,8 +72,8 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                 for (i in seq_len(nrow(res$oc))) {
                     x <- res$oc[i, ]
                     self$results$oc$setRow(rowKey = as.character(x$g),
-                        values = list(effect = x$effect, reject = x$reject, earlyEff = x$earlyEff,
-                                      earlyFut = x$earlyFut, en = x$en))
+                        values = blank_na(list(effect = x$effect, reject = x$reject, earlyEff = x$earlyEff,
+                                               earlyFut = x$earlyFut, en = x$en)))
                 }
             }
 
@@ -74,9 +81,9 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             if (surv) {
                 for (k in seq_len(K)) {
                     x <- res$timing[k, ]
-                    self$results$timing$setRow(rowKey = k, values = list(
+                    self$results$timing$setRow(rowKey = k, values = blank_na(list(
                         events = ceiling(x$events - 1e-9), timeH1 = x$timeH1, timeH0 = x$timeH0,
-                        enrolled = ceiling(x$enrolled - 1e-9)))
+                        enrolled = ceiling(x$enrolled - 1e-9))))
                 }
             }
 
@@ -99,6 +106,14 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                     reject = vapply(pr, function(p) sum(p$up) + (if (res$sided == 2) sum(p$lo) else 0), 0),
                     en = vapply(pr, function(p) sum(d$t * rowSums(p)) * res$size$Nmax, 0)))
             }
+        },
+
+        # Notice, not `type: Notice` in the yaml, which does not compile (jamovi skill)
+        .notice = function(text) {
+            n <- jmvcore::Notice$new(options = self$options, name = "inputProblem",
+                                     type = jmvcore::NoticeType$ERROR)
+            n$setContent(text)
+            self$results$insert(1, n)
         },
 
         .optionList = function() {
@@ -225,11 +240,12 @@ gsdClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             if (is.null(st)) return(FALSE)
             surv <- st$endpoint == "surv"
             scale <- self$options$boundScale
+            xvar <- self$options$boundX
             labels <- list(eff = .("Efficacy"), fut = .("Futility"),
-                           x = if (surv) .("Events") else .("Sample size"),
-                           y = switch(scale, z = .("Z boundary"), p = .("Nominal p-value"),
+                           x = if (xvar == "t") .("Information fraction") else if (surv) .("Events") else .("Sample size"),
+                           y = switch(scale, z = .("Z boundary"), b = .("B-value (Z·√t)"), p = .("Nominal p-value"),
                                       effect = if (surv) .("Hazard ratio") else .("Effect")))
-            print(plot_bounds(st, scale, theme$color, list(theme_only(ggtheme)), labels))
+            print(plot_bounds(st, scale, theme$color, list(theme_only(ggtheme)), labels, xvar))
             TRUE
         },
 
