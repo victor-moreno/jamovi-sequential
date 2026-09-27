@@ -75,7 +75,7 @@ items:
           title: Estimate
           type: number
 
-    - name: path
+    - name: llrPath
       title: Path
       type: Table
       visible: (pathTable)

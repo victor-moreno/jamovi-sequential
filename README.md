@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.7
+## Version 0.5.8
 
 Every analysis works in the same order: the design options come first, and the data go in the
 **Analysis of observed data** box at the end of the options panel (variables, or patients and

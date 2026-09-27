@@ -18,12 +18,12 @@ sprtClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             r$oc$getColumn("theta")$setTitle(private$.thetaTitle())
             statTitle <- if (o$boundary == "triangular") .("Z") else .("LLR")
             r$test$getColumn("stat")$setTitle(statTitle)
-            r$path$getColumn("stat")$setTitle(statTitle)
+            r$llrPath$getColumn("stat")$setTitle(statTitle)
             r$test$getColumn("estimate")$setTitle(switch(o$model, binom = .("Proportion"),
                 norm1 = , t1 = .("Mean"), .("Difference")))
             if (!is.null(o$dep)) r$test$addRow(rowKey = 1, values = list())
             # a visibility expression cannot combine a variable with &&
-            else r$path$setVisible(FALSE)
+            else r$llrPath$setVisible(FALSE)
         },
 
         .thetaTitle = function() {
@@ -66,7 +66,7 @@ sprtClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                 a <- tryCatch(private$.analyse(d), error = function(e) e)
                 if (inherits(a, "error")) {
                     private$.notice(conditionMessage(a), "dataProblem", jmvcore::NoticeType$WARNING)
-                    for (nm in c("test", "path")) r[[nm]]$setVisible(FALSE)
+                    for (nm in c("test", "llrPath")) r[[nm]]$setVisible(FALSE)
                     a <- NULL
                 }
             }
@@ -105,7 +105,7 @@ sprtClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             if (two) note <- paste(note, sprintf(.("Difference = %s − %s."), levs[2], levs[1]))
             self$results$test$setNote("bias", note, init = FALSE)
             if (o$pathTable) {
-                tb <- self$results$path
+                tb <- self$results$llrPath
                 for (i in seq_len(if (a$decision == "continue") a$N else k))
                     tb$addRow(rowKey = i, values = blank_na(list(n = i, V = if (is.null(a$V)) NA else a$V[i],
                         stat = a$stat[i], lower = a$lower[i], upper = a$upper[i])))
@@ -115,7 +115,7 @@ sprtClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
 
         .fail = function(text) {
             private$.notice(text, "inputProblem", jmvcore::NoticeType$ERROR)
-            for (nm in c("summary", "oc", "test", "path", "pathPlot", "ocPlot"))
+            for (nm in c("summary", "oc", "test", "llrPath", "pathPlot", "ocPlot"))
                 self$results[[nm]]$setVisible(FALSE)
             invisible(NULL)
         },

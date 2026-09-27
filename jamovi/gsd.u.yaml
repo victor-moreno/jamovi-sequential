@@ -30,7 +30,7 @@ children:
     format: number
 - type: CollapseBox
   label: Effect size
-  collapsed: false
+  collapsed: true
   stretchFactor: 1
   children:
   - type: LayoutBox
@@ -140,7 +140,7 @@ children:
       enable: (endpoint:surv && solveFor:followup)
 - type: CollapseBox
   label: Efficacy boundary
-  collapsed: false
+  collapsed: true
   stretchFactor: 1
   children:
   - type: LayoutBox

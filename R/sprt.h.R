@@ -247,7 +247,7 @@ sprtResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         summary = function() private$.items[["summary"]],
         oc = function() private$.items[["oc"]],
         test = function() private$.items[["test"]],
-        path = function() private$.items[["path"]],
+        llrPath = function() private$.items[["llrPath"]],
         pathPlot = function() private$.items[["pathPlot"]],
         ocPlot = function() private$.items[["ocPlot"]]),
     private = list(),
@@ -396,7 +396,7 @@ sprtResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `type`="number"))))
             self$add(jmvcore::Table$new(
                 options=options,
-                name="path",
+                name="llrPath",
                 title="Path",
                 visible="(pathTable)",
                 clearWith=list(
@@ -550,7 +550,7 @@ sprtBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$summary} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$oc} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$test} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$path} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$llrPath} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$pathPlot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$ocPlot} \tab \tab \tab \tab \tab an image \cr
 #' }
