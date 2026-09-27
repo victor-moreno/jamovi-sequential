@@ -40,6 +40,20 @@ analyses:
       Fleming's multistage test, and Bayesian monitoring with predictive (Lee &
       Liu) or posterior probabilities. Exact operating characteristics, and
       inference for observed data.
+datasets:
+  - name: Interim analyses - difference in means
+    path: gsd_interim_means.csv
+    description: >-
+      Fabricated cumulative results of a two-arm trial (difference in means, SD
+      1) at two interim analyses: N, estimate and standard error. Use with Group
+      Sequential Design, default design (effect 0.5): the trial stops for
+      efficacy at the second look.
+  - name: Interim analyses - survival
+    path: gsd_interim_survival.csv
+    description: >-
+      Fabricated cumulative results of a survival trial at two interim analyses:
+      events, log hazard ratio and standard error. Use with Group Sequential
+      Design, endpoint time to event (hazard ratio 0.7).
 usesNative: false
 minApp: 2.3.0
 
