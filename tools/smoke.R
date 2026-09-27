@@ -20,3 +20,19 @@ dat <- data.frame(n = c(57, 114), est = c(0.5, 0.55), se = 2 / sqrt(c(57, 114)))
 m <- jmsequential::gsd(data = dat, lookN = "n", estimate = "est", se = "se")
 stopifnot(identical(m$monitor$asDF$decision[2], "Stop: reject H0"), m$final$asDF$p < 0.01)
 cat("   smoke test passed: monitoring stops at look 2, p =", signif(m$final$asDF$p, 3), "\n")
+
+# SPRT: exact binomial OC (gsDesign::binomialSPRT, maxn 400) and a t-SPRT on data
+p <- jmsequential::sprt(data = data.frame())$oc$asDF$pH1
+stopifnot(abs(p[1] - 0.03991942) < 1e-6, abs(p[3] - 0.8238091) < 1e-6)
+set.seed(40); invisible(rbinom(80, 1, 0.4)); x <- round(rnorm(80) + 0.6 * (rep(1:2, 40) == 2), 2)
+t2 <- jmsequential::sprt(data = data.frame(x = x, g = factor(rep(c("C", "T"), 40))), dep = "x", group = "g",
+                         model = "t2", nsim = 200)$test$asDF
+stopifnot(t2$n == 41)
+cat(sprintf("   smoke test passed: SPRT alpha %.4f, t-SPRT decides at n = %d\n", p[1], t2$n))
+
+# MaxSPRT: Poisson critical value for T = 20 (Sequential::CV.Poisson) and a signal on the example data
+sv <- data.frame(cases = c(0, 1, 2, 3, 5, 6, 8, 10, 12, 13, 15, 17, 18, 20), expected = round(0.65 * 1:14, 2))
+mx <- jmsequential::maxsprt(data = sv, cases = "cases", expected = "expected")
+stopifnot(identical(mx$summary$getCell(rowKey = "cv", "value")$value, "3.628123"),
+          which(mx$monitor$asDF$decision == "Signal: reject H0")[1] == 12)
+cat("   smoke test passed: MaxSPRT cv 3.628123, signal at look 12\n")

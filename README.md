@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.1.0
+## Version 0.3.0
 
 ### Group Sequential Design
 
@@ -93,8 +93,61 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
 - The predictive probabilities and boundaries agree with ph2bayes.
 - Fleming's boundaries reproduce two published examples.
 
-Planned next: SPRT and MaxSPRT; Bayesian and anytime-valid monitoring; individual-level data;
-a classical fixed-sample size module.
+### Sequential Probability Ratio Test
+
+*Sequential → Sequential Probability Ratio Test*: Wald's test after every observation.
+
+**Tests**
+
+- Proportion (one sample); mean with known SD (one sample); difference in means with known SD
+  (two samples).
+- Sequential one- and two-sample t-tests (Rushton 1950; Hajnal 1961), one- or two-sided.
+
+**Boundaries**
+
+- Wald SPRT, or Whitehead's continuous triangular test.
+- Optional truncation at a maximum sample size, with the decision there taken from the sign of
+  the LLR or only at the upper threshold.
+
+**Output**
+
+- Thresholds, attained α and power, expected n under H0 and H1, and the fixed-sample n.
+- Operating characteristics: exact values (dynamic programming for proportions, the recursive
+  integration engine for known-SD means) or seeded simulation (t-tests), next to Wald's
+  approximations.
+- For data in arrival order (with a group variable for two samples): the decision, the n at the
+  decision and the estimate, a path table, and a plot of the path against the boundaries.
+
+**Validation:** the LLR paths agree with the SPRT package and with sprtt; the exact binomial
+operating characteristics agree with gsDesign's `binomialSPRT` to 10⁻⁷.
+
+### Safety Surveillance (MaxSPRT)
+
+*Sequential → Safety Surveillance (MaxSPRT)*: the maximized SPRT of Kulldorff et al. (2011) for
+post-marketing safety surveillance.
+
+- **Models:** Poisson (observed against expected counts), or binomial (cases in the risk window
+  against the control window, with matching ratio z).
+- **Design:** α, the surveillance length, a minimum number of cases for a signal, and continuous
+  or group monitoring (equally spaced or custom looks).
+- **Output:** the exact critical value and attained α, the cases needed for a signal, and
+  power, expected time to signal and expected length of surveillance for chosen relative risks.
+- **Data:** cumulative cases and expected counts (or all cases), one row per look, giving the
+  LLR, the relative risk and the signal decision, and a plot of the counts against the
+  signalling boundary.
+
+**Validation:** critical values, attained α, power, time to signal and surveillance length agree
+with the Sequential package (Silva & Kulldorff) to 10⁻⁶ in 10 designs. Sequential reports the
+lower end of the interval of critical values that give the same discrete design; so does
+jmsequential.
+
+### Example data
+
+*Data library → jmsequential*: interim results of a trial (difference in means, survival), patients
+in arrival order (binary and continuous outcomes, two arms), and weekly surveillance counts.
+
+Planned next: Bayesian and anytime-valid monitoring; individual-level data; a classical
+fixed-sample size module.
 
 ## Installation
 
@@ -116,7 +169,8 @@ See `tutorial/README.md` to build it.
 ## Development
 
 - **Tests:** `Rscript -e 'testthat::test_local(".")'`. The reference values under
-  `tests/testthat/fixtures/` were generated from rpact and gsDesign.
+  `tests/testthat/fixtures/` were generated from rpact, gsDesign, clinfun, ph2bayes, SPRT, sprtt
+  and Sequential.
 - **Build:** `bash tools/build-jmo.sh {current|solid}` writes `dist/`.
 - **Install:** `bash tools/install.sh [desktop|docker|both]`, which runs `tools/smoke.R` against
   the installed module.
@@ -128,11 +182,13 @@ Methods follow the publications cited in the tutorial, in particular:
 - Jennison & Turnbull, *Group Sequential Methods with Applications to Clinical Trials* (2000);
 - Whitehead, *The Design and Analysis of Sequential Clinical Trials* (1997);
 - Lan & DeMets (1983);
-- Lachin & Foulkes (1986).
+- Lachin & Foulkes (1986);
+- Wald, *Sequential Analysis* (1947);
+- Kulldorff, Davis, Kolczak, Lewis, Lieu & Platt (2011).
 
 The R packages [rpact](https://www.rpact.org) (G. Wassmer, F. Pahlke),
-[gsDesign](https://keaven.github.io/gsDesign/) (K. Anderson), ldbounds and seqtest served as
-references and test oracles. No code was copied from packages whose licences are incompatible
+[gsDesign](https://keaven.github.io/gsDesign/) (K. Anderson), ldbounds, seqtest, clinfun,
+ph2bayes, SPRT, sprtt and Sequential served as references and test oracles. No code was copied from packages whose licences are incompatible
 with GPL-3.
 
 ## Licence
