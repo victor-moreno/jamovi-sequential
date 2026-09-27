@@ -190,46 +190,53 @@ sprt_binom_exact <- function(p, par, alpha, beta, boundary = "wald", nMax = NA, 
     c(pH1 = pH1, asn = en + n * alive, pCont = alive, nEnd = n)
 }
 
-# Exact OC for the known-SD normal models with the recursive-integration engine, one
-# look per observation (norm2: one look per pair of observations, 1:1).
+# Exact OC for the known-SD normal models with the recursive-integration engine, testing after
+# every observation as the data analysis does; two samples alternate between the groups (1:1),
+# so from the second observation the information is n1 n2 / ((n1 + n2) sigma^2).
 sprt_norm_exact <- function(theta, model, par, alpha, beta, boundary = "wald", nMax = NA, truncRule = "sign",
                             horizon = NA) {
     Delta <- if (model == "norm1") par$mu1 - par$mu0 else par$delta1
-    step <- if (model == "norm1") 1 / par$sigma^2 else 1 / (2 * par$sigma^2)   # information per step
-    nStep <- if (model == "norm1") 1 else 2                                      # observations per step
+    info_at <- function(n) if (model == "norm1") n / par$sigma^2 else floor(n / 2) * ceiling(n / 2) / (n * par$sigma^2)
+    nFirst <- if (model == "norm1") 1 else 2
+    th0 <- if (model == "norm1") par$mu0 else 0
     if (boundary == "wald") {
         th <- sprt_thresholds(alpha, beta)
-        w <- sprt_wald_oc(model, if (model == "norm1") par$mu0 else 0, par, alpha, beta)
-        K <- if (!is.na(nMax)) floor(nMax / nStep) else if (!is.na(horizon)) horizon else
-            max(20, ceiling(8 * max(w[["asn"]], sprt_wald_oc(model, if (model == "norm1") par$mu1 else par$delta1, par, alpha, beta)[["asn"]]) / nStep))
-        I <- seq_len(K) * step
-        s <- sign(Delta)
+        nLast <- if (!is.na(nMax)) nMax else if (!is.na(horizon)) horizon else
+            max(40, ceiling(8 * max(sprt_wald_oc(model, th0, par, alpha, beta)[["asn"]],
+                                    sprt_wald_oc(model, th0 + Delta, par, alpha, beta)[["asn"]])))
+        n <- nFirst:nLast
+        I <- info_at(n)
+        K <- length(n)
         up <- (th[["upper"]] / abs(Delta) + abs(Delta) * I / 2) / sqrt(I)
         lo <- (th[["lower"]] / abs(Delta) + abs(Delta) * I / 2) / sqrt(I)
         if (!is.na(nMax)) {
             if (truncRule == "sign") up[K] <- (abs(Delta) * I[K] / 2) / sqrt(I[K])
             lo[K] <- up[K]
         }
-        thetaEff <- s * (theta - (if (model == "norm1") par$mu0 else 0))
+        thetaEff <- sign(Delta) * (theta - th0)
     } else {
-        thetaR <- Delta / par$sigma
-        tp <- tri_params(alpha, beta, thetaR)
-        Vstep <- if (model == "norm1") 1 else 0.5
-        K <- ceiling(tp$a / tp$c / Vstep)
-        if (!is.na(nMax)) K <- min(K, floor(nMax / nStep))
-        V <- seq_len(K) * Vstep
-        ak <- tp$a - 0.583 * sqrt(Vstep)
+        tp <- tri_params(alpha, beta, Delta / par$sigma)
+        Vof <- function(n) info_at(n) * par$sigma^2              # Whitehead's V on the standardised scale
+        Vmax <- tp$a / tp$c
+        nLast <- nFirst
+        while (Vof(nLast) < Vmax) nLast <- nLast + 1              # the triangle closes here
+        if (!is.na(nMax)) nLast <- min(nLast, nMax)
+        n <- nFirst:nLast
+        V <- Vof(n)
+        K <- length(n)
+        # per-observation Christmas-tree correction, as in sprt_analyse()
+        ak <- tp$a - 0.583 * sqrt(c(V[1], diff(V)))
         up <- (ak + tp$c * V) / sqrt(V); lo <- (-ak + 3 * tp$c * V) / sqrt(V)
         up[K] <- 2 * tp$c * sqrt(V[K]); lo <- pmin(lo, up); lo[K] <- up[K]
         I <- V
-        thetaEff <- tp$sgn * (theta - (if (model == "norm1") par$mu0 else 0)) / par$sigma
+        thetaEff <- tp$sgn * (theta - th0) / par$sigma
     }
     p <- gs_probs(I, up, lo, theta = thetaEff)
     stop <- rowSums(p)
-    if (boundary == "wald" && is.na(nMax) && 1 - sum(stop) > 1e-7 && K < 20000)
-        return(sprt_norm_exact(theta, model, par, alpha, beta, boundary, NA, truncRule, 2 * K))
-    c(pH1 = sum(p$up), asn = nStep * sum(seq_len(K) * stop) + nStep * K * max(0, 1 - sum(stop)),
-      pCont = max(0, 1 - sum(stop)), nEnd = nStep * K)
+    if (boundary == "wald" && is.na(nMax) && 1 - sum(stop) > 1e-7 && nLast < 20000)
+        return(sprt_norm_exact(theta, model, par, alpha, beta, boundary, NA, truncRule, 2 * nLast))
+    c(pH1 = sum(p$up), asn = sum(n * stop) + nLast * max(0, 1 - sum(stop)),
+      pCont = max(0, 1 - sum(stop)), nEnd = nLast)
 }
 
 # Seeded simulation for the t-test SPRTs (and a check for the others).

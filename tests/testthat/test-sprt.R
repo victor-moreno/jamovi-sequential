@@ -83,3 +83,21 @@ test_that("the maxsprt analysis runs and signals", {
     r <- maxsprt(data = dat, model = "binomial", cases = "obs", expected = "exp")
     expect_false(r$monitor$visible)
 })
+
+test_that("two-sample known-SD SPRT: exact OC stays finite and agrees with simulation (many looks)", {
+    par <- list(delta1 = 0.5, sigma = 1)
+    for (th in c(0, 0.5)) {
+        e <- sprt_norm_exact(th, "norm2", par, .05, .2)
+        s <- sprt_simulate(th, "norm2", par, .05, .2, nsim = 6000, seed = 5)
+        expect_true(e[["pH1"]] >= 0 && e[["pH1"]] <= 1)
+        expect_lt(abs(e[["pH1"]] - s[["pH1"]]), 0.02)
+        expect_lt(abs(e[["asn"]] / s[["asn"]] - 1), 0.04)
+    }
+    # the recursion conserves probability over thousands of looks
+    th <- sprt_thresholds(.05, .2)
+    I <- seq_len(2000) * 0.5
+    p <- gs_probs(I, (th[["upper"]] / 0.5 + 0.5 * I / 2) / sqrt(I), (th[["lower"]] / 0.5 + 0.5 * I / 2) / sqrt(I))
+    expect_lt(abs(sum(p$up) + sum(p$lo) - 1), 1e-5)
+    r <- sprt(data = data.frame(), model = "norm2")
+    expect_true(all(r$oc$asDF$pH1 >= 0 & r$oc$asDF$pH1 <= 1))
+})

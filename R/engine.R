@@ -22,10 +22,22 @@ gs_grid_points <- function(mean, sd, r = 18) {
 }
 
 # Grid restricted to [a, b] plus Simpson weights (odd points = grid, even = midpoints).
-gs_simpson <- function(x, a, b) {
+# hmax: largest gap allowed between grid points. The J&T grid is built for a few looks; with
+# many looks (an SPRT looks after every observation) the transition density between looks is
+# narrower than the grid, above all in the tails, and the recursion blows up. Gaps wider than
+# hmax (a third of the transition sd, see gs_advance) are filled with equally spaced points.
+gs_simpson <- function(x, a, b, hmax = Inf) {
     lo <- max(a, min(x)); hi <- min(b, max(x))
     if (!(hi > lo)) return(NULL)
     p <- sort(unique(c(lo, x[x > lo & x < hi], hi)))
+    d <- diff(p)
+    if (any(d > hmax)) {
+        extra <- unlist(lapply(which(d > hmax), function(i) {
+            k <- ceiling(d[i] / hmax)
+            p[i] + d[i] * seq_len(k - 1) / k
+        }))
+        p <- sort(c(p, extra))
+    }
     m <- length(p)
     d <- diff(p)
     z <- numeric(2 * m - 1)
@@ -83,9 +95,13 @@ gs_advance <- function(state, I, region, theta, r = 18) {
     m <- (state$z0 * sqrt(state$I0) + theta * (I - state$I0)) / sqrt(I)
     s <- sqrt((I - state$I0) / I)
     x <- gs_grid_points(m, s, r)
+    # sd of the transition on the Z scale: when it is narrow (many looks, e.g. an SPRT), the grid
+    # must resolve it; designs with a few looks keep the validated J&T grid unchanged
+    kappa <- tr$sd / sqrt(I)
+    hmax <- if (kappa < 0.25) kappa / 3 else Inf
     zz <- numeric(0); ww <- numeric(0)
     for (j in seq_len(nrow(region))) {
-        g <- gs_simpson(x, region[j, 1], region[j, 2])
+        g <- gs_simpson(x, region[j, 1], region[j, 2], hmax)
         if (!is.null(g)) { zz <- c(zz, g$z); ww <- c(ww, g$w) }
     }
     if (length(zz) == 0)
