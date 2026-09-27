@@ -1,0 +1,24 @@
+.claude
+.cache
+.tmp
+.venv
+.envrc
+node_modules
+.env
+*.zip
+*.tar
+*.tar.gz
+# local working memory, never pushed
+task_plan.md
+findings.md
+progress.md
+# build artefacts
+.R
+build
+*.jmo
+dist
+# compiled from jamovi/i18n/*.po by the build
+inst/i18n
+# local only, never pushed: survey report, implementation plan, fixture generator
+docs
+dev
