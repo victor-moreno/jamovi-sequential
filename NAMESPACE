@@ -2,3 +2,5 @@
 importFrom(jmvcore, .)
 export(gsd)
 export(phase2)
+export(sprt)
+export(maxsprt)

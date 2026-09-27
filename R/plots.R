@@ -129,3 +129,59 @@ plot_monitor <- function(st, cols, base, labels, xvar = "n") {
         ggplot2::geom_point(data = ob, ggplot2::aes(x, z), inherit.aes = FALSE, colour = obsCol, size = 3.2, shape = 17) +
         ggplot2::annotate("text", x = last$x, y = last$z, label = labels$obs, vjust = -1.3, size = 3.5, colour = ink)
 }
+
+# SPRT: boundaries (LLR against n, or Z against V for the triangular test) with the observed
+# path. st: bx, bup, blo (boundary lines), xT / yT (truncation segment), path (x, y), stop.
+plot_sprt_path <- function(st, cols, base, labels) {
+    ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(ink)) ink <- "grey30"
+    b <- rbind(data.frame(x = st$bx, y = st$bup, what = labels$upper),
+               data.frame(x = st$bx, y = st$blo, what = labels$lower))
+    b$what <- factor(b$what, c(labels$upper, labels$lower))
+    p <- ggplot2::ggplot() +
+        ggplot2::geom_hline(yintercept = 0, linewidth = 0.3, colour = "grey60", linetype = "dotted") +
+        ggplot2::geom_line(data = b, ggplot2::aes(x, y, colour = what), linewidth = 0.9) +
+        ggplot2::scale_colour_manual(values = stats::setNames(cols[1:2], c(labels$upper, labels$lower)))
+    if (!is.null(st$xT) && !is.na(st$xT))
+        p <- p + ggplot2::annotate("segment", x = st$xT, xend = st$xT, y = st$yT[1], yend = st$yT[2],
+                                   colour = ink, linetype = "22", linewidth = 0.6)
+    if (!is.null(st$path)) {
+        pc <- if (length(cols) >= 3) cols[3] else ink
+        p <- p + ggplot2::geom_path(data = st$path, ggplot2::aes(x, y), colour = pc, linewidth = 0.6)
+        if (nrow(st$path) <= 200)
+            p <- p + ggplot2::geom_point(data = st$path, ggplot2::aes(x, y), colour = pc, size = 1.1)
+        if (!is.null(st$stop))
+            p <- p + ggplot2::annotate("point", x = st$stop[["x"]], y = st$stop[["y"]], shape = 21, size = 3.6,
+                                       stroke = 1.2, colour = pc, fill = NA)
+    }
+    p + ggplot2::expand_limits(x = 0) +
+        ggplot2::labs(x = labels$x, y = labels$y, colour = NULL) + base + ggplot2::theme(legend.position = "top")
+}
+
+# MaxSPRT: cases needed for a signal against the expected count (Poisson) or all cases
+# (binomial), the null expectation, and the observed cumulative counts.
+plot_maxsprt <- function(st, cols, base, labels) {
+    ink <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(ink)) ink <- "grey30"
+    b <- st$boundary
+    xmax <- max(b$x, if (!is.null(st$path)) st$path$x)
+    p <- ggplot2::ggplot() +
+        ggplot2::annotate("segment", x = 0, xend = xmax, y = 0, yend = st$slope * xmax,
+                          colour = "grey60", linetype = "dotted", linewidth = 0.5) +
+        # group monitoring tests only at the looks: points, not a step line
+        (if (st$continuous) ggplot2::geom_step(data = b, ggplot2::aes(x, y, colour = labels$signal), linewidth = 0.9, direction = "hv")
+         else ggplot2::geom_point(data = b, ggplot2::aes(x, y, colour = labels$signal), size = 2.8, shape = 15))
+    p <- p + ggplot2::scale_colour_manual(values = stats::setNames(cols[1], labels$signal))
+    if (!is.null(st$path)) {
+        pc <- if (length(cols) >= 3) cols[3] else ink
+        p <- p + ggplot2::geom_path(data = st$path, ggplot2::aes(x, y), colour = pc, linewidth = 0.6) +
+            ggplot2::geom_point(data = st$path, ggplot2::aes(x, y), colour = pc, size = 1.6)
+        if (!is.null(st$signal))
+            p <- p + ggplot2::annotate("point", x = st$signal[["x"]], y = st$signal[["y"]], shape = 21, size = 3.8,
+                                       stroke = 1.2, colour = pc, fill = NA) +
+                ggplot2::annotate("text", x = st$signal[["x"]], y = st$signal[["y"]], label = labels$signalled,
+                                  vjust = -1.3, size = 3.5, colour = ink)
+    }
+    p + ggplot2::expand_limits(x = 0, y = 0) +
+        ggplot2::labs(x = labels$x, y = labels$y, colour = NULL) + base + ggplot2::theme(legend.position = "top")
+}

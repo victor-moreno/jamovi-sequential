@@ -1,0 +1,171 @@
+title: Sequential Probability Ratio Test
+name: sprt
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Outcome (rows in arrival order)
+        children:
+          - type: VariablesListBox
+            name: dep
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Group (two-sample tests)
+        children:
+          - type: VariablesListBox
+            name: group
+            maxItemCount: 1
+            isTarget: true
+            enable: (model:norm2 || model:t2)
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        cell:
+          column: 0
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: ComboBox
+            name: model
+          - type: ComboBox
+            name: boundary
+      - type: LayoutBox
+        cell:
+          column: 1
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: alpha
+            format: number
+          - type: TextBox
+            name: power
+            format: number
+  - type: CollapseBox
+    label: Hypotheses
+    collapsed: false
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: p0
+                format: number
+                enable: (model:binom)
+              - type: TextBox
+                name: p1
+                format: number
+                enable: (model:binom)
+              - type: TextBox
+                name: mu0
+                format: number
+                enable: (model:norm1 || model:t1)
+              - type: TextBox
+                name: mu1
+                format: number
+                enable: (model:norm1)
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: delta1
+                format: number
+                enable: (model:norm2)
+              - type: TextBox
+                name: sigma
+                format: number
+                enable: (model:norm1 || model:norm2)
+              - type: TextBox
+                name: d1
+                format: number
+                enable: (model:t1 || model:t2)
+              - type: ComboBox
+                name: tails
+                enable: (model:t1 || model:t2)
+  - type: CollapseBox
+    label: Truncation and simulation
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: truncate
+                children:
+                  - type: TextBox
+                    name: nMax
+                    format: number
+                    enable: (truncate)
+                  - type: ComboBox
+                    name: truncRule
+                    enable: (truncate && boundary:wald)
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: nsim
+                format: number
+                enable: (model:t1 || model:t2)
+              - type: TextBox
+                name: seed
+                format: number
+                enable: (model:t1 || model:t2)
+  - type: CollapseBox
+    label: Output
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: LayoutBox
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: ocTable
+              - type: CheckBox
+                name: pathTable
+          - type: LayoutBox
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: pathPlot
+              - type: CheckBox
+                name: ocPlot

@@ -1,0 +1,95 @@
+---
+name:  maxsprt
+title: Safety Surveillance (MaxSPRT)
+jrs: '1.1'
+
+items:
+    - name: summary
+      title: Design summary
+      type: Table
+      clearWith: [ model, alpha, survLength, N, z, M, monitoring, nLooks, looks, rr ]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: text
+
+    - name: performance
+      title: Performance
+      type: Table
+      clearWith: [ model, alpha, survLength, N, z, M, monitoring, nLooks, looks, rr ]
+      columns:
+        - name: rr
+          title: Relative risk
+          type: number
+        - name: power
+          title: Power
+          type: number
+        - name: timeToSignal
+          title: Expected time to signal
+          type: number
+        - name: length
+          title: Expected length of surveillance
+          type: number
+
+    - name: thresholds
+      title: Signalling thresholds
+      type: Table
+      visible: (thresholdTable)
+      clearWith: [ model, alpha, survLength, N, z, M, monitoring, nLooks, looks ]
+      columns:
+        - name: look
+          title: Expected cases (up to)
+          type: number
+        - name: signal
+          title: Signal if cases ≥
+          type: integer
+
+    - name: monitor
+      title: Surveillance
+      type: Table
+      visible: (cases)
+      clearWith: [ cases, expected, model, alpha, survLength, N, z, M, monitoring, nLooks, looks ]
+      columns:
+        - name: look
+          title: Look
+          type: integer
+        - name: obs
+          title: Cases
+          type: number
+        - name: exp
+          title: Expected
+          type: number
+        - name: rr
+          title: Relative risk
+          type: number
+        - name: llr
+          title: LLR
+          type: number
+        - name: cv
+          title: Critical value
+          type: number
+        - name: decision
+          title: Decision
+          type: text
+
+    - name: boundaryPlot
+      title: Signalling boundary
+      type: Image
+      width: 550
+      height: 420
+      renderFun: .plotBoundary
+      visible: (boundaryPlot)
+      clearWith: [ cases, expected, model, alpha, survLength, N, z, M, monitoring, nLooks, looks ]
+
+    - name: powerPlot
+      title: Power
+      type: Image
+      width: 550
+      height: 500
+      renderFun: .plotPower
+      visible: (powerPlot)
+      clearWith: [ model, alpha, survLength, N, z, M, monitoring, nLooks, looks ]
+...

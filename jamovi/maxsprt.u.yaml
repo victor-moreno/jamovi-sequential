@@ -1,0 +1,99 @@
+title: Safety Surveillance (MaxSPRT)
+name: maxsprt
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Observed cases (cumulative)
+        children:
+          - type: VariablesListBox
+            name: cases
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Expected cases under H0 (Poisson) or all cases (binomial), cumulative
+        children:
+          - type: VariablesListBox
+            name: expected
+            maxItemCount: 1
+            isTarget: true
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        cell:
+          column: 0
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: ComboBox
+            name: model
+          - type: TextBox
+            name: alpha
+            format: number
+          - type: TextBox
+            name: M
+            format: number
+      - type: LayoutBox
+        cell:
+          column: 1
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: survLength
+            format: number
+            enable: (model:poisson)
+          - type: TextBox
+            name: N
+            format: number
+            enable: (model:binomial)
+          - type: TextBox
+            name: z
+            format: number
+            enable: (model:binomial)
+  - type: CollapseBox
+    label: Monitoring
+    collapsed: false
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: ComboBox
+            name: monitoring
+          - type: TextBox
+            name: nLooks
+            format: number
+            enable: (monitoring:group)
+          - type: TextBox
+            name: looks
+            format: string
+            width: large
+            enable: (monitoring:group)
+  - type: CollapseBox
+    label: Output
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: rr
+            format: string
+            width: large
+          - type: CheckBox
+            name: thresholdTable
+          - type: CheckBox
+            name: boundaryPlot
+          - type: CheckBox
+            name: powerPlot

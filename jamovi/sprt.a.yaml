@@ -1,0 +1,180 @@
+---
+name:  sprt
+title: Sequential Probability Ratio Test
+menuGroup: Sequential
+menuTitle: Sequential Probability Ratio Test
+menuSubtitle: Wald SPRT, sequential t-test, triangular test
+version: '0.3.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Wald's sequential probability ratio test after every observation, for a
+      proportion, a mean or a difference in means with known SD, and the
+      sequential one- and two-sample t-tests; optionally Whitehead's continuous
+      triangular test, and truncation at a maximum sample size. Wald's
+      approximations and exact (or simulated) operating characteristics, and
+      the test applied to data in arrival order.
+
+options:
+    - name: data
+      type: Data
+
+    - name: dep
+      title: Outcome (rows in arrival order)
+      type: Variable
+      default: null
+      suggested: [ continuous, nominal ]
+      permitted: [ numeric ]
+
+    - name: group
+      title: Group (two-sample tests)
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: model
+      title: Test
+      type: List
+      options:
+        - name: binom
+          title: Proportion (one sample)
+        - name: norm1
+          title: Mean, known SD (one sample)
+        - name: norm2
+          title: Difference in means, known SD (two samples)
+        - name: t1
+          title: One-sample t-test
+        - name: t2
+          title: Two-sample t-test
+      default: binom
+
+    - name: p0
+      title: Proportion under H0
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.2
+
+    - name: p1
+      title: Proportion under H1
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.4
+
+    - name: mu0
+      title: Mean under H0
+      type: Number
+      default: 0
+
+    - name: mu1
+      title: Mean under H1
+      type: Number
+      default: 0.5
+
+    - name: delta1
+      title: Difference under H1
+      type: Number
+      default: 0.5
+
+    - name: sigma
+      title: Standard deviation
+      type: Number
+      min: 0.000001
+      default: 1
+
+    - name: d1
+      title: Standardised effect under H1 (d)
+      type: Number
+      default: 0.5
+
+    - name: tails
+      title: Alternative (t-tests)
+      type: List
+      options:
+        - name: one
+          title: One-sided
+        - name: two
+          title: Two-sided
+      default: one
+
+    - name: alpha
+      title: Type I error (α)
+      type: Number
+      min: 0.0001
+      max: 0.5
+      default: 0.05
+
+    - name: power
+      title: Power
+      type: Number
+      min: 0.5
+      max: 0.9999
+      default: 0.8
+
+    - name: boundary
+      title: Boundaries
+      type: List
+      options:
+        - name: wald
+          title: Wald SPRT
+        - name: triangular
+          title: Triangular test (Whitehead, continuous)
+      default: wald
+
+    - name: truncate
+      title: Truncate at a maximum sample size
+      type: Bool
+      default: false
+
+    - name: nMax
+      title: Maximum sample size
+      type: Integer
+      min: 2
+      max: 100000
+      default: 100
+
+    - name: truncRule
+      title: Decision at the maximum
+      type: List
+      options:
+        - name: sign
+          title: Reject H0 if the LLR is positive
+        - name: upper
+          title: Reject H0 only at the upper threshold
+      default: sign
+
+    - name: nsim
+      title: Simulations (t-tests)
+      type: Integer
+      min: 100
+      max: 100000
+      default: 2000
+
+    - name: seed
+      title: Seed
+      type: Integer
+      default: 1
+
+    - name: ocTable
+      title: Operating characteristics
+      type: Bool
+      default: true
+
+    - name: pathTable
+      title: Path table (every observation)
+      type: Bool
+      default: false
+
+    - name: pathPlot
+      title: Boundaries and path plot
+      type: Bool
+      default: true
+
+    - name: ocPlot
+      title: Operating characteristics plot
+      type: Bool
+      default: false
+...

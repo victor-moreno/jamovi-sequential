@@ -1,0 +1,121 @@
+---
+name:  maxsprt
+title: Safety Surveillance (MaxSPRT)
+menuGroup: Sequential
+menuTitle: Safety Surveillance (MaxSPRT)
+menuSubtitle: Poisson and binomial MaxSPRT
+version: '0.3.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Maximized sequential probability ratio test for post-marketing safety
+      surveillance (Kulldorff et al. 2011): Poisson (observed against expected
+      counts) or binomial (cases in the risk window against the control
+      window), continuous or group monitoring, with an exact critical value,
+      signalling thresholds, power, expected time to signal and expected
+      length of surveillance, and the test applied to cumulative counts.
+
+options:
+    - name: data
+      type: Data
+
+    - name: cases
+      title: Observed cases (cumulative)
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: expected
+      title: Expected cases under H0 (Poisson) or all cases (binomial), cumulative
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: model
+      title: Model
+      type: List
+      options:
+        - name: poisson
+          title: Poisson (observed against expected counts)
+        - name: binomial
+          title: Binomial (risk window against control window)
+      default: poisson
+
+    - name: alpha
+      title: Type I error (α)
+      type: Number
+      min: 0.0001
+      max: 0.5
+      default: 0.05
+
+    - name: survLength
+      title: Surveillance length (expected cases under H0)
+      type: Number
+      min: 0.1
+      max: 1000
+      default: 20
+
+    - name: N
+      title: Surveillance length (cases)
+      type: Integer
+      min: 1
+      max: 1000
+      default: 50
+
+    - name: z
+      title: Matching ratio z (control to risk window)
+      type: Number
+      min: 0.001
+      default: 1
+
+    - name: M
+      title: Minimum cases for a signal
+      type: Integer
+      min: 1
+      default: 1
+
+    - name: monitoring
+      title: Monitoring
+      type: List
+      options:
+        - name: continuous
+          title: Continuous (after every case)
+        - name: group
+          title: Group (at planned looks)
+      default: continuous
+
+    - name: nLooks
+      title: Number of equally spaced looks
+      type: Integer
+      min: 1
+      max: 200
+      default: 5
+
+    - name: looks
+      title: Cumulative looks (optional)
+      type: String
+      default: ''
+
+    - name: rr
+      title: Relative risks for power
+      type: String
+      default: '1.5, 2, 3, 4'
+
+    - name: thresholdTable
+      title: Signalling thresholds
+      type: Bool
+      default: true
+
+    - name: boundaryPlot
+      title: Signalling boundary plot
+      type: Bool
+      default: true
+
+    - name: powerPlot
+      title: Power plot
+      type: Bool
+      default: false
+...

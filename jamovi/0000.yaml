@@ -40,6 +40,34 @@ analyses:
       Fleming's multistage test, and Bayesian monitoring with predictive (Lee &
       Liu) or posterior probabilities. Exact operating characteristics, and
       inference for observed data.
+  - title: Sequential Probability Ratio Test
+    name: sprt
+    ns: jmsequential
+    category: analyses
+    menuGroup: Sequential
+    menuTitle: Sequential Probability Ratio Test
+    menuSubtitle: Wald SPRT, sequential t-test, triangular test
+    description: >-
+      Wald's sequential probability ratio test after every observation, for a
+      proportion, a mean or a difference in means with known SD, and the
+      sequential one- and two-sample t-tests; optionally Whitehead's continuous
+      triangular test, and truncation at a maximum sample size. Wald's
+      approximations and exact (or simulated) operating characteristics, and the
+      test applied to data in arrival order.
+  - title: Safety Surveillance (MaxSPRT)
+    name: maxsprt
+    ns: jmsequential
+    category: analyses
+    menuGroup: Sequential
+    menuTitle: Safety Surveillance (MaxSPRT)
+    menuSubtitle: Poisson and binomial MaxSPRT
+    description: >-
+      Maximized sequential probability ratio test for post-marketing safety
+      surveillance (Kulldorff et al. 2011): Poisson (observed against expected
+      counts) or binomial (cases in the risk window against the control window),
+      continuous or group monitoring, with an exact critical value, signalling
+      thresholds, power, expected time to signal and expected length of
+      surveillance, and the test applied to cumulative counts.
 datasets:
   - name: Interim analyses - difference in means
     path: gsd_interim_means.csv
