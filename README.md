@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.5
+## Version 0.5.6
 
 In jamovi the *Sequential* menu has two headings. **Design**: Group Sequential Design and Phase II
 Multistage Design. **Analysis**: Sequential Probability Ratio Test, Safety Surveillance (MaxSPRT),

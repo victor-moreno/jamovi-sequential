@@ -518,7 +518,7 @@ phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$add(jmvcore::Table$new(
                 options=options,
                 name="observed",
-                title="Observed data",
+                title="Analysis of observed data",
                 visible="(analyse)",
                 clearWith=list(
                     "design",

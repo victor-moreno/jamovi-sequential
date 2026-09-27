@@ -104,7 +104,7 @@ items:
           type: number
 
     - name: observed
-      title: Observed data
+      title: Analysis of observed data
       type: Table
       visible: (analyse)
       clearWith: [ design, p0, p1, alpha, power, simonType, admWeight, nMax, flemingStages, flemingN, prior, priorA, priorB, bayesNmax, bayesFirst, bayesEvery, thetaT, thetaL, thetaU, analyse, obsN, obsX, ciLevel ]
