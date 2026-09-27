@@ -268,6 +268,31 @@ ph2_compute <- function(o, simon = NULL) {
 }
 
 # Observed data: n patients evaluated, x responses.
+# Probability that the trial ends promising given x responses in n patients, if the true rate is
+# p: exact over the remaining patients, applying the stopping rules at every later look. A look
+# at exactly n has already decided (1 or 0); an unplanned n is assumed to have passed the earlier
+# looks. NA beyond the maximum sample size.
+ph2_cond_promising <- function(st, n, x, p) {
+    K <- length(st$nk)
+    k <- match(n, st$nk)
+    if (!is.na(k) && (x >= st$eff[k] || x <= st$fut[k] || k == K)) return(as.numeric(x >= st$eff[k]))
+    later <- which(st$nk > n)
+    if (!length(later)) return(NA_real_)
+    dist <- 1; prev <- n; succ <- 0
+    for (k in later) {
+        d <- st$nk[k] - prev
+        # distribution of the extra responses since the current status, still running
+        dist <- stats::convolve(dist, rev(stats::dbinom(0:d, d, p)), type = "open")
+        dist[dist < 0] <- 0
+        y <- x + seq_along(dist) - 1
+        e <- y >= st$eff[k]
+        succ <- succ + sum(dist[e])
+        dist[e | y <= st$fut[k]] <- 0
+        prev <- st$nk[k]
+    }
+    min(1, succ)
+}
+
 ph2_observe <- function(o, res, n, x, level = 0.95) {
     st <- res$stages
     if (x > n) stop("Observed data: responses cannot exceed the number of patients.")
@@ -277,7 +302,9 @@ ph2_observe <- function(o, res, n, x, level = 0.95) {
     cp <- if (n > 0) as.numeric(stats::binom.test(x, n, conf.level = level)$conf.int) else c(0, 1)
     out <- list(n = n, x = x, k = k, decision = decision, naive = if (n > 0) x / n else NA,
                 lower = cp[1], upper = cp[2],
-                p.value = stats::pbinom(x - 1, n, o$p0, lower.tail = FALSE), adjusted = FALSE)
+                p.value = stats::pbinom(x - 1, n, o$p0, lower.tail = FALSE), adjusted = FALSE,
+                cond = vapply(c(o$p0, o$p1, if (n > 0) x / n else NA), function(p)
+                    if (is.na(p)) NA_real_ else ph2_cond_promising(st, n, x, p), 0))
     if (res$design == "simon" && !is.na(k) && (k == 2 || decision == "not promising")) {
         d <- res$chosen
         inf <- ph2_twostage_inference(x, k, d$r1, d$n1, d$n, o$p0, level)

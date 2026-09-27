@@ -145,3 +145,16 @@ test_that("the outcome map marks the current status and fades what can no longer
     expect_equal(now$x1, 4:8)
     expect_true(all(now$x1 + now$x2 == 8))
 })
+
+test_that("P(ends promising | data) is exact and handles planned looks and the end", {
+    st <- list(nk = c(13, 43), fut = c(3, 12), eff = c(14, 13))
+    # 6/11: stage 1 ends with 6-8 responses (never <= 3); promising if the total reaches 13
+    manual <- function(p) sum(stats::dbinom(0:2, 2, p) * stats::pbinom(13 - (6 + 0:2) - 1, 30, p, lower.tail = FALSE))
+    for (p in c(0.2, 0.4, 6 / 11)) expect_equal(ph2_cond_promising(st, 11, 6, p), manual(p), tolerance = 1e-12)
+    expect_equal(ph2_cond_promising(st, 13, 3, 0.3), 0)
+    expect_equal(ph2_cond_promising(st, 43, 13, 0.3), 1)
+    expect_true(is.na(ph2_cond_promising(st, 50, 20, 0.3)))
+    r <- phase2(data = data.frame(), analyse = TRUE, obsN = 11, obsX = 6)
+    ob <- r$observed$asDF
+    expect_equal(c(ob$cond0, ob$cond1), c(manual(0.2), manual(0.4)), tolerance = 1e-12)
+})

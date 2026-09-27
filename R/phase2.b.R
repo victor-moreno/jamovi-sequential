@@ -144,6 +144,7 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                 n = obs$n, x = obs$x, decision = dec, naive = obs$naive,
                 umvue = if (is.null(obs$umvue)) NA else obs$umvue,
                 lower = obs$lower, upper = obs$upper, pvalue = obs$p.value,
+                cond0 = obs$cond[1], cond1 = obs$cond[2], condHat = obs$cond[3],
                 postMean = if (is.null(obs$postMean)) NA else obs$postMean,
                 crLower = if (is.null(obs$crLower)) NA else obs$crLower,
                 crUpper = if (is.null(obs$crUpper)) NA else obs$crUpper,
@@ -152,6 +153,7 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             note <- if (obs$adjusted)
                 .("The p-value and the exact interval account for the two-stage stopping rule (Koyama & Chen 2008); UMVUE of Jung & Kim (2004).")
             else .("Exact binomial p-value and Clopper-Pearson interval; they do not account for interim looks.")
+            note <- paste(note, .("P(ends promising | data): exact probability that the remaining patients lead to a promising result under the design's rules, if the true rate is p0, p1 or the observed rate."))
             if (!is.null(res$prior))
                 note <- paste(note, sprintf(.("Posterior from the Beta(%s, %s) prior; predictive probability of a positive final analysis."),
                                             format(signif(res$prior[1], 3)), format(signif(res$prior[2], 3))))

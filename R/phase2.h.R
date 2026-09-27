@@ -581,6 +581,21 @@ phase2Results <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `type`="number", 
                         `format`="zto,pvalue"),
                     list(
+                        `name`="cond0", 
+                        `title`="at p0", 
+                        `superTitle`="P(ends promising | data)", 
+                        `type`="number"),
+                    list(
+                        `name`="cond1", 
+                        `title`="at p1", 
+                        `superTitle`="P(ends promising | data)", 
+                        `type`="number"),
+                    list(
+                        `name`="condHat", 
+                        `title`="at observed rate", 
+                        `superTitle`="P(ends promising | data)", 
+                        `type`="number"),
+                    list(
                         `name`="postMean", 
                         `title`="Mean", 
                         `superTitle`="Posterior", 

@@ -4,7 +4,7 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.4
+## Version 0.5.5
 
 In jamovi the *Sequential* menu has two headings. **Design**: Group Sequential Design and Phase II
 Multistage Design. **Analysis**: Sequential Probability Ratio Test, Safety Surveillance (MaxSPRT),
@@ -91,6 +91,8 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
 - For observed data: the decision, the Koyama & Chen p-value and exact interval, Jung & Kim's
   UMVUE after a Simon design, and the posterior and predictive probabilities for the Bayesian
   designs.
+- For observed data, also the probability that the trial ends promising given the data so far
+  (exact, under p0, p1 and the observed rate), at planned or unplanned looks.
 - Stopping boundaries plot: shaded decision regions (not promising, continue, promising) at each
   look and the responses expected under p0 and p1. With observed data it also shows the current
   status, the triangle of trajectories still possible, and the projection at the observed rate

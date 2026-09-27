@@ -136,6 +136,18 @@ items:
           title: p (H0 p ≤ p0)
           type: number
           format: zto,pvalue
+        - name: cond0
+          title: at p0
+          superTitle: P(ends promising | data)
+          type: number
+        - name: cond1
+          title: at p1
+          superTitle: P(ends promising | data)
+          type: number
+        - name: condHat
+          title: at observed rate
+          superTitle: P(ends promising | data)
+          type: number
         - name: postMean
           title: Mean
           superTitle: Posterior
