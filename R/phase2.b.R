@@ -109,8 +109,10 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             img <- self$results$outcomePlot
             if (o$outcomePlot) {
                 if (K != 2) {
+                    # shown where the map would be, not at the top of the results
                     private$.notice(.("The outcome map needs a two-stage design (Simon, or two stages or looks)."),
-                                    "outcomeMap", jmvcore::NoticeType$INFO)
+                                    "outcomeMap", jmvcore::NoticeType$INFO,
+                                    at = match("outcomePlot", self$results$itemNames))
                     img$setVisible(FALSE)
                 } else if (is.null(img$state))
                     img$setState(list(n1 = st$nk[1], n2 = st$nk[2] - st$nk[1], fut1 = st$fut[1],
@@ -127,10 +129,10 @@ phase2Class <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
         },
 
         # Notice, not `type: Notice` in the yaml, which does not compile (jamovi skill)
-        .notice = function(text, name, type) {
+        .notice = function(text, name, type, at = 1) {
             n <- jmvcore::Notice$new(options = self$options, name = name, type = type)
             n$setContent(text)
-            self$results$insert(1, n)
+            self$results$insert(at, n)
         },
 
         .fillObserved = function(obs, res) {

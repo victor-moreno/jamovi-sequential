@@ -98,6 +98,11 @@ test_that("the outcome map describes two-stage designs and is refused for other 
     expect_true(all((d$what == "yes") == (d$x1 > 3 & d$x1 + d$x2 >= 13)))
     r <- phase2(data = data.frame(), design = "fleming", outcomePlot = TRUE)
     expect_false(r$outcomePlot$visible)
+    # the notice sits where the map would be, not at the top
+    nm <- r$itemNames
+    expect_equal(match("outcomeMap", nm), match("outcomePlot", nm) - 1)
+    r <- phase2(data = data.frame(), design = "single", outcomePlot = TRUE)
+    expect_gt(match("outcomeMap", r$itemNames), match("ocPlot", r$itemNames))
 })
 
 test_that("the stopping-boundary plot shades the decisions per look; trajectories and projection toggle", {
