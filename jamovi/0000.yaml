@@ -127,6 +127,13 @@ datasets:
       vaccination campaign, with the counts expected under H0. Use with Safety
       Surveillance (MaxSPRT), default Poisson design (T = 20): the MaxSPRT
       signals in week 12.
+  - name: Interim analyses - two arms, binary outcome
+    path: bayes_binary_interim.csv
+    description: >-
+      Fabricated cumulative responses and patients per arm at two interim
+      analyses of a trial with a binary outcome. Use with Bayesian Sequential
+      Monitoring, model two arms binary (control 0.3, treatment 0.5, 60 per
+      arm): the trial stops for efficacy at the second look.
 usesNative: false
 minApp: 2.3.0
 
