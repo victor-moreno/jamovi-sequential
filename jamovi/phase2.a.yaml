@@ -2,7 +2,6 @@
 name:  phase2
 title: Phase II Multistage Design
 menuGroup: Sequential
-menuSubgroup: Design
 menuTitle: Phase II Multistage Design
 menuSubtitle: Simon, Fleming, Bayesian monitoring
 version: '0.1.0'

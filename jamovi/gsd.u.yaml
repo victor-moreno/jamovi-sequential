@@ -4,51 +4,6 @@ jus: '3.0'
 stage: 0
 compilerMode: tame
 children:
-- type: VariableSupplier
-  persistentItems: false
-  stretchFactor: 1
-  children:
-  - type: TargetLayoutBox
-    label: Cumulative N or events
-    children:
-    - type: VariablesListBox
-      name: lookN
-      maxItemCount: 1
-      isTarget: true
-  - type: TargetLayoutBox
-    label: Estimate (log HR for survival)
-    children:
-    - type: VariablesListBox
-      name: estimate
-      maxItemCount: 1
-      isTarget: true
-  - type: TargetLayoutBox
-    label: Standard error
-    children:
-    - type: VariablesListBox
-      name: se
-      maxItemCount: 1
-      isTarget: true
-  - type: TargetLayoutBox
-    label: Z (instead of estimate and SE)
-    children:
-    - type: VariablesListBox
-      name: zStat
-      maxItemCount: 1
-      isTarget: true
-  - type: TargetLayoutBox
-    label: Information fraction (optional)
-    children:
-    - type: VariablesListBox
-      name: infoFrac
-      maxItemCount: 1
-      isTarget: true
-- type: LayoutBox
-  margin: large
-  children:
-  - type: CheckBox
-    name: finalLook
-    enable: (lookN)
 - type: LayoutBox
   margin: large
   stretchFactor: 1
@@ -268,6 +223,56 @@ children:
     - type: ComboBox
       name: futCpUnder
       enable: (futility:cp && !efficacy:pt && !efficacy:triangular)
+- type: CollapseBox
+  label: Analysis of observed data
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+    - type: TargetLayoutBox
+      label: Cumulative N or events
+      children:
+      - type: VariablesListBox
+        name: lookN
+        maxItemCount: 1
+        isTarget: true
+    - type: TargetLayoutBox
+      label: Estimate (log HR for survival)
+      children:
+      - type: VariablesListBox
+        name: estimate
+        maxItemCount: 1
+        isTarget: true
+    - type: TargetLayoutBox
+      label: Standard error
+      children:
+      - type: VariablesListBox
+        name: se
+        maxItemCount: 1
+        isTarget: true
+    - type: TargetLayoutBox
+      label: Z (instead of estimate and SE)
+      children:
+      - type: VariablesListBox
+        name: zStat
+        maxItemCount: 1
+        isTarget: true
+    - type: TargetLayoutBox
+      label: Information fraction (optional)
+      children:
+      - type: VariablesListBox
+        name: infoFrac
+        maxItemCount: 1
+        isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+    - type: CheckBox
+      name: finalLook
+      enable: (lookN)
 - type: CollapseBox
   label: Output
   collapsed: true

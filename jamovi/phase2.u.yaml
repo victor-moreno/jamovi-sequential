@@ -104,7 +104,7 @@ children:
       format: number
       enable: (design:predictive || design:posterior)
 - type: CollapseBox
-  label: Observed data
+  label: Analysis of observed data
   collapsed: true
   stretchFactor: 1
   children:

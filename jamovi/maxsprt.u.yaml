@@ -4,24 +4,6 @@ jus: '3.0'
 stage: 0
 compilerMode: tame
 children:
-- type: VariableSupplier
-  persistentItems: false
-  stretchFactor: 1
-  children:
-  - type: TargetLayoutBox
-    label: Observed cases (cumulative)
-    children:
-    - type: VariablesListBox
-      name: cases
-      maxItemCount: 1
-      isTarget: true
-  - type: TargetLayoutBox
-    label: Expected under H0 (or all cases)
-    children:
-    - type: VariablesListBox
-      name: expected
-      maxItemCount: 1
-      isTarget: true
 - type: LayoutBox
   margin: large
   stretchFactor: 1
@@ -66,6 +48,29 @@ children:
       format: string
       width: large
       enable: (monitoring:group)
+- type: CollapseBox
+  label: Analysis of observed data
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+    - type: TargetLayoutBox
+      label: Observed cases (cumulative)
+      children:
+      - type: VariablesListBox
+        name: cases
+        maxItemCount: 1
+        isTarget: true
+    - type: TargetLayoutBox
+      label: Expected under H0 (or all cases)
+      children:
+      - type: VariablesListBox
+        name: expected
+        maxItemCount: 1
+        isTarget: true
 - type: CollapseBox
   label: Output
   collapsed: true

@@ -1,7 +1,7 @@
 Package: jmsequential
 Type: Package
 Title: Sequential Designs and Monitoring for Clinical Trials and Epidemiology
-Version: 0.5.6
+Version: 0.5.7
 Authors@R: person("V.", "Moreno", email = "v.moreno@iconcologia.net", role = c("aut", "cre"))
 Description: Design and interim monitoring of studies analysed repeatedly as data
     accumulate, with control of type I and type II errors: group sequential

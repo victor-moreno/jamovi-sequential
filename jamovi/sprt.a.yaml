@@ -2,7 +2,6 @@
 name:  sprt
 title: Sequential Probability Ratio Test
 menuGroup: Sequential
-menuSubgroup: Analysis
 menuTitle: Sequential Probability Ratio Test
 menuSubtitle: Wald SPRT, sequential t-test, triangular test
 version: '0.3.0'
