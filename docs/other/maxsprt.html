@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Continuous or group monitoring of adverse events after licensure, with a composite alternative and exact critical values.">
+
+<title>Safety surveillance: the MaxSPRT – Sequential Methods</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../other/phase2.html" rel="next">
+<link href="../other/sprt.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-4143a9d5f9d8f9deb4202a6d60211dcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Sequential Methods</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../foundations/why-sequential.html"> 
+<span class="menu-text">Foundations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../gsd/boundaries.html"> 
+<span class="menu-text">Group sequential</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../other/sprt.html"> 
+<span class="menu-text">Other methods</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../other/sprt.html">Other sequential approaches</a></li><li class="breadcrumb-item"><a href="../other/maxsprt.html">Safety surveillance: the MaxSPRT</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sequential Methods: an Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../foundations/why-sequential.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why sequential analysis?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../foundations/information.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Information and the canonical joint distribution</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Group sequential designs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/boundaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Classical group sequential boundaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/spending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Error-spending functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/futility.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Futility boundaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/triangular.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Whitehead’s triangular tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/sample-size.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From information to sample size</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/monitoring.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interim monitoring</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inference after a sequential test</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Other sequential approaches</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/sprt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sequential probability ratio tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/maxsprt.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Safety surveillance: the MaxSPRT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/phase2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Phase II multistage designs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/bayesian.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bayesian sequential monitoring</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/anytime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Anytime-valid inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../further/beyond.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Beyond this module</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../further/glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-surveillance-problem" id="toc-the-surveillance-problem" class="nav-link active" data-scroll-target="#the-surveillance-problem">The surveillance problem</a></li>
+  <li><a href="#the-maximized-sprt" id="toc-the-maximized-sprt" class="nav-link" data-scroll-target="#the-maximized-sprt">The maximized SPRT</a></li>
+  <li><a href="#how-the-statistic-behaves" id="toc-how-the-statistic-behaves" class="nav-link" data-scroll-target="#how-the-statistic-behaves">How the statistic behaves</a></li>
+  <li><a href="#example-designing-and-running-a-surveillance" id="toc-example-designing-and-running-a-surveillance" class="nav-link" data-scroll-target="#example-designing-and-running-a-surveillance">Example: designing and running a surveillance</a></li>
+  <li><a href="#the-example-in-jamovi" id="toc-the-example-in-jamovi" class="nav-link" data-scroll-target="#the-example-in-jamovi">The example in jamovi</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../other/sprt.html">Other sequential approaches</a></li><li class="breadcrumb-item"><a href="../other/maxsprt.html">Safety surveillance: the MaxSPRT</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Safety surveillance: the MaxSPRT</h1>
+</div>
+
+<div>
+  <div class="description">
+    Continuous or group monitoring of adverse events after licensure, with a composite alternative and exact critical values.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-surveillance-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-surveillance-problem">The surveillance problem</h2>
+<p>After a vaccine or drug is licensed, rare adverse events are monitored in near real time in large health-care databases. Each week brings new exposed persons and new events. The question is whether the observed count of an adverse event exceeds what would be expected, and the analysis is repeated every week for months or years <span class="citation" data-cites="yih2011 nelson2015">(<a href="#ref-yih2011" role="doc-biblioref">Yih et al. 2011</a>; <a href="#ref-nelson2015" role="doc-biblioref">Nelson et al. 2015</a>)</span>. Repeated testing must control the overall false-alarm probability. Unlike a trial, there is no specific alternative: any increase in risk matters.</p>
+</section>
+<section id="the-maximized-sprt" class="level2">
+<h2 class="anchored" data-anchor-id="the-maximized-sprt">The maximized SPRT</h2>
+<p><span class="citation" data-cites="kulldorff2011">Kulldorff et al. (<a href="#ref-kulldorff2011" role="doc-biblioref">2011</a>)</span> replaced the simple alternative of Wald’s SPRT with a composite one, relative risk <span class="math inline">\(\mathrm{RR} &gt; 1\)</span>, and maximised the likelihood ratio over it. For <strong>Poisson data</strong>, with <span class="math inline">\(c_t\)</span> observed and <span class="math inline">\(\mu_t\)</span> expected events by time <span class="math inline">\(t\)</span>,</p>
+<p><span class="math display">\[
+\mathrm{LLR}_t = \begin{cases} (\mu_t - c_t) + c_t \ln(c_t/\mu_t) &amp; \text{if } c_t &gt; \mu_t,\\
+0 &amp; \text{otherwise.} \end{cases}
+\]</span></p>
+<p>A signal is raised the first time <span class="math inline">\(\mathrm{LLR}_t\)</span> reaches a critical value <span class="math inline">\(\mathrm{CV}\)</span>. The critical value is computed <strong>exactly</strong> so that the probability of any signal before the end of surveillance is <span class="math inline">\(\alpha\)</span> under <span class="math inline">\(H_0\)</span>. The end of surveillance is defined by an upper limit <span class="math inline">\(T\)</span> on the expected count. Variants include:</p>
+<ul>
+<li><strong>Binomial MaxSPRT</strong> for self-controlled and matched designs. Each event falls in the risk window or in a control window, and the matching ratio fixes the null probability.</li>
+<li><strong>Conditional MaxSPRT</strong> for when the expected counts are estimated from historical data.</li>
+<li><strong>Minimum events.</strong> A minimum number of events can be required before a signal, which avoids signals from one or two early events.</li>
+</ul>
+<p><strong>Continuous versus group monitoring.</strong> Testing at every new event maximises timeliness. Testing at fixed intervals (group sequential MaxSPRT) loses little and matches how data arrive in practice <span class="citation" data-cites="silva2015">(<a href="#ref-silva2015" role="doc-biblioref">Silva and Kulldorff 2015</a>)</span>. The type I error can also be distributed over the looks with an optimal alpha spending <span class="citation" data-cites="silva2020">(<a href="#ref-silva2020" role="doc-biblioref">Silva et al. 2020</a>)</span>. For a review of the statistical methods used in near-real-time vaccine safety surveillance, see <span class="citation" data-cites="leite2016">Leite et al. (<a href="#ref-leite2016" role="doc-biblioref">2016</a>)</span>.</p>
+</section>
+<section id="how-the-statistic-behaves" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-statistic-behaves">How the statistic behaves</h2>
+<p>The table shows the LLR for several observed counts when 4 events are expected. The critical value depends on <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(T\)</span>; a signal needs clearly more events than expected.</p>
+<div class="cell">
+<div id="tbl-maxsprt" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-maxsprt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Poisson MaxSPRT log-likelihood ratio when 4 events are expected.
+</figcaption>
+<div aria-describedby="tbl-maxsprt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Observed events</th>
+<th style="text-align: right;">Observed / expected</th>
+<th style="text-align: right;">LLR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.250</td>
+<td style="text-align: right;">0.116</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">0.433</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1.750</td>
+<td style="text-align: right;">0.917</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">1.545</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2.250</td>
+<td style="text-align: right;">2.298</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2.500</td>
+<td style="text-align: right;">3.163</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">2.750</td>
+<td style="text-align: right;">4.128</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3.000</td>
+<td style="text-align: right;">5.183</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="example-designing-and-running-a-surveillance" class="level2">
+<h2 class="anchored" data-anchor-id="example-designing-and-running-a-surveillance">Example: designing and running a surveillance</h2>
+<p>A new vaccine is monitored for an adverse event. Surveillance runs until 20 events are expected under <span class="math inline">\(H_0\)</span> (<span class="math inline">\(T = 20\)</span>), with <span class="math inline">\(\alpha = 0.05\)</span> and continuous monitoring.</p>
+<div class="cell">
+<div id="tbl-maxsprt-design" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-maxsprt-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Poisson MaxSPRT, T = 20, α = 0.05: power, expected time to signal (among the surveillances that signal) and expected length, in expected events under H0.
+</figcaption>
+<div aria-describedby="tbl-maxsprt-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 9%">
+<col style="width: 20%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">RR</th>
+<th style="text-align: right;">Power</th>
+<th style="text-align: right;">Time to signal</th>
+<th style="text-align: right;">Length</th>
+<th style="text-align: right;">Power, 5 looks</th>
+<th style="text-align: right;">Time to signal, 5 looks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1.500</td>
+<td style="text-align: right;">0.450</td>
+<td style="text-align: right;">8.677</td>
+<td style="text-align: right;">14.908</td>
+<td style="text-align: right;">0.544</td>
+<td style="text-align: right;">10.860</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">0.921</td>
+<td style="text-align: right;">6.964</td>
+<td style="text-align: right;">7.996</td>
+<td style="text-align: right;">0.954</td>
+<td style="text-align: right;">8.312</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.000</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">2.669</td>
+<td style="text-align: right;">2.670</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4.696</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.000</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">1.409</td>
+<td style="text-align: right;">1.409</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4.089</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The exact critical value is 3.628123, as in the R package Sequential. With a relative risk of 2, the surveillance signals 92 % of the time, on average after 7.0 expected events. The last two columns show a group version with five looks, at 4, 8, …, 20 expected events. Counts are discrete, so the group design attains α = 0.0463 rather than exactly 0.05. Its critical value is lower (2.217) because fewer tests are made. The group design has more power, but it signals later: continuous monitoring buys timeliness, not power.</p>
+<p>The dataset <em>Safety surveillance</em> (shipped with the module) holds weekly cumulative counts. In week 12, 17 events have been observed against 7.8 expected (observed / expected = 2.18). The LLR reaches 4.04 and exceeds the critical value, so the MaxSPRT signals. A signal calls for a confirmatory study, not a final verdict: the estimate at the signal is biased upwards, like any estimate at a sequential stopping time.</p>
+<div id="fig-maxsprt" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-maxsprt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]">
+<div class="cell-output-display light-content">
+<div>
+<figure class="figure">
+<p><img src="maxsprt_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display dark-content">
+<div>
+<figure class="figure">
+<p><img src="maxsprt_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-maxsprt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Poisson MaxSPRT (T = 20, α = 0.05): events needed for a signal at each expected count, the null expectation (dotted) and the weekly cumulative counts of the example, which signal in week 12.
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>In jmsequential
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><em>Sequential → Safety Surveillance (MaxSPRT)</em> (version 0.3.0).</p>
+<ul>
+<li><strong>Model:</strong> Poisson (observed against expected counts) or binomial (cases in the risk window against the control window, with matching ratio z).</li>
+<li><strong>Design:</strong> α, surveillance length (T expected events, or N cases), minimum number of cases for a signal, continuous or group monitoring (equally spaced or custom looks).</li>
+<li><strong>Design results:</strong> the exact critical value and attained α, the cases needed for a signal at each point, and power, expected time to signal and expected length of surveillance for the chosen relative risks.</li>
+<li><strong>Data:</strong> cumulative observed cases and expected counts (or all cases, binomial), one row per look. The analysis reports the LLR, the relative risk and the decision at each look, and plots the counts against the signalling boundary.</li>
+</ul>
+<p>The methods are reimplemented from the published papers; the R package Sequential, by the authors of <span class="citation" data-cites="silva2015">Silva and Kulldorff (<a href="#ref-silva2015" role="doc-biblioref">2015</a>)</span>, is used only to check the results.</p>
+</div>
+</div>
+</section>
+<section id="the-example-in-jamovi" class="level2">
+<h2 class="anchored" data-anchor-id="the-example-in-jamovi">The example in jamovi</h2>
+<ol type="1">
+<li>Open the data set <em>Safety surveillance - weekly counts</em> (☰ → <em>Open</em> → <em>Data Library</em> → <em>jmsequential</em>).</li>
+<li><em>Sequential → Safety Surveillance (MaxSPRT)</em>: the defaults are the design of the example (Poisson, α = 0.05, T = 20, continuous monitoring).</li>
+<li>In the <strong>Analysis of observed data</strong> box, move cases to <strong>Observed cases</strong> and expected to <strong>Expected under H0</strong>.</li>
+</ol>
+<p>The design summary gives the critical value, 3.628123, and the <strong>Performance</strong> table the first columns of <a href="#tbl-maxsprt-design" class="quarto-xref">Table&nbsp;2</a>. The <strong>Surveillance</strong> table signals in week 12: 17 cases against 7.8 expected, an LLR of 4.04 above 3.63. The <strong>Signalling boundary</strong> plot is <a href="#fig-maxsprt" class="quarto-xref">Figure&nbsp;1</a>.</p>
+<div id="fig-jamovi-maxsprt" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-maxsprt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/maxsprt.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;2: The surveillance of the example in jamovi."><img src="../screenshots/maxsprt.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-maxsprt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The surveillance of the example in jamovi.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="references" class="level2">
+
+
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-kulldorff2011" class="csl-entry" role="listitem">
+Kulldorff, Martin, Robert L. Davis, Margarette Kolczak†, Edwin Lewis, Tracy Lieu, and Richard Platt. 2011. <span>“A Maximized Sequential Probability Ratio Test for Drug and Vaccine Safety Surveillance.”</span> <em>Sequential Analysis</em> 30 (1): 58–78. <a href="https://doi.org/10.1080/07474946.2011.539924">https://doi.org/10.1080/07474946.2011.539924</a>.
+</div>
+<div id="ref-leite2016" class="csl-entry" role="listitem">
+Leite, Andreia, Nick J. Andrews, and Sara L. Thomas. 2016. <span>“Near Real‐time Vaccine Safety Surveillance Using Electronic Health Records—a Systematic Review of the Application of Statistical Methods.”</span> <em>Pharmacoepidemiology and Drug Safety</em> 25 (3): 225–37. <a href="https://doi.org/10.1002/pds.3966">https://doi.org/10.1002/pds.3966</a>.
+</div>
+<div id="ref-nelson2015" class="csl-entry" role="listitem">
+Nelson, Jennifer C, Andrea J Cook, Onchee Yu, Shanshan Zhao, Lisa A Jackson, and Bruce M Psaty. 2015. <span>“Methods for Observational Post-Licensure Medical Product Safety Surveillance.”</span> <em>Statistical Methods in Medical Research</em> 24 (2): 177–93. <a href="https://doi.org/10.1177/0962280211413452">https://doi.org/10.1177/0962280211413452</a>.
+</div>
+<div id="ref-silva2015" class="csl-entry" role="listitem">
+Silva, I. R., and M. Kulldorff. 2015. <span>“Continuous Versus Group Sequential Analysis for Post‐market Drug and Vaccine Safety Surveillance.”</span> <em>Biometrics</em> 71 (3): 851–58. <a href="https://doi.org/10.1111/biom.12324">https://doi.org/10.1111/biom.12324</a>.
+</div>
+<div id="ref-silva2020" class="csl-entry" role="listitem">
+Silva, Ivair R., Martin Kulldorff, and W. Katherine Yih. 2020. <span>“Optimal Alpha Spending for Sequential Analysis with Binomial Data.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 82 (4): 1141–64. <a href="https://doi.org/10.1111/rssb.12379">https://doi.org/10.1111/rssb.12379</a>.
+</div>
+<div id="ref-yih2011" class="csl-entry" role="listitem">
+Yih, W. Katherine, Martin Kulldorff, Bruce H. Fireman, et al. 2011. <span>“Active Surveillance for Adverse Events: The Experience of the Vaccine Safety Datalink Project.”</span> <em>Pediatrics</em> 127 (Supplement_1): S54–64. <a href="https://doi.org/10.1542/peds.2010-1722i">https://doi.org/10.1542/peds.2010-1722i</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../other/sprt.html" class="pagination-link" aria-label="Sequential probability ratio tests">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Sequential probability ratio tests</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../other/phase2.html" class="pagination-link" aria-label="Phase II multistage designs">
+        <span class="nav-page-text">Phase II multistage designs</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Tutorial for the jmsequential jamovi module · V. Moreno</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

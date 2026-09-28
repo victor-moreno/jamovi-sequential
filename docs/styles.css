@@ -1,0 +1,4 @@
+/* Tables of boundaries: aligned figures */
+table { font-variant-numeric: tabular-nums; }
+.callout-note .callout-title-container, .callout-tip .callout-title-container { font-weight: 600; }
+.figure-caption, figcaption { font-size: 0.9rem; }

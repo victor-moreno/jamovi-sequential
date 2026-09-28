@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Stopping when success has become unlikely: beta spending, fixed and conditional-power rules, binding versus non-binding, and the two-sided inner wedge.">
+
+<title>Futility boundaries – Sequential Methods</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../gsd/triangular.html" rel="next">
+<link href="../gsd/spending.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-4143a9d5f9d8f9deb4202a6d60211dcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Sequential Methods</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../foundations/why-sequential.html"> 
+<span class="menu-text">Foundations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../gsd/boundaries.html"> 
+<span class="menu-text">Group sequential</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../other/sprt.html"> 
+<span class="menu-text">Other methods</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../gsd/boundaries.html">Group sequential designs</a></li><li class="breadcrumb-item"><a href="../gsd/futility.html">Futility boundaries</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sequential Methods: an Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../foundations/why-sequential.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why sequential analysis?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../foundations/information.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Information and the canonical joint distribution</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Group sequential designs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/boundaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Classical group sequential boundaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/spending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Error-spending functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/futility.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Futility boundaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/triangular.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Whitehead’s triangular tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/sample-size.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From information to sample size</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/monitoring.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interim monitoring</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../gsd/inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inference after a sequential test</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Other sequential approaches</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/sprt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sequential probability ratio tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/maxsprt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Safety surveillance: the MaxSPRT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/phase2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Phase II multistage designs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/bayesian.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bayesian sequential monitoring</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../other/anytime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Anytime-valid inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../further/beyond.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Beyond this module</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../further/glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-stop-for-futility" id="toc-why-stop-for-futility" class="nav-link active" data-scroll-target="#why-stop-for-futility">Why stop for futility?</a></li>
+  <li><a href="#binding-or-non-binding" id="toc-binding-or-non-binding" class="nav-link" data-scroll-target="#binding-or-non-binding">Binding or non-binding?</a></li>
+  <li><a href="#ways-to-define-the-futility-boundary" id="toc-ways-to-define-the-futility-boundary" class="nav-link" data-scroll-target="#ways-to-define-the-futility-boundary">Ways to define the futility boundary</a></li>
+  <li><a href="#example-adding-futility-to-an-obrienfleming-design" id="toc-example-adding-futility-to-an-obrienfleming-design" class="nav-link" data-scroll-target="#example-adding-futility-to-an-obrienfleming-design">Example: adding futility to an O’Brien–Fleming design</a></li>
+  <li><a href="#two-sided-designs-the-inner-wedge" id="toc-two-sided-designs-the-inner-wedge" class="nav-link" data-scroll-target="#two-sided-designs-the-inner-wedge">Two-sided designs: the inner wedge</a></li>
+  <li><a href="#the-example-in-jamovi" id="toc-the-example-in-jamovi" class="nav-link" data-scroll-target="#the-example-in-jamovi">The example in jamovi</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../gsd/boundaries.html">Group sequential designs</a></li><li class="breadcrumb-item"><a href="../gsd/futility.html">Futility boundaries</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Futility boundaries</h1>
+</div>
+
+<div>
+  <div class="description">
+    Stopping when success has become unlikely: beta spending, fixed and conditional-power rules, binding versus non-binding, and the two-sided inner wedge.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="why-stop-for-futility" class="level2">
+<h2 class="anchored" data-anchor-id="why-stop-for-futility">Why stop for futility?</h2>
+<p>Efficacy boundaries alone never shorten a trial of an ineffective treatment: under <span class="math inline">\(H_0\)</span> it runs to its maximum size. A <strong>futility boundary</strong> <span class="math inline">\(a_k\)</span> stops the study when the evidence of benefit is weak — for a one-sided design, when <span class="math inline">\(Z_k \le a_k\)</span>. Patients are no longer randomised to a treatment that does not work, and resources are freed <span class="citation" data-cites="lachin2005">(<a href="#ref-lachin2005" role="doc-biblioref">Lachin 2005</a>)</span>. The price is a small loss of power, which is recovered by a slightly larger maximum sample size.</p>
+</section>
+<section id="binding-or-non-binding" class="level2">
+<h2 class="anchored" data-anchor-id="binding-or-non-binding">Binding or non-binding?</h2>
+<ul>
+<li><strong>Binding</strong> futility: the efficacy boundaries are computed <em>assuming</em> the trial stops whenever the futility boundary is crossed. The efficacy boundaries are slightly lower. But if the monitoring committee decides to continue after crossing the futility boundary, the type I error is no longer controlled.</li>
+<li><strong>Non-binding</strong> futility: the efficacy boundaries are computed ignoring the futility rule, so <span class="math inline">\(\alpha\)</span> is controlled whether or not the rule is followed. The actual type I error is slightly below <span class="math inline">\(\alpha\)</span> when the rule <em>is</em> followed. This is the usual choice in confirmatory trials, because a committee must remain free to weigh other evidence <span class="citation" data-cites="fda2019">(<a href="#ref-fda2019" role="doc-biblioref">U.S. Food and Drug Administration 2019</a>)</span>.</li>
+</ul>
+<p>Power is always computed assuming the futility rule is followed.</p>
+</section>
+<section id="ways-to-define-the-futility-boundary" class="level2">
+<h2 class="anchored" data-anchor-id="ways-to-define-the-futility-boundary">Ways to define the futility boundary</h2>
+<p><strong>Beta spending.</strong> The type II error is spent like <span class="math inline">\(\alpha\)</span>, with any of the <a href="../gsd/spending.html">spending families</a>. At look <span class="math inline">\(k\)</span>, <span class="math inline">\(a_k\)</span> solves</p>
+<p><span class="math display">\[
+P_{\theta_1}\!\left(\text{continue to look } k,\ Z_k \le a_k\right) = \beta(t_k) - \beta(t_{k-1}).
+\]</span></p>
+<p>The maximum information is then chosen so that the two boundaries meet at the final look, <span class="math inline">\(a_K = b_K\)</span>. That gives power exactly <span class="math inline">\(1-\beta\)</span> <span class="citation" data-cites="pampallona2001">(<a href="#ref-pampallona2001" role="doc-biblioref">Pampallona et al. 2001</a>)</span>.</p>
+<p><strong>Fixed z-values.</strong> For example, stop if <span class="math inline">\(Z &lt; 0\)</span> (the estimate points the wrong way) at the halfway look. The maximum information is solved for power.</p>
+<p><strong>Conditional power.</strong> Stop if the probability of eventually rejecting <span class="math inline">\(H_0\)</span>, given the current data, falls below a threshold <span class="math inline">\(\gamma\)</span> <span class="citation" data-cites="lan1982 lachin2005">(<a href="#ref-lan1982" role="doc-biblioref">Gordon Lan et al. 1982</a>; <a href="#ref-lachin2005" role="doc-biblioref">Lachin 2005</a>)</span>. Under the current trend and with only the final analysis remaining, this converts to the <span class="math inline">\(z\)</span>-bound</p>
+<p><span class="math display">\[
+a_k = \sqrt{t_k}\,\left(b_K - \sqrt{1 - t_k}\; z_{1-\gamma}\right).
+\]</span></p>
+<p><strong>Pampallona–Tsiatis.</strong> A power-family shape for both boundaries, solved jointly so that they meet at the last look <span class="citation" data-cites="pampallona1994">(<a href="#ref-pampallona1994" role="doc-biblioref">Pampallona and Tsiatis 1994</a>)</span>.</p>
+</section>
+<section id="example-adding-futility-to-an-obrienfleming-design" class="level2">
+<h2 class="anchored" data-anchor-id="example-adding-futility-to-an-obrienfleming-design">Example: adding futility to an O’Brien–Fleming design</h2>
+<p>One-sided <span class="math inline">\(\alpha = 0.025\)</span>, power 90 %, three equally spaced looks. The efficacy boundary uses Lan–DeMets O’Brien–Fleming-type spending. Futility uses Hwang–Shih–DeCani beta spending with <span class="math inline">\(\gamma = -2\)</span>.</p>
+<div class="cell">
+<div id="tbl-futility" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-futility-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Effect of a futility boundary (sample sizes relative to the fixed design).
+</figcaption>
+<div aria-describedby="tbl-futility-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 21%">
+<col style="width: 14%">
+<col style="width: 7%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Design</th>
+<th style="text-align: left;">b (looks 1-3)</th>
+<th style="text-align: left;">a (looks 1-2)</th>
+<th style="text-align: right;">Max n</th>
+<th style="text-align: right;">E n | H0</th>
+<th style="text-align: right;">E n | H1</th>
+<th style="text-align: right;">Actual alpha</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">No futility</td>
+<td style="text-align: left;">3.710, 2.511, 1.993</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: right;">1.0119</td>
+<td style="text-align: right;">1.0098</td>
+<td style="text-align: right;">0.8115</td>
+<td style="text-align: right;">0.0250</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Non-binding</td>
+<td style="text-align: left;">3.710, 2.511, 1.993</td>
+<td style="text-align: left;">-0.242, 0.937</td>
+<td style="text-align: right;">1.0665</td>
+<td style="text-align: right;">0.6242</td>
+<td style="text-align: right;">0.8233</td>
+<td style="text-align: right;">0.0233</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Binding</td>
+<td style="text-align: left;">3.710, 2.511, 1.958</td>
+<td style="text-align: left;">-0.261, 0.909</td>
+<td style="text-align: right;">1.0454</td>
+<td style="text-align: right;">0.6168</td>
+<td style="text-align: right;">0.8112</td>
+<td style="text-align: right;">0.0250</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The non-binding futility boundary cuts the expected sample size under <span class="math inline">\(H_0\)</span> by 38 %, while the maximum sample size grows by only 5.4 %. With the non-binding rule, efficacy boundaries do not change and the actual <span class="math inline">\(\alpha\)</span> (if futility stops are obeyed) falls below 0.025. With the binding rule, the efficacy boundaries are lowered until the actual <span class="math inline">\(\alpha\)</span> is exactly 0.025.</p>
+<div id="fig-futility" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-futility-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]">
+<div class="cell-output-display light-content">
+<div>
+<figure class="figure">
+<p><img src="futility_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display dark-content">
+<div>
+<figure class="figure">
+<p><img src="futility_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-futility-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Non-binding design: the study continues while Z stays between the two boundaries; they meet at the last look.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="two-sided-designs-the-inner-wedge" class="level2">
+<h2 class="anchored" data-anchor-id="two-sided-designs-the-inner-wedge">Two-sided designs: the inner wedge</h2>
+<p>In a two-sided design, “futility” means the estimate is close to zero in <em>either</em> direction. The study stops for futility when <span class="math inline">\(|Z_k| &lt; a_k\)</span>, an <strong>inner wedge</strong> between the two efficacy boundaries <span class="citation" data-cites="pampallona1994">(<a href="#ref-pampallona1994" role="doc-biblioref">Pampallona and Tsiatis 1994</a>)</span>.</p>
+<div id="fig-wedge" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wedge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]">
+<div class="cell-output-display light-content">
+<div>
+<figure class="figure">
+<p><img src="futility_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display dark-content">
+<div>
+<figure class="figure">
+<p><img src="futility_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wedge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Two-sided design, alpha = 0.05, power 90 %, four looks, O’Brien-Fleming-type alpha and beta spending (non-binding).
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>How jmsequential computes two-sided beta spending
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>jmsequential follows rpact (version 3.3.0 or later), the reference implementation.</p>
+<ol type="1">
+<li>The corresponding one-sided design at level <span class="math inline">\(\alpha/2\)</span> is solved first. Looks where <em>its</em> futility bound would be negative get no inner wedge: a wedge around zero that early would stop almost no trial.</li>
+<li>Beta spending is rescaled to start at the first look that does have a wedge.</li>
+</ol>
+<p>With this rule, jmsequential’s two-sided designs agree with rpact to <span class="math inline">\(10^{-6}\)</span>. In the example above, the first look has no wedge for this reason.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Conditional-power rules with binding futility
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a <em>binding</em> design, jmsequential makes the conditional-power bound self-consistent: at the futility boundary, the conditional power computed with the design’s <em>actual</em> final boundary equals the chosen threshold. So the interim report shows exactly the threshold at the boundary. rpact converts with the non-binding final boundary instead. For non-binding designs the two programs agree exactly.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>In jmsequential
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><em>Sequential → Group Sequential Design</em> (from version 0.1.0). Under <strong>Futility boundary</strong> choose None, Beta spending (with its family and parameter), Fixed z-values, Conditional power, or use the Pampallona–Tsiatis efficacy option. Tick <strong>Binding futility</strong> for a binding rule. The same options apply to one- and two-sided designs.</p>
+</div>
+</div>
+</section>
+<section id="the-example-in-jamovi" class="level2">
+<h2 class="anchored" data-anchor-id="the-example-in-jamovi">The example in jamovi</h2>
+<ol type="1">
+<li><em>Sequential → Group Sequential Design</em>. The defaults are the efficacy part of the example: one-sided α = 0.025, power 0.9, three analyses, Lan–DeMets O’Brien–Fleming spending.</li>
+<li>In the <strong>Futility boundary</strong> box choose <em>Beta spending</em>. Its default function is Hwang–Shih–DeCani with γ = −2; leave <strong>Binding futility</strong> unticked.</li>
+</ol>
+<p>The <strong>Boundaries</strong> table holds the non-binding row of <a href="#tbl-futility" class="quarto-xref">Table&nbsp;1</a>: efficacy 3.71, 2.51 and 1.99, futility −0.242 and 0.937. The plot below it is <a href="#fig-futility" class="quarto-xref">Figure&nbsp;1</a>.</p>
+<div id="fig-jamovi-futility" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-futility-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-futility.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;3: The non-binding futility design of the example in jamovi."><img src="../screenshots/gsd-futility.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-futility-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The non-binding futility design of the example in jamovi.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="references" class="level2">
+
+
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-lan1982" class="csl-entry" role="listitem">
+Gordon Lan, K. K., Richard Simon, and Max Halperin. 1982. <span>“Stochastically Curtailed Tests in Long–Term Clinical Trials.”</span> <em>Communications in Statistics. Part C: Sequential Analysis</em> 1 (3): 207–19. <a href="https://doi.org/10.1080/07474948208836014">https://doi.org/10.1080/07474948208836014</a>.
+</div>
+<div id="ref-lachin2005" class="csl-entry" role="listitem">
+Lachin, John M. 2005. <span>“A Review of Methods for Futility Stopping Based on Conditional Power.”</span> <em>Statistics in Medicine</em> 24 (18): 2747–64. <a href="https://doi.org/10.1002/sim.2151">https://doi.org/10.1002/sim.2151</a>.
+</div>
+<div id="ref-pampallona1994" class="csl-entry" role="listitem">
+Pampallona, Sandro, and Anastasios A. Tsiatis. 1994. <span>“Group Sequential Designs for One-Sided and Two-Sided Hypothesis Testing with Provision for Early Stopping in Favor of the Null Hypothesis.”</span> <em>Journal of Statistical Planning and Inference</em> 42 (1-2): 19–35. <a href="https://doi.org/10.1016/0378-3758(94)90187-2">https://doi.org/10.1016/0378-3758(94)90187-2</a>.
+</div>
+<div id="ref-pampallona2001" class="csl-entry" role="listitem">
+Pampallona, Sandro, Anastasios A. Tsiatis, and Kyungmann Kim. 2001. <span>“Interim Monitoring of Group Sequential Trials Using Spending Functions for the Type i and Type II Error Probabilities.”</span> <em>Drug Information Journal</em> 35 (4): 1113–21. <a href="https://doi.org/10.1177/009286150103500408">https://doi.org/10.1177/009286150103500408</a>.
+</div>
+<div id="ref-fda2019" class="csl-entry" role="listitem">
+U.S. Food and Drug Administration. 2019. <em>Adaptive Designs for Clinical Trials of Drugs and Biologics: Guidance for Industry</em>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../gsd/spending.html" class="pagination-link" aria-label="Error-spending functions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Error-spending functions</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../gsd/triangular.html" class="pagination-link" aria-label="Whitehead's triangular tests">
+        <span class="nav-page-text">Whitehead’s triangular tests</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Tutorial for the jmsequential jamovi module · V. Moreno</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
