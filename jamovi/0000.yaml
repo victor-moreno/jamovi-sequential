@@ -1,7 +1,7 @@
 ---
 title: Sequential Designs
 name: jmsequential
-version: 0.5.10
+version: 0.6.0
 jms: '1.0'
 authors:
   - V. Moreno
@@ -14,9 +14,10 @@ description: >-
   and error spending, with futility), Whitehead's triangular tests, sample size
   for means, proportions and survival (accrual, follow-up, dropout), phase II
   multistage designs (Simon, Fleming, Bayesian predictive and posterior),
-  sequential probability ratio tests (Wald, sequential t-tests), the MaxSPRT for
-  safety surveillance, Bayesian monitoring with frequentist operating
-  characteristics, and anytime-valid e-values and confidence sequences.
+  biomarker-stratified phase II designs (randomized and single-arm), sequential
+  probability ratio tests (Wald, sequential t-tests), the MaxSPRT for safety
+  surveillance, Bayesian monitoring with frequentist operating characteristics,
+  and anytime-valid e-values and confidence sequences.
 analyses:
   - title: Group Sequential Design
     name: gsd

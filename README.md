@@ -94,6 +94,54 @@ From it the analysis gives:
   by the decision it leads to (promising in green). With observed data, the current status is
   outlined in red and the outcomes that can no longer be reached are faded.
 
+### Biomarker-Stratified Phase II
+
+*Sequential → Biomarker-Stratified Phase II*: phase II trials stratified by a biomarker (BM+ /
+BM−) that decide both whether to go to phase III and in which population: **BM+ only**
+(enrichment), **biomarker-stratified**, **all-comers**, or **stop**.
+
+**Randomized designs** (experimental vs control)
+
+- The decision algorithm of Freidlin et al. (2012): a one-sided test in BM+; if negative, an
+  overall stratified test; if positive, the confidence interval of the effect in BM− decides
+  between BM+ only, stratified and all-comers. Every constant is editable.
+- Time to event (hazard ratio; events per stratum from the power target in BM+, patients from the
+  control median per stratum, accrual, follow-up and dropout) or binary response (difference in
+  rates).
+- Stratum sizes fixed (a BM− : BM+ ratio) or at the natural prevalence of BM+.
+- Optional futility look in each stratum at a fraction of the information (an extension: the
+  original authors recommend it without specifying it).
+
+**Single-arm designs** (two stages, both strata at stage 1)
+
+- Optimal or minimax stratified design (Parashar et al. 2016): searched to minimise the expected
+  sample size under H0, subject to the probability of any go under H0, the power to recommend
+  all-comers when both strata respond, and the power to recommend BM+ only when only BM+ responds.
+- A user-defined design with the rules of Jones & Holmgren (2007) or the isotonic rules of Li &
+  Ivanova (2024), in which each stratum is judged against the pooled rate when the observed rates
+  contradict their expected order.
+- Parallel Simon designs, one per stratum at α/2.
+- Uninteresting and target rates per stratum; for time to event, medians converted to the rate of
+  patients event-free at a landmark (exponential survival).
+- Stratum sizes fixed, or all-comers enrolment with the cut-offs re-derived at the realised
+  stratum sizes (an extension).
+
+**Output**
+
+- Design summary, sample size per stratum, decision rules.
+- Operating characteristics: the probability of each recommendation and the expected size under
+  no effect, effect in BM+ only, equal and BM+-larger effects (randomized) or both strata active
+  (single arm), plus a user-defined scenario. All exact: normal approximation for the randomized
+  designs, binomial for the single-arm designs.
+- **Decision map:** for randomized designs, the recommendation given the estimated effects in BM+
+  and BM−; for single-arm designs, the route after every stage-1 outcome.
+- **Recommendation by true effects:** the most likely recommendation over a grid of true effects,
+  shaded by its probability.
+- **Patient-level data:** biomarker, arm, and response or time and event (in arrival order for
+  single-arm trials). Randomized: HR per stratum (Cox) with log-rank tests, the stratified
+  overall test, the interaction and Gail & Simon's test for a qualitative interaction, and the
+  decision path. Single arm: responses per stage and stratum, the route and the recommendation.
+
 ### Sequential Probability Ratio Test
 
 *Sequential → Sequential Probability Ratio Test*: Wald's test after every observation.
@@ -170,14 +218,15 @@ size and under optional stopping.
 ## Example data
 
 *Data library → jmsequential*: interim results of a trial (difference in means, survival, two arms
-binary), patients in arrival order (binary and continuous outcomes, two arms), and weekly
-surveillance counts.
+binary), patients in arrival order (binary and continuous outcomes, two arms), weekly
+surveillance counts, and a randomized and a single-arm biomarker-stratified phase II trial.
 
 ## Tutorial
 
 A [website on sequential methods](https://victor-moreno.github.io/jamovi-sequential/) (in
 `docs/`): boundaries, spending, futility, triangular tests, sample size, monitoring, inference,
-SPRT, MaxSPRT, phase II, Bayesian and anytime-valid designs, with examples computed by this
+SPRT, MaxSPRT, phase II, biomarker-stratified phase II, Bayesian and anytime-valid designs, with
+examples computed by this
 module. Each method page ends with its example worked in jamovi, with a screenshot of the options
 and the results. The site is rendered with Quarto from a source kept outside this repository.
 
@@ -218,6 +267,10 @@ not needed to run them.
   the known-SD SPRT, the normal Bayesian rules and the known-SD anytime-valid design.
 - Phase II designs, the binomial SPRT and the two-arm Bayesian rules are computed exactly from the
   binomial distribution.
+- Biomarker-stratified designs: randomized probabilities from independent normal statistics per
+  stratum, with one Gauss–Legendre integral for the overall test and the bivariate normal
+  distribution (Genz 2004) for the interim look; the single-arm search enumerates the BM− and BM+
+  parts of the design separately and combines them by branch and bound.
 
 ## Acknowledgements
 
@@ -233,7 +286,9 @@ Methods follow the publications cited in the tutorial, in particular:
 - Wald, *Sequential Analysis* (1947);
 - Kulldorff, Davis, Kolczak, Lewis, Lieu & Platt (2011);
 - Spiegelhalter, Freedman & Parmar (1994); Rouder, Speckman, Sun, Morey & Iverson (2009);
-- Robbins (1970); Grünwald, de Heide & Koolen (2024).
+- Robbins (1970); Grünwald, de Heide & Koolen (2024);
+- Freidlin, McShane, Polley & Korn (2012); Jones & Holmgren (2007); Parashar, Bowden, Starr,
+  Wernisch & Mander (2016); Li & Ivanova (2024).
 
 Ideas and reference values for the tests come from these R packages:
 [rpact](https://www.rpact.org) (G. Wassmer, F. Pahlke),
@@ -241,7 +296,9 @@ Ideas and reference values for the tests come from these R packages:
 O. A. Perez), seqtest (T. Yanagida), clinfun (V. E. Seshan), ph2bayes (K. Nagashima), SPRT
 (H. Budihal), sprtt (M. Snijder-Steinhilber, M. Schnuerch, A.-L. Schubert), Sequential (I. R. Silva,
 M. Kulldorff), BayesFactor (R. D. Morey, J. N. Rouder) and
-[safestats](https://github.com/AlexanderLyNL/safestats) (A. Ly, R. Turner and co-authors). They are
+[safestats](https://github.com/AlexanderLyNL/safestats) (A. Ly, R. Turner and co-authors), ph2hetero
+(P. Sfumato, T. Filleron, B. Cabarrou), mvtnorm (A. Genz, F. Bretz, T. Hothorn and co-authors) and
+survival (T. Therneau), and from the NCI program RP2BM of Freidlin et al. They are
 not dependencies of the module, and no code was copied from packages whose licences are
 incompatible with GPL-3.
 

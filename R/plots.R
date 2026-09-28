@@ -375,6 +375,12 @@ bm_ink <- function(base) {
     if (is.null(col)) "#0b0b0b" else col
 }
 
+# Fill behind direct labels: white under dark ink, near-black under light ink (dark themes).
+bm_label_fill <- function(ink) {
+    rgb <- grDevices::col2rgb(ink)[, 1] / 255
+    if (sum(rgb * c(0.299, 0.587, 0.114)) > 0.5) "#1a1a19" else "white"
+}
+
 # Labels at the centre of each region of a tiled map.
 bm_region_labels <- function(df, x, y, what) {
     s <- split(df, df[[what]])
@@ -419,7 +425,7 @@ plot_bm_rand_regions <- function(st, base, labels) {
         ggplot2::geom_hline(yintercept = 0, colour = ink, alpha = 0.35, linetype = "dashed") +
         ggplot2::geom_vline(xintercept = 0, colour = ink, alpha = 0.35, linetype = "dashed") +
         ggplot2::geom_label(data = lab, ggplot2::aes(x, y, label = text), inherit.aes = FALSE,
-                            size = ann_size(base, 0.75), colour = ink, fill = "white", alpha = 0.8, label.size = 0)
+                            size = ann_size(base, 0.75), colour = ink, fill = bm_label_fill(ink), alpha = 0.8, label.size = 0)
     if (!is.null(st$obs)) {
         ob <- st$obs
         o <- data.frame(x = tr(ob[["thP"]]), y = tr(ob[["thN"]]),
