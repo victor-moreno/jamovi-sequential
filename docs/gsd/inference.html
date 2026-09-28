@@ -72,6 +72,9 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark-4143a9d5f9d8f9deb4202a6d60211dcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -535,6 +538,7 @@ window.Quarto = {
   <li><a href="#exact-inference-at-the-end-of-the-trial" id="toc-exact-inference-at-the-end-of-the-trial" class="nav-link" data-scroll-target="#exact-inference-at-the-end-of-the-trial">Exact inference at the end of the trial</a></li>
   <li><a href="#reporting" id="toc-reporting" class="nav-link" data-scroll-target="#reporting">Reporting</a></li>
   <li><a href="#example-the-same-data-under-two-designs" id="toc-example-the-same-data-under-two-designs" class="nav-link" data-scroll-target="#example-the-same-data-under-two-designs">Example: the same data under two designs</a></li>
+  <li><a href="#the-example-in-jamovi" id="toc-the-example-in-jamovi" class="nav-link" data-scroll-target="#the-example-in-jamovi">The example in jamovi</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -708,6 +712,65 @@ Table&nbsp;2: Inference at the final analysis: naive against stagewise ordering.
 </ul>
 <p>Repeated confidence intervals appear in the <strong>Interim analyses</strong> table at every look. For one-sided designs these numbers agree with rpact to at least five decimals. For two-sided designs rpact reports the naive estimate and interval instead.</p>
 </div>
+</div>
+</section>
+<section id="the-example-in-jamovi" class="level2">
+<h2 class="anchored" data-anchor-id="the-example-in-jamovi">The example in jamovi</h2>
+<p>The looks of the example go into a small data set: the cumulative N (35 %, 72 % and 100 % of the default design’s 171 patients), Z and the information fraction.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>look</th>
+<th>n</th>
+<th>z</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>60</td>
+<td>0.50</td>
+<td>0.35</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>123</td>
+<td>1.00</td>
+<td>0.72</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>171</td>
+<td>2.40</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li><em>Sequential → Group Sequential Design</em>: the defaults are the O’Brien–Fleming-type design of the example.</li>
+<li>In the <strong>Analysis of observed data</strong> box, move n to <strong>Cumulative N or events</strong>, z to <strong>Z (instead of estimate and SE)</strong> and t to <strong>Information fraction</strong>, and tick <strong>The last row is the final analysis</strong>.</li>
+</ol>
+<p>The <strong>Inference after stopping</strong> table gives the O’Brien–Fleming rows of <a href="#tbl-final" class="quarto-xref">Table&nbsp;2</a> on the scale of the difference in means (the design effect is 0.5): naive estimate 0.368 (95 % CI 0.067–0.669), median-unbiased estimate 0.355 (0.044–0.660) and stagewise p = 0.013.</p>
+<div id="fig-jamovi-inference-options" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-inference-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-inference-options.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: The three looks, the last marked as the final analysis."><img src="../screenshots/gsd-inference-options.png" class="img-fluid figure-img" width="690"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-inference-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The three looks, the last marked as the final analysis.
+</figcaption>
+</figure>
+</div>
+<div id="fig-jamovi-inference" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-inference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-inference-results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Inference after stopping at the final analysis."><img src="../screenshots/gsd-inference-results.png" class="img-fluid figure-img" width="678"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-inference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Inference after stopping at the final analysis.
+</figcaption>
+</figure>
 </div>
 </section>
 <section id="references" class="level2">
@@ -1182,6 +1245,38 @@ Tsiatis, Anastasios A., Gary L. Rosner, and Cyrus R. Mehta. 1984. <span>“Exact
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

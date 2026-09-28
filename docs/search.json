@@ -88,7 +88,7 @@
     "href": "gsd/sample-size.html#the-example-in-jamovi",
     "title": "From information to sample size",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nSequential → Group Sequential Design, Endpoint: Time to event. The hazard ratio, in the Effect size box, is 0.7 by default.\nIn the Survival design box the defaults are those of the example: control median 12, accrual over 24 and minimum follow-up 12, calculating the sample size. Set Dropout probability to 0.05 by time 12.\nIn the Futility boundary box choose Beta spending (Hwang–Shih–DeCani, γ = −2).\n\nThe design summary gives 353 events from 551 patients, at most 36 months, and expected durations of 28.7 months under H1 and 21.6 under H0. The Timing of the analyses table, further down, is Table 2.\n\n\n\n\n\n\nFigure 1: The survival design of the example in jamovi.",
+    "text": "The example in jamovi\n\nSequential → Group Sequential Design, Endpoint: Time to event. The hazard ratio, in the Effect size box, is 0.7 by default.\nIn the Survival design box the defaults are those of the example: control median 12, accrual over 24 and minimum follow-up 12, calculating the sample size. Set Dropout probability to 0.05 by time 12.\nIn the Futility boundary box choose Beta spending (Hwang–Shih–DeCani, γ = −2).\n\nThe design summary gives 353 events from 551 patients, at most 36 months, and expected durations of 28.7 months under H1 and 21.6 under H0. The Timing of the analyses table, further down, is Table 2.\n\n\n\n\n\n\nFigure 1: The Survival design box of the example.\n\n\n\n\n\n\n\n\n\nFigure 2: The design summary of the survival design.",
     "crumbs": [
       "Home",
       "Group sequential designs",
@@ -172,7 +172,7 @@
     "href": "gsd/futility.html#the-example-in-jamovi",
     "title": "Futility boundaries",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nSequential → Group Sequential Design. The defaults are the efficacy part of the example: one-sided α = 0.025, power 0.9, three analyses, Lan–DeMets O’Brien–Fleming spending.\nIn the Futility boundary box choose Beta spending. Its default function is Hwang–Shih–DeCani with γ = −2; leave Binding futility unticked.\n\nThe Boundaries table holds the non-binding row of Table 1: efficacy 3.71, 2.51 and 1.99, futility −0.242 and 0.937. The plot below it is Figure 1.\n\n\n\n\n\n\nFigure 3: The non-binding futility design of the example in jamovi.",
+    "text": "The example in jamovi\n\nSequential → Group Sequential Design. The defaults are the efficacy part of the example: one-sided α = 0.025, power 0.9, three analyses, Lan–DeMets O’Brien–Fleming spending.\nIn the Futility boundary box choose Beta spending. Its default function is Hwang–Shih–DeCani with γ = −2; leave Binding futility unticked.\n\nThe Boundaries table holds the non-binding row of Table 1: efficacy 3.71, 2.51 and 1.99, futility −0.242 and 0.937. The plot below it is Figure 1.\n\n\n\n\n\n\nFigure 3: The Futility boundary box of the example.\n\n\n\n\n\n\n\n\n\nFigure 4: The boundaries of the non-binding futility design.",
     "crumbs": [
       "Home",
       "Group sequential designs",
@@ -245,6 +245,18 @@
     "title": "Inference after a sequential test",
     "section": "Example: the same data under two designs",
     "text": "Example: the same data under two designs\nA trial runs to its final analysis, with \\(Z\\) = 0.5, 1.0 and 2.4 at information fractions 0.35, 0.72 and 1. The table compares the naive analysis of the final data with the stagewise analysis under an O’Brien–Fleming-type and a Pocock-type design (Lan–DeMets spending, one-sided \\(\\alpha = 0.025\\); effect as a multiple of the design effect).\n\n\n\n\nTable 2: Inference at the final analysis: naive against stagewise ordering.\n\n\n\n\n\n\nAnalysis\nEstimate\nLower\nUpper\np-value\n\n\n\n\nNaive (fixed sample)\n0.7360\n0.1350\n1.3371\n0.0082\n\n\nStagewise, O’Brien-Fleming type\n0.7094\n0.0876\n1.3196\n0.0129\n\n\nStagewise, Pocock type\n0.6795\n0.0087\n1.3029\n0.0237\n\n\n\n\n\n\n\n\nThe stagewise analysis accounts for the two earlier chances of stopping. It gives a larger p-value, a smaller median-unbiased estimate and an interval shifted towards zero. The correction is larger under the Pocock-type design, which spent more \\(\\alpha\\) at the interim looks; the naive p-value ignores both. Under the stagewise ordering a trial that stops at its first look gets exactly the fixed-sample analysis: only \\(Z_1\\) matters there. Estimators that also correct the bias of early stops use other orderings or explicit bias adjustment (Emerson and Fleming 1990; Robertson et al. 2023a).\n\n\n\n\n\n\nTipIn jmsequential\n\n\n\nSequential → Group Sequential Design with a dataset (version 0.1.0). When a boundary is crossed, or the last row is marked as the final analysis, the Inference after stopping table gives:\n\nthe naive estimate and confidence interval, for reference;\nthe stagewise-ordering median-unbiased estimate and interval;\nthe stagewise p-value.\n\nRepeated confidence intervals appear in the Interim analyses table at every look. For one-sided designs these numbers agree with rpact to at least five decimals. For two-sided designs rpact reports the naive estimate and interval instead.",
+    "crumbs": [
+      "Home",
+      "Group sequential designs",
+      "Inference after a sequential test"
+    ]
+  },
+  {
+    "objectID": "gsd/inference.html#the-example-in-jamovi",
+    "href": "gsd/inference.html#the-example-in-jamovi",
+    "title": "Inference after a sequential test",
+    "section": "The example in jamovi",
+    "text": "The example in jamovi\nThe looks of the example go into a small data set: the cumulative N (35 %, 72 % and 100 % of the default design’s 171 patients), Z and the information fraction.\n\n\n\nlook\nn\nz\nt\n\n\n\n\n1\n60\n0.50\n0.35\n\n\n2\n123\n1.00\n0.72\n\n\n3\n171\n2.40\n1.00\n\n\n\n\nSequential → Group Sequential Design: the defaults are the O’Brien–Fleming-type design of the example.\nIn the Analysis of observed data box, move n to Cumulative N or events, z to Z (instead of estimate and SE) and t to Information fraction, and tick The last row is the final analysis.\n\nThe Inference after stopping table gives the O’Brien–Fleming rows of Table 2 on the scale of the difference in means (the design effect is 0.5): naive estimate 0.368 (95 % CI 0.067–0.669), median-unbiased estimate 0.355 (0.044–0.660) and stagewise p = 0.013.\n\n\n\n\n\n\nFigure 1: The three looks, the last marked as the final analysis.\n\n\n\n\n\n\n\n\n\nFigure 2: Inference after stopping at the final analysis.",
     "crumbs": [
       "Home",
       "Group sequential designs",
@@ -478,7 +490,7 @@
     "href": "other/anytime.html#the-example-in-jamovi",
     "title": "Anytime-valid inference",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nOpen the data set Sequential outcomes - patients in arrival order (☰ → Open → Data Library → jmsequential).\nSequential → Anytime-Valid Monitoring: the defaults are the two-sample test of the example (unknown SD, hence the safe t-test; α = 0.05, d = 0.5, power 0.8).\nIn the Analysis of observed data box, move score to Outcome and arm to Group.\n\nThe Monitoring table shows every fourth patient and the decision: E first reaches 1/α = 20 after 73 patients (E = 24.3), and from then on the confidence sequence excludes 0. The Design table above it gives the planned N; the E-process plot further down is Figure 2.\n\n\n\n\n\n\nFigure 3: The safe t-test of the example in jamovi.",
+    "text": "The example in jamovi\n\nOpen the data set Sequential outcomes - patients in arrival order (☰ → Open → Data Library → jmsequential).\nSequential → Anytime-Valid Monitoring: the defaults are the two-sample test of the example (unknown SD, hence the safe t-test; α = 0.05, d = 0.5, power 0.8).\nIn the Analysis of observed data box, move score to Outcome and arm to Group.\n\nThe Monitoring table shows every fourth patient and the decision: E first reaches 1/α = 20 after 73 patients (E = 24.3), and from then on the confidence sequence excludes 0. The Design table above it gives the planned N; the E-process plot further down is Figure 2.\n\n\n\n\n\n\nFigure 3: The variables of the example in the Analysis of observed data box.\n\n\n\n\n\n\n\n\n\nFigure 4: The Monitoring table of the safe t-test.",
     "crumbs": [
       "Home",
       "Other sequential approaches",
@@ -550,7 +562,7 @@
     "href": "other/maxsprt.html#the-example-in-jamovi",
     "title": "Safety surveillance: the MaxSPRT",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nOpen the data set Safety surveillance - weekly counts (☰ → Open → Data Library → jmsequential).\nSequential → Safety Surveillance (MaxSPRT): the defaults are the design of the example (Poisson, α = 0.05, T = 20, continuous monitoring).\nIn the Analysis of observed data box, move cases to Observed cases and expected to Expected under H0.\n\nThe design summary gives the critical value, 3.628123, and the Performance table the first columns of Table 2. The Surveillance table signals in week 12: 17 cases against 7.8 expected, an LLR of 4.04 above 3.63. The Signalling boundary plot is Figure 1.\n\n\n\n\n\n\nFigure 2: The surveillance of the example in jamovi.",
+    "text": "The example in jamovi\n\nOpen the data set Safety surveillance - weekly counts (☰ → Open → Data Library → jmsequential).\nSequential → Safety Surveillance (MaxSPRT): the defaults are the design of the example (Poisson, α = 0.05, T = 20, continuous monitoring).\nIn the Analysis of observed data box, move cases to Observed cases and expected to Expected under H0.\n\nThe design summary gives the critical value, 3.628123, and the Performance table the first columns of Table 2. The Surveillance table signals in week 12: 17 cases against 7.8 expected, an LLR of 4.04 above 3.63. The Signalling boundary plot is Figure 1.\n\n\n\n\n\n\nFigure 2: The counts of the example in the Analysis of observed data box.\n\n\n\n\n\n\n\n\n\nFigure 3: The design summary and the performance of the MaxSPRT.\n\n\n\n\n\n\n\n\n\nFigure 4: The Surveillance table: a signal in week 12.",
     "crumbs": [
       "Home",
       "Other sequential approaches",
@@ -622,7 +634,7 @@
     "href": "other/phase2.html#the-example-in-jamovi",
     "title": "Phase II multistage designs",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nSequential → Phase II Multistage Design: the defaults are the example (Simon two-stage, optimal, p0 = 0.2, p1 = 0.4, one-sided α = 0.05, power 0.8).\nFor the unplanned look, tick Observed data in the Analysis of observed data box and enter 11 Patients evaluated and 6 Responses.\nIn Output, tick Stopping boundaries plot and Outcome map. The screenshot also has Operating characteristics plot unticked, which brings the map up.\n\nThe Analysis of observed data table gives the decision (Not a planned analysis), the observed rate 0.545 with its 95 % interval 0.234–0.833, and the probability of ending promising: 0.465 at p0, 0.991 at p1 and 1.000 at the observed rate. Below it come the outcome map, with the red box at 6 stage-1 responses (Figure 1), and the stopping boundaries (Figure 2).\n\n\n\n\n\n\nFigure 3: The Simon design of the example and the unplanned look at 6 of 11, in jamovi.",
+    "text": "The example in jamovi\n\nSequential → Phase II Multistage Design: the defaults are the example (Simon two-stage, optimal, p0 = 0.2, p1 = 0.4, one-sided α = 0.05, power 0.8).\nFor the unplanned look, tick Observed data in the Analysis of observed data box and enter 11 Patients evaluated and 6 Responses.\nIn Output, untick Operating characteristics plot and tick Outcome map, which then follows the table.\n\nThe Analysis of observed data table gives the decision (Not a planned analysis), the observed rate 0.545 with its 95 % interval 0.234–0.833, and the probability of ending promising: 0.465 at p0, 0.991 at p1 and 1.000 at the observed rate. Below it comes the outcome map, with the red box at 6 stage-1 responses (Figure 1). Stopping boundaries plot adds Figure 2.\n\n\n\n\n\n\nFigure 3: The unplanned look at 6 of 11 and the output options.\n\n\n\n\n\n\n\n\n\nFigure 4: The analysis of the observed data and the outcome map.",
     "crumbs": [
       "Home",
       "Other sequential approaches",
@@ -706,7 +718,7 @@
     "href": "other/sprt.html#the-example-in-jamovi",
     "title": "Sequential probability ratio tests",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nOpen the data set Sequential outcomes - patients in arrival order (☰ → Open → Data Library → jmsequential).\nSequential → Sequential Probability Ratio Test, Test: Two-sample t-test. The defaults are those of the example: d = 0.5, one-sided, α = 0.05, power 0.8.\nIn the Analysis of observed data box, move score to Outcome and arm to Group.\n\nThe design summary and the Operating characteristics table give Table 2: type I error 0.052, power 0.832, and a fixed-sample n of 99. The Sequential test table accepts H1 after 41 patients, with an estimated difference of 0.771. The Boundaries plot, further down, is Figure 2.\n\n\n\n\n\n\nFigure 3: The sequential t-test of the example in jamovi.",
+    "text": "The example in jamovi\n\nOpen the data set Sequential outcomes - patients in arrival order (☰ → Open → Data Library → jmsequential).\nSequential → Sequential Probability Ratio Test, Test: Two-sample t-test. The defaults are those of the example: d = 0.5, one-sided, α = 0.05, power 0.8.\nIn the Analysis of observed data box, move score to Outcome and arm to Group.\n\nThe design summary and the Operating characteristics table give Table 2: type I error 0.052, power 0.832, and a fixed-sample n of 99. The Sequential test table accepts H1 after 41 patients, with an estimated difference of 0.771. The Boundaries plot, further down, is Figure 2.\n\n\n\n\n\n\nFigure 3: The options of the sequential t-test example.\n\n\n\n\n\n\n\n\n\nFigure 4: Its design summary, operating characteristics and sequential test.",
     "crumbs": [
       "Home",
       "Other sequential approaches",
@@ -790,7 +802,7 @@
     "href": "other/bayesian.html#the-example-in-jamovi",
     "title": "Bayesian sequential monitoring",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nOpen the data set Interim analyses - difference in means (☰ → Open → Data Library → jmsequential).\nSequential → Bayesian Sequential Monitoring: the defaults are the design of the example (normal approximation, 180 patients in three analyses, effect 0.5, sceptical prior, success if P(θ &gt; 0) ≥ 0.975, futility if the predictive probability falls below 0.1).\nIn the Analysis of observed data box, move n to Cumulative N, estimate to Estimate and se to Standard error.\n\nThe Interim analyses table gives P(benefit) = 0.923 after 57 patients (continue) and 0.994 after 114 (stop for efficacy), with the posterior mean shrunk from 0.55 to 0.40. The design tables above it give the sceptical row of Table 2.\n\n\n\n\n\n\nFigure 1: Bayesian monitoring of the example in jamovi.",
+    "text": "The example in jamovi\n\nOpen the data set Interim analyses - difference in means (☰ → Open → Data Library → jmsequential).\nSequential → Bayesian Sequential Monitoring: the defaults are the design of the example (normal approximation, 180 patients in three analyses, effect 0.5, sceptical prior, success if P(θ &gt; 0) ≥ 0.975, futility if the predictive probability falls below 0.1).\nIn the Analysis of observed data box, move n to Cumulative N, estimate to Estimate and se to Standard error.\n\nThe Interim analyses table gives P(benefit) = 0.923 after 57 patients (continue) and 0.994 after 114 (stop for efficacy), with the posterior mean shrunk from 0.55 to 0.40. The design tables above it give the sceptical row of Table 2.\n\n\n\n\n\n\nFigure 1: The looks of the example in the Analysis of observed data box.\n\n\n\n\n\n\n\n\n\nFigure 2: The Interim analyses table of the Bayesian monitoring.",
     "crumbs": [
       "Home",
       "Other sequential approaches",
@@ -850,7 +862,7 @@
     "href": "other/biomarker.html#the-example-in-jamovi",
     "title": "Phase II with a predictive biomarker",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\n\nOpen Data library → jmsequential → Biomarker trial - randomized, PFS and response.\nSequential → Biomarker-Stratified Phase II: the defaults are the randomized example above.\nIn Analysis of observed data, assign biomarker (positive level Positive), arm (experimental level Experimental), pfs as time and progression (event level Yes).\n\nThe Decision table gives Z = 2.86 in BM+ (positive), the 80 % interval of the BM− HR (0.67–1.05) and the recommendation: a biomarker-stratified phase III.\nFor the single-arm example, open Biomarker trial - single arm, arrival order, set Trial to Single arm and Endpoint to Response (binary), and assign biomarker and response.",
+    "text": "The example in jamovi\nRandomized.\n\nOpen Data library → jmsequential → Biomarker trial - randomized, PFS and response.\nSequential → Biomarker-Stratified Phase II: the defaults are the randomized design above (the Randomized design box can be closed).\nIn Analysis of observed data, move biomarker to Biomarker and choose the Positive level Positive; arm to Arm (randomized), with the Experimental level Experimental; pfs to Time (time to event); and progression to Event (time to event), with the Event level Yes. jamovi preselects the first level of each variable (Negative, Control and No here), so check all three; the note under the Observed data table repeats the levels used.\n\n\n\n\n\n\n\nFigure 4: The variables of the randomized example and their levels.\n\n\n\nThe Observed data table gives the hazard ratio in each stratum (BM+ 0.443, 95 % CI 0.250–0.784; BM− 0.837, 0.589–1.188), the stratified overall test and the interaction. The Decision table follows the algorithm: Z = 2.86 in BM+ (positive), the 80 % interval of the BM− HR (0.67–1.05) and the recommendation, a biomarker-stratified phase III. The Decision map places the estimates in Figure 1.\n\n\n\n\n\n\nFigure 5: The analysis of the randomized example.\n\n\n\n\n\n\n\n\n\nFigure 6: Its decision map.\n\n\n\nSingle arm.\n\nOpen Biomarker trial - single arm, arrival order.\nSequential → Biomarker-Stratified Phase II, Trial: Single arm, Endpoint: Response (binary). The defaults of the Single-arm design box are the example: the optimal stratified design for 0.2 against 0.4 (BM−) and 0.5 (BM+), found in a few seconds.\nIn Analysis of observed data, move biomarker to Biomarker (Positive level Positive) and response to Response (binary) (Response level Yes).\n\n\n\n\n\n\n\nFigure 7: The single-arm design of the example.\n\n\n\n\n\n\n\n\n\nFigure 8: Its variables and levels.\n\n\n\nThe design tables give the optimal design of Table 2, its sample sizes and its rules. The Observed data and Decision tables walk the patients through it: 3 of 16 BM− and 7 of 8 BM+ responses at stage 1, so only BM+ continues, and 24 of 32 BM+ responses in all: promising in BM+ only. The Decision map marks the stage-1 outcome (Figure 3).\n\n\n\n\n\n\nFigure 9: The optimal single-arm design: summary, sample sizes and rules.\n\n\n\n\n\n\n\n\n\nFigure 10: The analysis of the single-arm example.",
     "crumbs": [
       "Home",
       "Other sequential approaches",
@@ -1078,7 +1090,7 @@
     "href": "gsd/monitoring.html#the-example-in-jamovi",
     "title": "Interim monitoring",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\nThe looks of the example go into a small data set, one row per analysis. Type it into a new jamovi spreadsheet:\n\n\n\nlook\nn\nz\nt\n\n\n\n\n1\n60\n1.10\n0.35\n\n\n2\n123\n2.30\n0.72\n\n\n\nn is the cumulative sample size (35 % and 72 % of the design’s maximum of 171), and t the information fraction, which makes the spending times exact.\n\nSequential → Group Sequential Design: the defaults are the design of the example.\nIn the Analysis of observed data box, move n to Cumulative N or events, z to Z (instead of estimate and SE) and t to Information fraction.\n\nThe Interim analyses table repeats Table 1: boundaries 3.61 and 2.40, Continue at both looks, conditional power 0.833 and 0.948 under the design effect, predictive power 0.463 and 0.871. Its repeated confidence intervals are on the scale of the difference in means, whereas Table 1 gives them as multiples of the design effect (0.5).\n\n\n\n\n\n\nFigure 2: Interim monitoring of the example in jamovi (a wider window shows the whole table).",
+    "text": "The example in jamovi\nThe looks of the example go into a small data set, one row per analysis. Type it into a new jamovi spreadsheet:\n\n\n\nlook\nn\nz\nt\n\n\n\n\n1\n60\n1.10\n0.35\n\n\n2\n123\n2.30\n0.72\n\n\n\nn is the cumulative sample size (35 % and 72 % of the design’s maximum of 171), and t the information fraction, which makes the spending times exact.\n\nSequential → Group Sequential Design: the defaults are the design of the example.\nIn the Analysis of observed data box, move n to Cumulative N or events, z to Z (instead of estimate and SE) and t to Information fraction.\n\nThe Interim analyses table repeats Table 1: boundaries 3.61 and 2.40, Continue at both looks, conditional power 0.833 and 0.948 under the design effect, predictive power 0.463 and 0.871. Its repeated confidence intervals are on the scale of the difference in means, whereas Table 1 gives them as multiples of the design effect (0.5).\n\n\n\n\n\n\nFigure 2: The looks of the example in the Analysis of observed data box.\n\n\n\n\n\n\n\n\n\nFigure 3: The Interim analyses table.",
     "crumbs": [
       "Home",
       "Group sequential designs",
@@ -1158,6 +1170,18 @@
     ]
   },
   {
+    "objectID": "gsd/spending.html#the-example-in-jamovi",
+    "href": "gsd/spending.html#the-example-in-jamovi",
+    "title": "Error-spending functions",
+    "section": "The example in jamovi",
+    "text": "The example in jamovi\n\nSequential → Group Sequential Design: the defaults are the planned design (three analyses, Lan–DeMets O’Brien–Fleming spending, one-sided α = 0.025, power 0.9).\nType 0.4, 0.75, 1 in Information fractions.\n\nThe Boundaries table gives the actual boundaries of Table 2, 3.36, 2.35 and 2.01, with a cumulative α of 0.0004, 0.0097 and 0.025.\n\n\n\n\n\n\nFigure 2: The looks of the example as information fractions.\n\n\n\n\n\n\n\n\n\nFigure 3: The boundaries at the actual information fractions.",
+    "crumbs": [
+      "Home",
+      "Group sequential designs",
+      "Error-spending functions"
+    ]
+  },
+  {
     "objectID": "gsd/triangular.html",
     "href": "gsd/triangular.html",
     "title": "Whitehead’s triangular tests",
@@ -1199,6 +1223,18 @@
     "title": "Whitehead’s triangular tests",
     "section": "Example: attained errors and sample size",
     "text": "Example: attained errors and sample size\n\n\n\n\nTable 1: Triangular tests with one-sided alpha = 0.025 and power 90 %: exact attained errors and sample sizes relative to the fixed design.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDesign\nAttained alpha\nPower\nMax n\nE n | H0\nE n | H1\n\n\n\n\nTriangular, 5 looks\n0.0253\n0.9021\n1.2609\n0.5822\n0.6802\n\n\nTriangular, 10 looks\n0.0251\n0.9024\n1.3418\n0.5453\n0.6457\n\n\nTriangular, 20 looks\n0.0250\n0.9025\n1.4022\n0.5257\n0.6273\n\n\nLD O’Brien-Fleming, 10 looks\n0.0250\n0.9000\n1.0355\n1.0310\n0.7223\n\n\n\n\n\n\n\n\nThe triangular test needs a larger maximum sample size than O’Brien–Fleming, and more so the more often it looks. In exchange it stops much earlier on average under both hypotheses, especially under \\(H_0\\), where the O’Brien–Fleming design has no futility boundary. The attained \\(\\alpha\\) and power are close to their targets, and closer as looks become more frequent.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Expected sample size (relative to the fixed design) across true effects, 10 looks.\n\n\n\nTriangular tests are available in SAS PROC SEQDESIGN and PEST. In psychology they have been popularised by the R package seqtest (Yanagida 2017).\n\n\n\n\n\n\nTipIn jmsequential\n\n\n\nSequential → Group Sequential Design (from version 0.1.0). Under Efficacy boundary choose Triangular test (Whitehead); two-sided designs give the double triangular test. The results show the exact attained \\(\\alpha\\) and power next to the nominal values. To see the triangle in the boundary plot, set Boundary scale to B-value (Z·√t) and Horizontal axis to Information fraction: the B-value is Whitehead’s score up to a constant, so the boundaries are straight lines. For continuous (observation by observation) triangular monitoring, choose Triangular test (Whitehead, continuous) in the SPRT analysis (from version 0.3.0).",
+    "crumbs": [
+      "Home",
+      "Group sequential designs",
+      "Whitehead's triangular tests"
+    ]
+  },
+  {
+    "objectID": "gsd/triangular.html#the-example-in-jamovi",
+    "href": "gsd/triangular.html#the-example-in-jamovi",
+    "title": "Whitehead’s triangular tests",
+    "section": "The example in jamovi",
+    "text": "The example in jamovi\n\nSequential → Group Sequential Design: one-sided α = 0.025 and power 0.9 are the defaults.\nNumber of analyses: 10.\nIn the Efficacy boundary box choose Triangular test (Whitehead). Its lower boundary is the test’s own (binding) futility boundary.\n\nThe design summary gives the ten-look row of Table 1 for the default endpoint (a difference in means of 0.5, SD 1): attained α 0.025 and power 0.902, at most 226 patients (inflation factor 1.342) against 169 for a fixed design, and 91.7 and 108.6 patients expected under H0 and H1.\n\n\n\n\n\n\nFigure 3: The options of the triangular test with ten looks.\n\n\n\n\n\n\n\n\n\nFigure 4: Its design summary.",
     "crumbs": [
       "Home",
       "Group sequential designs",
@@ -1258,7 +1294,7 @@
     "href": "gsd/boundaries.html#the-example-in-jamovi",
     "title": "Classical group sequential boundaries",
     "section": "The example in jamovi",
-    "text": "The example in jamovi\nThe O’Brien–Fleming design of the example needs no data:\n\nSequential → Group Sequential Design.\nTest: Two-sided (symmetric); Type I error (α): 0.05; Number of analyses: 5. The default power is 0.9.\nIn the Efficacy boundary box choose O’Brien-Fleming.\n\nThe Boundaries table gives the O’Brien–Fleming column of Table 1 (4.56, 3.23, 2.63, 2.28, 2.04) and the design summary its inflation factor, 1.026. The sample sizes are for the default endpoint, a difference in means of 0.5 with SD 1: at most 173 patients, against 169 for a fixed design.\n\n\n\n\n\n\nFigure 2: Sequential → Group Sequential Design set up for the O’Brien–Fleming example.",
+    "text": "The example in jamovi\nThe O’Brien–Fleming design of the example needs no data:\n\nSequential → Group Sequential Design.\nTest: Two-sided (symmetric); Type I error (α): 0.05; Number of analyses: 5. The default power is 0.9.\nIn the Efficacy boundary box choose O’Brien-Fleming.\n\nThe Boundaries table gives the O’Brien–Fleming column of Table 1 (4.56, 3.23, 2.63, 2.28, 2.04) and the design summary its inflation factor, 1.026. The sample sizes are for the default endpoint, a difference in means of 0.5 with SD 1: at most 173 patients, against 169 for a fixed design.\n\n\n\n\n\n\nFigure 2: The options of the O’Brien–Fleming example.\n\n\n\n\n\n\n\n\n\nFigure 3: Its design summary and boundaries.",
     "crumbs": [
       "Home",
       "Group sequential designs",

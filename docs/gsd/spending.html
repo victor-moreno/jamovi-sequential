@@ -72,6 +72,9 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark-4143a9d5f9d8f9deb4202a6d60211dcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -535,6 +538,7 @@ window.Quarto = {
   <li><a href="#the-families" id="toc-the-families" class="nav-link" data-scroll-target="#the-families">The families</a></li>
   <li><a href="#spending-functions-mimic-the-classical-boundaries" id="toc-spending-functions-mimic-the-classical-boundaries" class="nav-link" data-scroll-target="#spending-functions-mimic-the-classical-boundaries">Spending functions mimic the classical boundaries</a></li>
   <li><a href="#example-the-looks-happen-at-other-times" id="toc-example-the-looks-happen-at-other-times" class="nav-link" data-scroll-target="#example-the-looks-happen-at-other-times">Example: the looks happen at other times</a></li>
+  <li><a href="#the-example-in-jamovi" id="toc-the-example-in-jamovi" class="nav-link" data-scroll-target="#the-example-in-jamovi">The example in jamovi</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -828,6 +832,34 @@ Table&nbsp;2: Boundaries at the planned and at the actual information fractions 
 <div class="callout-body-container callout-body">
 <p><em>Sequential → Group Sequential Design</em> (from version 0.1.0). Under <strong>Efficacy boundary</strong>, choose a spending function and its parameter. Enter unequal timings in <strong>Information fractions</strong>, e.g. <code>0.4, 0.75, 1</code> (cumulative sample sizes such as <code>120, 225, 300</code> work too). When monitoring (from 0.2.0), the boundaries are recomputed at the information actually observed at each look.</p>
 </div>
+</div>
+</section>
+<section id="the-example-in-jamovi" class="level2">
+<h2 class="anchored" data-anchor-id="the-example-in-jamovi">The example in jamovi</h2>
+<ol type="1">
+<li><em>Sequential → Group Sequential Design</em>: the defaults are the planned design (three analyses, Lan–DeMets O’Brien–Fleming spending, one-sided α = 0.025, power 0.9).</li>
+<li>Type <code>0.4, 0.75, 1</code> in <strong>Information fractions</strong>.</li>
+</ol>
+<p>The <strong>Boundaries</strong> table gives the actual boundaries of <a href="#tbl-timing" class="quarto-xref">Table&nbsp;2</a>, 3.36, 2.35 and 2.01, with a cumulative α of 0.0004, 0.0097 and 0.025.</p>
+<div id="fig-jamovi-spending-options" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-spending-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-spending-options.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;2: The looks of the example as information fractions."><img src="../screenshots/gsd-spending-options.png" class="img-fluid figure-img" width="690"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-spending-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The looks of the example as information fractions.
+</figcaption>
+</figure>
+</div>
+<div id="fig-jamovi-spending" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-spending-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-spending-results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;3: The boundaries at the actual information fractions."><img src="../screenshots/gsd-spending-results.png" class="img-fluid figure-img" width="775"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-spending-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The boundaries at the actual information fractions.
+</figcaption>
+</figure>
 </div>
 </section>
 <section id="references" class="level2">
@@ -1299,6 +1331,38 @@ Lan, K. K. Gordon, and David L. DeMets. 1989. <span>“Changing Frequency of Int
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

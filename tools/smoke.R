@@ -48,3 +48,13 @@ cat(sprintf("   smoke test passed: Bayesian stop at look 2, two-arm alpha %.4f\n
 a <- jmsequential::anytime(data = data.frame(), sdKnown = TRUE, samples = "one")$summary$asDF$value[4]
 stopifnot(identical(a, "54"))
 cat("   smoke test passed: anytime-valid n =", a, "\n")
+
+# biomarker-stratified phase II: Freidlin et al. (2012) defaults, and Parashar et al. (2016) Table IV row 8
+# evaluated as a user-defined design (alpha 0.038, EN 13.5)
+bmx <- function(...) jmsequential::biomarker(bmLevel = NULL, armLevel = NULL, respLevel = NULL, eventLevel = NULL, ...)
+r <- bmx(data = data.frame())$oc$asDF
+s <- bmx(data = data.frame(), trial = "single", endpoint = "binary", saDesign = "jones", p0Neg = 0.03, p0Pos = 0.03,
+         p1Neg = 0.25, p1Pos = 0.40, udN1Neg = 6, udK1Neg = 1, udN1Pos = 4, udK1Pos = 1, udNNeg = 23, udKNeg = 3,
+         udNPos = 5, udKPos = 2, udNePos = 9, udKePos = 2)$oc$asDF
+stopifnot(abs(r$enrich[2] - 0.5000177) < 1e-6, abs(1 - s$stop[1] - 0.0378) < 5e-4)
+cat(sprintf("   smoke test passed: biomarker BM+ only -> enrichment %.3f, single-arm alpha %.4f\n", r$enrich[2], 1 - s$stop[1]))

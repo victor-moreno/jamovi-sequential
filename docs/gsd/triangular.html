@@ -72,6 +72,9 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark-4143a9d5f9d8f9deb4202a6d60211dcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -533,6 +536,7 @@ window.Quarto = {
   <li><a href="#the-v-z-plane" id="toc-the-v-z-plane" class="nav-link active" data-scroll-target="#the-v-z-plane">The (V, Z) plane</a></li>
   <li><a href="#the-triangular-test" id="toc-the-triangular-test" class="nav-link" data-scroll-target="#the-triangular-test">The triangular test</a></li>
   <li><a href="#example-attained-errors-and-sample-size" id="toc-example-attained-errors-and-sample-size" class="nav-link" data-scroll-target="#example-attained-errors-and-sample-size">Example: attained errors and sample size</a></li>
+  <li><a href="#the-example-in-jamovi" id="toc-the-example-in-jamovi" class="nav-link" data-scroll-target="#the-example-in-jamovi">The example in jamovi</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -722,6 +726,35 @@ Figure&nbsp;2: Expected sample size (relative to the fixed design) across true e
 <div class="callout-body-container callout-body">
 <p><em>Sequential → Group Sequential Design</em> (from version 0.1.0). Under <strong>Efficacy boundary</strong> choose <strong>Triangular test (Whitehead)</strong>; two-sided designs give the double triangular test. The results show the exact attained <span class="math inline">\(\alpha\)</span> and power next to the nominal values. To see the triangle in the boundary plot, set <strong>Boundary scale</strong> to <em>B-value (Z·√t)</em> and <strong>Horizontal axis</strong> to <em>Information fraction</em>: the B-value is Whitehead’s score up to a constant, so the boundaries are straight lines. For continuous (observation by observation) triangular monitoring, choose <strong>Triangular test (Whitehead, continuous)</strong> in the <a href="../other/sprt.html">SPRT</a> analysis (from version 0.3.0).</p>
 </div>
+</div>
+</section>
+<section id="the-example-in-jamovi" class="level2">
+<h2 class="anchored" data-anchor-id="the-example-in-jamovi">The example in jamovi</h2>
+<ol type="1">
+<li><em>Sequential → Group Sequential Design</em>: one-sided α = 0.025 and power 0.9 are the defaults.</li>
+<li><strong>Number of analyses</strong>: 10.</li>
+<li>In the <strong>Efficacy boundary</strong> box choose <em>Triangular test (Whitehead)</em>. Its lower boundary is the test’s own (binding) futility boundary.</li>
+</ol>
+<p>The design summary gives the ten-look row of <a href="#tbl-triangular" class="quarto-xref">Table&nbsp;1</a> for the default endpoint (a difference in means of 0.5, SD 1): attained α 0.025 and power 0.902, at most 226 patients (inflation factor 1.342) against 169 for a fixed design, and 91.7 and 108.6 patients expected under H0 and H1.</p>
+<div id="fig-jamovi-triangular-options" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-triangular-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-triangular-options.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;3: The options of the triangular test with ten looks."><img src="../screenshots/gsd-triangular-options.png" class="img-fluid figure-img" width="690"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-triangular-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The options of the triangular test with ten looks.
+</figcaption>
+</figure>
+</div>
+<div id="fig-jamovi-triangular" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-triangular-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/gsd-triangular-results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;4: Its design summary."><img src="../screenshots/gsd-triangular-results.png" class="img-fluid figure-img" width="825"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-triangular-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Its design summary.
+</figcaption>
+</figure>
 </div>
 </section>
 <section id="references" class="level2">
@@ -1190,6 +1223,38 @@ Yanagida, Takuya. 2017. <span>“Seqtest: An r Package for Sequential Triangular
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

@@ -72,6 +72,9 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark-4143a9d5f9d8f9deb4202a6d60211dcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/bootstrap/bootstrap-e5e84f5a70260acdabf710505354887c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -927,13 +930,90 @@ Figure&nbsp;3: Route after stage 1 of the optimal stratified design, for every n
 </section>
 <section id="the-example-in-jamovi" class="level2">
 <h2 class="anchored" data-anchor-id="the-example-in-jamovi">The example in jamovi</h2>
+<p><strong>Randomized.</strong></p>
 <ol type="1">
 <li>Open <em>Data library → jmsequential → Biomarker trial - randomized, PFS and response</em>.</li>
-<li><em>Sequential → Biomarker-Stratified Phase II</em>: the defaults are the randomized example above.</li>
-<li>In <strong>Analysis of observed data</strong>, assign <em>biomarker</em> (positive level <em>Positive</em>), <em>arm</em> (experimental level <em>Experimental</em>), <em>pfs</em> as time and <em>progression</em> (event level <em>Yes</em>).</li>
+<li><em>Sequential → Biomarker-Stratified Phase II</em>: the defaults are the randomized design above (the <strong>Randomized design</strong> box can be closed).</li>
+<li>In <strong>Analysis of observed data</strong>, move <em>biomarker</em> to <strong>Biomarker</strong> and choose the <strong>Positive level</strong> <em>Positive</em>; <em>arm</em> to <strong>Arm (randomized)</strong>, with the <strong>Experimental level</strong> <em>Experimental</em>; <em>pfs</em> to <strong>Time (time to event)</strong>; and <em>progression</em> to <strong>Event (time to event)</strong>, with the <strong>Event level</strong> <em>Yes</em>. jamovi preselects the first level of each variable (<em>Negative</em>, <em>Control</em> and <em>No</em> here), so check all three; the note under the <strong>Observed data</strong> table repeats the levels used.</li>
 </ol>
-<p>The <strong>Decision</strong> table gives Z = 2.86 in BM+ (positive), the 80 % interval of the BM− HR (0.67–1.05) and the recommendation: a biomarker-stratified phase III.</p>
-<p>For the single-arm example, open <em>Biomarker trial - single arm, arrival order</em>, set <strong>Trial</strong> to <em>Single arm</em> and <strong>Endpoint</strong> to <em>Response (binary)</em>, and assign <em>biomarker</em> and <em>response</em>.</p>
+<div id="fig-jamovi-bm-rand-options" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-rand-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-rand-options.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;4: The variables of the randomized example and their levels."><img src="../screenshots/biomarker-rand-options.png" class="img-fluid figure-img" width="690"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-rand-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: The variables of the randomized example and their levels.
+</figcaption>
+</figure>
+</div>
+<p>The <strong>Observed data</strong> table gives the hazard ratio in each stratum (BM+ 0.443, 95 % CI 0.250–0.784; BM− 0.837, 0.589–1.188), the stratified overall test and the interaction. The <strong>Decision</strong> table follows the algorithm: Z = 2.86 in BM+ (positive), the 80 % interval of the BM− HR (0.67–1.05) and the recommendation, a biomarker-stratified phase III. The <strong>Decision map</strong> places the estimates in <a href="#fig-bm-regions" class="quarto-xref">Figure&nbsp;1</a>.</p>
+<div id="fig-jamovi-bm-rand" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-rand-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-rand-results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;5: The analysis of the randomized example."><img src="../screenshots/biomarker-rand-results.png" class="img-fluid figure-img" width="1044"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-rand-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: The analysis of the randomized example.
+</figcaption>
+</figure>
+</div>
+<div id="fig-jamovi-bm-rand-map" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-rand-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-rand-map.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;6: Its decision map."><img src="../screenshots/biomarker-rand-map.png" class="img-fluid figure-img" width="665"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-rand-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Its decision map.
+</figcaption>
+</figure>
+</div>
+<p><strong>Single arm.</strong></p>
+<ol type="1">
+<li>Open <em>Biomarker trial - single arm, arrival order</em>.</li>
+<li><em>Sequential → Biomarker-Stratified Phase II</em>, <strong>Trial</strong>: <em>Single arm</em>, <strong>Endpoint</strong>: <em>Response (binary)</em>. The defaults of the <strong>Single-arm design</strong> box are the example: the optimal stratified design for 0.2 against 0.4 (BM−) and 0.5 (BM+), found in a few seconds.</li>
+<li>In <strong>Analysis of observed data</strong>, move <em>biomarker</em> to <strong>Biomarker</strong> (<strong>Positive level</strong> <em>Positive</em>) and <em>response</em> to <strong>Response (binary)</strong> (<strong>Response level</strong> <em>Yes</em>).</li>
+</ol>
+<div id="fig-jamovi-bm-single-options" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-single-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-single-options.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;7: The single-arm design of the example."><img src="../screenshots/biomarker-single-options.png" class="img-fluid figure-img" width="690"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-single-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: The single-arm design of the example.
+</figcaption>
+</figure>
+</div>
+<div id="fig-jamovi-bm-single-variables" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-single-variables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-single-variables.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;8: Its variables and levels."><img src="../screenshots/biomarker-single-variables.png" class="img-fluid figure-img" width="690"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-single-variables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Its variables and levels.
+</figcaption>
+</figure>
+</div>
+<p>The design tables give the optimal design of <a href="#tbl-bm-single" class="quarto-xref">Table&nbsp;2</a>, its sample sizes and its rules. The <strong>Observed data</strong> and <strong>Decision</strong> tables walk the patients through it: 3 of 16 BM− and 7 of 8 BM+ responses at stage 1, so only BM+ continues, and 24 of 32 BM+ responses in all: promising in BM+ only. The <strong>Decision map</strong> marks the stage-1 outcome (<a href="#fig-bm-routes" class="quarto-xref">Figure&nbsp;3</a>).</p>
+<div id="fig-jamovi-bm-single-design" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-single-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-single-design.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;9: The optimal single-arm design: summary, sample sizes and rules."><img src="../screenshots/biomarker-single-design.png" class="img-fluid figure-img" width="816"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-single-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: The optimal single-arm design: summary, sample sizes and rules.
+</figcaption>
+</figure>
+</div>
+<div id="fig-jamovi-bm-single" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jamovi-bm-single-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../screenshots/biomarker-single-results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;10: The analysis of the single-arm example."><img src="../screenshots/biomarker-single-results.png" class="img-fluid figure-img" width="726"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jamovi-bm-single-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: The analysis of the single-arm example.
+</figcaption>
+</figure>
+</div>
 </section>
 <section id="references" class="level2">
 
@@ -1425,6 +1505,38 @@ Zang, Yong, and Ying Yuan. 2016. <span>“Optimal Sequential Enrichment Designs 
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

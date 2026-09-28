@@ -875,15 +875,15 @@ biomarkerResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     list(
                         `name`="patients", 
                         `title`="Patients", 
-                        `type`="number"),
+                        `type`="integer"),
                     list(
                         `name`="exp", 
                         `title`="Experimental", 
-                        `type`="number"),
+                        `type`="integer"),
                     list(
                         `name`="ctrl", 
                         `title`="Control", 
-                        `type`="number"),
+                        `type`="integer"),
                     list(
                         `name`="events", 
                         `title`="Events", 
@@ -904,7 +904,7 @@ biomarkerResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `type`="integer"),
                     list(
                         `name`="total", 
-                        `title`="Total", 
+                        `title`="Maximum", 
                         `type`="integer"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -1166,7 +1166,7 @@ biomarkerResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `type`="text"),
                     list(
                         `name`="n", 
-                        `title`="Patients", 
+                        `title`="N", 
                         `type`="integer"),
                     list(
                         `name`="nE", 

@@ -37,13 +37,13 @@ items:
           type: text
         - name: patients
           title: Patients
-          type: number
+          type: integer
         - name: exp
           title: Experimental
-          type: number
+          type: integer
         - name: ctrl
           title: Control
-          type: number
+          type: integer
         - name: events
           title: Events
           type: number
@@ -59,7 +59,7 @@ items:
           superTitle: Total if stage 2 in
           type: integer
         - name: total
-          title: Total
+          title: Maximum
           type: integer
 
     - name: rules
@@ -131,7 +131,7 @@ items:
           title: ''
           type: text
         - name: n
-          title: Patients
+          title: N
           type: integer
         - name: nE
           title: Experimental

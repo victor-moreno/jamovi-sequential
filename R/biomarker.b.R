@@ -64,8 +64,9 @@ biomarkerClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                        neg = if (surv) sizes$neg * d$qNeg else NA)
             ev$total <- if (surv) ev$pos + ev$neg else NA
             for (key in c("pos", "neg", "total"))
-                r$sizes$setRow(rowKey = key, values = blank_na(list(patients = sizes[[key]], exp = sizes[[key]] * r1,
-                                                                    ctrl = sizes[[key]] * (1 - r1), events = ev[[key]])))
+                # whole patients (natural prevalence: rounded expected sizes, see the note)
+                r$sizes$setRow(rowKey = key, values = blank_na(list(patients = round(sizes[[key]]), exp = round(sizes[[key]] * r1),
+                                                                    ctrl = round(sizes[[key]] * (1 - r1)), events = ev[[key]])))
             note <- if (nat) sprintf(.("Natural prevalence: %d patients enrolled whatever their biomarker; the stratum sizes shown are expected values (BM+ sized for the power target at the expected size)."), d$N)
                     else sprintf(.("Fixed stratum sizes: about %d patients are screened to fill both strata (prevalence %s)."),
                                  ceiling(max(d$nPos / o$prev, d$nNeg / (1 - o$prev))), o$prev)
@@ -146,20 +147,23 @@ biomarkerClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                 st <- s[[key]]
                 v <- c(list(n = st$n, nE = st$nE, nC = st$nC,
                             xE = if (surv) st$eventsE else st$xE, xC = if (surv) st$eventsC else st$xC), row(st))
-                r$observed$setRow(rowKey = key, values = blank_na(c(v, list(n1 = NA, x1 = NA, n2 = NA, x2 = NA))))
+                r$observed$setRow(rowKey = key, values = blank_na(c(v, list(n1 = NA_real_, x1 = NA_real_, n2 = NA_real_, x2 = NA_real_))))
             }
             a <- s$all
             r$observed$setRow(rowKey = "all", values = blank_na(c(list(n = s$pos$n + s$neg$n, nE = s$pos$nE + s$neg$nE,
                 nC = s$pos$nC + s$neg$nC, xE = if (surv) s$pos$eventsE + s$neg$eventsE else s$pos$xE + s$neg$xE,
-                xC = if (surv) s$pos$eventsC + s$neg$eventsC else s$pos$xC + s$neg$xC, n1 = NA, x1 = NA, n2 = NA, x2 = NA),
+                xC = if (surv) s$pos$eventsC + s$neg$eventsC else s$pos$xC + s$neg$xC, n1 = NA_real_, x1 = NA_real_, n2 = NA_real_, x2 = NA_real_),
                 row(a))))
             it <- s$inter
-            r$observed$setRow(rowKey = "inter", values = blank_na(c(list(n = NA, nE = NA, nC = NA, xE = NA, xC = NA,
-                n1 = NA, x1 = NA, n2 = NA, x2 = NA), row(it))))
+            r$observed$setRow(rowKey = "inter", values = blank_na(c(list(n = NA_real_, nE = NA_real_, nC = NA_real_, xE = NA_real_, xC = NA_real_,
+                n1 = NA_real_, x1 = NA_real_, n2 = NA_real_, x2 = NA_real_), row(it))))
             note <- if (surv) .("HR experimental / control: Cox model per stratum (Breslow ties); Z and p from the log-rank test (overall: stratified log-rank). Interaction: ratio HR(BM+) / HR(BM−).")
                     else .("Difference experimental − control with unpooled standard errors; overall: inverse-variance combination of the strata. Interaction: difference BM+ − BM−.")
             note <- paste(note, sprintf(.("Gail & Simon test for a qualitative interaction (effects in opposite directions): Q = %s, p = %s."),
                                         format(round(it$Q, 3)), format.pval(it$pGS, digits = 3)))
+            # jamovi preselects the first level of each variable, so say which ones were used
+            note <- paste(note, sprintf(.("Levels used: BM+ = %s; experimental arm = %s; %s = %s."), o$bmLevel, o$armLevel,
+                                        if (surv) .("event") else .("response"), if (surv) o$eventLevel else o$respLevel))
             r$observed$setNote("m", note, init = FALSE)
             dd <- bm_rand_decide(s, res$ro)
             private$.fillRandDecision(s, dd, res)
@@ -344,7 +348,7 @@ biomarkerClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                     ci <- ss_cp(x$x1 + x$x2, x$n1 + x$n2, o$ciLevel)
                     r$observed$setRow(rowKey = key, values = blank_na(list(n1 = x$n1, x1 = x$x1, n2 = x$n2, x2 = x$x2,
                         n = x$n1 + x$n2, est = if (x$n1 + x$n2 > 0) (x$x1 + x$x2) / (x$n1 + x$n2) else NA, lower = ci[1], upper = ci[2],
-                        nE = NA, nC = NA, xE = NA, xC = NA, z = NA, p = NA)))
+                        nE = NA_real_, nC = NA_real_, xE = NA_real_, xC = NA_real_, z = NA_real_, p = NA_real_)))
                 }
                 ds <- function(x, lab) sprintf(.("%s: %d/%d responses at stage 1 (continue if ≥ %d); %d/%d in total (promising if ≥ %d): %s"),
                                                lab, x$x1, x$n1, x$k1, x$x1 + x$x2, x$n1 + x$n2, x$k, private$.stageText(x$decision))
@@ -362,7 +366,7 @@ biomarkerClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
                     ci <- ss_cp(x1 + x2, n1 + n2, o$ciLevel)
                     r$observed$setRow(rowKey = key, values = blank_na(list(n1 = n1, x1 = x1, n2 = n2, x2 = x2, n = n1 + n2,
                         est = if (n1 + n2 > 0) (x1 + x2) / (n1 + n2) else NA, lower = ci[1], upper = ci[2],
-                        nE = NA, nC = NA, xE = NA, xC = NA, z = NA, p = NA)))
+                        nE = NA_real_, nC = NA_real_, xE = NA_real_, xC = NA_real_, z = NA_real_, p = NA_real_)))
                 }
                 route <- switch(if (is.na(a$route)) "none" else a$route,
                     unselected = .("stage 2 in both strata"), enrichment = .("stage 2 in BM+ only (enrichment)"),
@@ -383,6 +387,8 @@ biomarkerClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
             note <- .("Patients in arrival order; stage 1 is the first patients of each stratum (natural prevalence: the first patients overall). Rates with exact (Clopper-Pearson) intervals that ignore the two-stage rule.")
             if (des$type == "iso") note <- paste(note, .("Isotonic rules: BM− is judged on the smaller and BM+ on the larger of its own and the pooled response rate."))
             if (surv) note <- paste(note, sprintf(.("Response = event-free at the landmark (%s); %d patients censored before it are not evaluable."), o$lmTime, nCens))
+            note <- paste(note, sprintf(.("Levels used: BM+ = %s; %s = %s."), o$bmLevel,
+                                        if (surv) .("event") else .("response"), if (surv) o$eventLevel else o$respLevel))
             r$observed$setNote("m", note, init = FALSE)
             list(stage1 = stage1)
         },
