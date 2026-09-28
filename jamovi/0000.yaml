@@ -99,6 +99,22 @@ analyses:
       difference in means, valid at every sample size and under optional
       stopping. The design gives the sample size for a target power, exact for a
       known SD and simulated otherwise.
+  - title: Biomarker-Stratified Phase II
+    name: biomarker
+    ns: jmsequential
+    category: analyses
+    menuGroup: Sequential
+    menuTitle: Biomarker-Stratified Phase II
+    menuSubtitle: Go/no-go and phase III population
+    description: >-
+      Phase II designs stratified by a biomarker, which decide both whether to
+      go to phase III and in which population (biomarker-positive only,
+      biomarker-stratified, all-comers). Randomized designs with the decision
+      algorithm of Freidlin et al. (2012); single-arm stratified two-stage
+      designs (Parashar et al. 2016, Li & Ivanova 2024, Jones & Holmgren 2007,
+      parallel Simon designs). Binary response or time to event; fixed stratum
+      sizes or natural prevalence; exact operating characteristics, and
+      patient-level analysis.
 datasets:
   - name: Interim analyses - difference in means
     path: gsd_interim_means.csv
@@ -125,6 +141,16 @@ datasets:
     description: >-
       Fabricated responses per arm at two interim looks. Bayesian Sequential
       Monitoring, two arms binary (0.3 vs 0.5): stops for efficacy at look 2.
+  - name: Biomarker trial - randomized, PFS and response
+    path: biomarker_randomized.csv
+    description: >-
+      Fabricated randomized trial of 204 patients by biomarker: PFS and
+      response. Biomarker-Stratified Phase II: biomarker-stratified phase III.
+  - name: Biomarker trial - single arm, arrival order
+    path: biomarker_singlearm.csv
+    description: >-
+      Fabricated single-arm trial in arrival order: biomarker, response, PFS.
+      Single-arm default design: promising in BM+ only after enrichment.
 usesNative: false
 minApp: 2.3.0
 

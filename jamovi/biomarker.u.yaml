@@ -1,0 +1,358 @@
+title: Biomarker-Stratified Phase II
+name: biomarker
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+- type: LayoutBox
+  margin: large
+  stretchFactor: 1
+  children:
+  - type: ComboBox
+    name: trial
+  - type: ComboBox
+    name: endpoint
+  - type: ComboBox
+    name: sizes
+  - type: TextBox
+    name: prev
+    format: number
+- type: CollapseBox
+  label: Randomized design
+  collapsed: false
+  stretchFactor: 1
+  children:
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+    - type: TextBox
+      name: alpha1
+      format: number
+      enable: (trial:randomized)
+    - type: TextBox
+      name: alpha2
+      format: number
+      enable: (trial:randomized)
+    - type: TextBox
+      name: power
+      format: number
+      enable: (trial:randomized)
+    - type: TextBox
+      name: alloc
+      format: number
+      enable: (trial:randomized)
+    - type: TextBox
+      name: ratioNeg
+      format: number
+      enable: (trial:randomized && sizes:fixed)
+    - type: TextBox
+      name: level
+      format: number
+      enable: (trial:randomized)
+    - type: Label
+      label: Hazard ratios (experimental / control)
+      children:
+      - type: TextBox
+        name: hrTarget
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: hrMid
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: hrNoBen
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: hrBen
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+    - type: Label
+      label: Response rates (experimental − control)
+      children:
+      - type: TextBox
+        name: pcPos
+        format: number
+        enable: (trial:randomized && endpoint:binary)
+      - type: TextBox
+        name: pcNeg
+        format: number
+        enable: (trial:randomized && endpoint:binary)
+      - type: TextBox
+        name: diffTarget
+        format: number
+        enable: (trial:randomized && endpoint:binary)
+      - type: TextBox
+        name: diffMid
+        format: number
+        enable: (trial:randomized && endpoint:binary)
+      - type: TextBox
+        name: diffNoBen
+        format: number
+        enable: (trial:randomized && endpoint:binary)
+      - type: TextBox
+        name: diffBen
+        format: number
+        enable: (trial:randomized && endpoint:binary)
+    - type: Label
+      label: Survival and accrual
+      children:
+      - type: TextBox
+        name: medPos
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: medNeg
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: accrual
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: followUp
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: dropoutProb
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+      - type: TextBox
+        name: dropoutTime
+        format: number
+        enable: (trial:randomized && endpoint:surv)
+    - type: CheckBox
+      name: interim
+      enable: (trial:randomized)
+      children:
+      - type: TextBox
+        name: frac
+        format: number
+        enable: (trial:randomized && interim)
+      - type: TextBox
+        name: zfut
+        format: number
+        enable: (trial:randomized && interim)
+- type: CollapseBox
+  label: Single-arm design
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+    - type: ComboBox
+      name: saDesign
+      enable: (trial:single)
+    - type: ComboBox
+      name: saType
+      enable: (trial:single && (saDesign:parashar || saDesign:parallel))
+    - type: TextBox
+      name: saAlpha
+      format: number
+      enable: (trial:single)
+    - type: TextBox
+      name: saPower
+      format: number
+      enable: (trial:single)
+    - type: Label
+      label: Response rates
+      children:
+      - type: TextBox
+        name: p0Neg
+        format: number
+        enable: (trial:single && endpoint:binary)
+      - type: TextBox
+        name: p0Pos
+        format: number
+        enable: (trial:single && endpoint:binary)
+      - type: TextBox
+        name: p1Neg
+        format: number
+        enable: (trial:single && endpoint:binary)
+      - type: TextBox
+        name: p1Pos
+        format: number
+        enable: (trial:single && endpoint:binary)
+    - type: Label
+      label: Time to event (rate at a landmark)
+      children:
+      - type: TextBox
+        name: lmTime
+        format: number
+        enable: (trial:single && endpoint:surv)
+      - type: TextBox
+        name: m0Neg
+        format: number
+        enable: (trial:single && endpoint:surv)
+      - type: TextBox
+        name: m0Pos
+        format: number
+        enable: (trial:single && endpoint:surv)
+      - type: TextBox
+        name: m1Neg
+        format: number
+        enable: (trial:single && endpoint:surv)
+      - type: TextBox
+        name: m1Pos
+        format: number
+        enable: (trial:single && endpoint:surv)
+    - type: Label
+      label: Search
+      children:
+      - type: TextBox
+        name: nMaxNeg
+        format: number
+        enable: (trial:single && saDesign:parashar)
+      - type: TextBox
+        name: nMaxPos
+        format: number
+        enable: (trial:single && saDesign:parashar)
+    - type: Label
+      label: User-defined design
+      children:
+      - type: TextBox
+        name: udN1Neg
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udK1Neg
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udN1Pos
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udK1Pos
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udNNeg
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udKNeg
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udNPos
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udKPos
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udNePos
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+      - type: TextBox
+        name: udKePos
+        format: number
+        enable: (trial:single && (saDesign:jones || saDesign:isotonic))
+- type: CollapseBox
+  label: Scenarios
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+    - type: CheckBox
+      name: userScen
+      children:
+      - type: TextBox
+        name: userPos
+        format: number
+        enable: (userScen)
+      - type: TextBox
+        name: userNeg
+        format: number
+        enable: (userScen)
+- type: CollapseBox
+  label: Analysis of observed data
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+    - type: TargetLayoutBox
+      label: Biomarker
+      children:
+      - type: VariablesListBox
+        name: biomarker
+        maxItemCount: 1
+        isTarget: true
+        fitToGrid: true
+      - type: LevelSelector
+        name: bmLevel
+        enable: (biomarker)
+    - type: TargetLayoutBox
+      label: Arm (randomized)
+      children:
+      - type: VariablesListBox
+        name: arm
+        maxItemCount: 1
+        isTarget: true
+        fitToGrid: true
+      - type: LevelSelector
+        name: armLevel
+        enable: (arm)
+    - type: TargetLayoutBox
+      label: Response (binary)
+      children:
+      - type: VariablesListBox
+        name: response
+        maxItemCount: 1
+        isTarget: true
+        fitToGrid: true
+      - type: LevelSelector
+        name: respLevel
+        enable: (response)
+    - type: TargetLayoutBox
+      label: Time (time to event)
+      children:
+      - type: VariablesListBox
+        name: time
+        maxItemCount: 1
+        isTarget: true
+    - type: TargetLayoutBox
+      label: Event (time to event)
+      children:
+      - type: VariablesListBox
+        name: event
+        maxItemCount: 1
+        isTarget: true
+        fitToGrid: true
+      - type: LevelSelector
+        name: eventLevel
+        enable: (event)
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+    - type: TextBox
+      name: ciLevel
+      format: number
+- type: CollapseBox
+  label: Output
+  collapsed: true
+  stretchFactor: 1
+  children:
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+    - type: CheckBox
+      name: ocTable
+    - type: CheckBox
+      name: regionPlot
+    - type: CheckBox
+      name: ocMap

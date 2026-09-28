@@ -25,4 +25,13 @@ test_that("every analysis serialises like in jamovi, in design and data modes", 
     ok(serialise(bayesmonClass, bayesmonOptions$new(lookN = "n", estimate = "estimate", se = "se", densityPlot = TRUE, ocPlot = TRUE), means))
     ok(serialise(bayesmonClass, bayesmonOptions$new(model = "bf", dep = "score", group = "arm", nsim = 100), sq))
     ok(serialise(anytimeClass, anytimeOptions$new(dep = "score", group = "arm"), sq))
+    rd <- read.csv(test_path("..", "..", "data", "biomarker_randomized.csv"), stringsAsFactors = TRUE)
+    sa <- read.csv(test_path("..", "..", "data", "biomarker_singlearm.csv"), stringsAsFactors = TRUE)
+    ok(serialise(biomarkerClass, biomarkerOptions$new(ocMap = TRUE)))
+    ok(serialise(biomarkerClass, biomarkerOptions$new(biomarker = "biomarker", bmLevel = "Positive", arm = "arm",
+                                                      armLevel = "Experimental", time = "pfs", event = "progression",
+                                                      eventLevel = "Yes"), rd))
+    ok(serialise(biomarkerClass, biomarkerOptions$new(trial = "single", endpoint = "binary", saDesign = "jones", ocMap = TRUE,
+                                                      biomarker = "biomarker", bmLevel = "Positive", response = "response",
+                                                      respLevel = "Yes"), sa))
 })

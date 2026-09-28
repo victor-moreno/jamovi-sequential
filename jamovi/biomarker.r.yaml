@@ -1,0 +1,217 @@
+---
+name:  biomarker
+title: Biomarker-Stratified Phase II
+jrs: '1.1'
+
+items:
+    # holds the single-arm design search in its state; cleared only by the options the search uses
+    - name: searchCache
+      title: Search
+      type: Table
+      visible: false
+      clearWith: [ trial, endpoint, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos ]
+      columns:
+        - name: x
+          title: ''
+          type: text
+
+    - name: summary
+      title: Design summary
+      type: Table
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos ]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: text
+
+    - name: sizes
+      title: Sample size
+      type: Table
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos ]
+      columns:
+        - name: stratum
+          title: ''
+          type: text
+        - name: patients
+          title: Patients
+          type: number
+        - name: exp
+          title: Experimental
+          type: number
+        - name: ctrl
+          title: Control
+          type: number
+        - name: events
+          title: Events
+          type: number
+        - name: stage1
+          title: Stage 1
+          type: integer
+        - name: unsel
+          title: Both strata continue
+          superTitle: Total if stage 2 in
+          type: integer
+        - name: enrich
+          title: BM+ only
+          superTitle: Total if stage 2 in
+          type: integer
+        - name: total
+          title: Total
+          type: integer
+
+    - name: rules
+      title: Decision rules
+      type: Table
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos ]
+      columns:
+        - name: step
+          title: Step
+          type: text
+        - name: condition
+          title: Condition
+          type: text
+        - name: action
+          title: Then
+          type: text
+
+    - name: oc
+      title: Operating characteristics
+      type: Table
+      visible: (ocTable)
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos, userScen, userPos, userNeg ]
+      columns:
+        - name: scenario
+          title: Scenario
+          type: text
+        - name: effPos
+          title: BM+
+          superTitle: True effect
+          type: text
+        - name: effNeg
+          title: BM−
+          superTitle: True effect
+          type: text
+        - name: stop
+          title: Stop
+          superTitle: P(recommendation)
+          type: number
+        - name: enrich
+          title: BM+ only
+          superTitle: P(recommendation)
+          type: number
+        - name: strat
+          title: Stratified
+          superTitle: P(recommendation)
+          type: number
+        - name: neg
+          title: BM− only
+          superTitle: P(recommendation)
+          type: number
+        - name: all
+          title: All-comers
+          superTitle: P(recommendation)
+          type: number
+        - name: expected
+          title: Expected N
+          type: number
+        - name: pet
+          title: P(stop after stage 1)
+          type: number
+
+    - name: observed
+      title: Observed data
+      type: Table
+      visible: (biomarker)
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos, biomarker, bmLevel, arm, armLevel, response, respLevel, time, event, eventLevel, ciLevel ]
+      columns:
+        - name: stratum
+          title: ''
+          type: text
+        - name: n
+          title: Patients
+          type: integer
+        - name: nE
+          title: Experimental
+          superTitle: Patients
+          type: integer
+        - name: nC
+          title: Control
+          superTitle: Patients
+          type: integer
+        - name: xE
+          title: Experimental
+          superTitle: Responses or events
+          type: integer
+        - name: xC
+          title: Control
+          superTitle: Responses or events
+          type: integer
+        - name: n1
+          title: Patients
+          superTitle: Stage 1
+          type: integer
+        - name: x1
+          title: Responses
+          superTitle: Stage 1
+          type: integer
+        - name: n2
+          title: Patients
+          superTitle: Stage 2
+          type: integer
+        - name: x2
+          title: Responses
+          superTitle: Stage 2
+          type: integer
+        - name: est
+          title: Estimate
+          type: number
+        - name: lower
+          title: Lower
+          superTitle: Interval
+          type: number
+        - name: upper
+          title: Upper
+          superTitle: Interval
+          type: number
+        - name: z
+          title: Z
+          type: number
+        - name: p
+          title: p (one-sided)
+          type: number
+          format: zto,pvalue
+
+    - name: decision
+      title: Decision
+      type: Table
+      visible: (biomarker)
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos, biomarker, bmLevel, arm, armLevel, response, respLevel, time, event, eventLevel, ciLevel ]
+      columns:
+        - name: step
+          title: Step
+          type: text
+        - name: result
+          title: Result
+          type: text
+
+    - name: regionPlot
+      title: Decision map
+      type: Image
+      visible: (regionPlot)
+      width: 550
+      height: 500
+      renderFun: .plotRegions
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos, biomarker, bmLevel, arm, armLevel, response, respLevel, time, event, eventLevel, ciLevel ]
+
+    - name: ocMap
+      title: Recommendation by true effects
+      type: Image
+      visible: (ocMap)
+      width: 550
+      height: 520
+      renderFun: .plotOCMap
+      clearWith: [ trial, endpoint, sizes, prev, alpha1, alpha2, power, alloc, ratioNeg, level, hrTarget, hrMid, hrNoBen, hrBen, pcPos, pcNeg, diffTarget, diffMid, diffNoBen, diffBen, medPos, medNeg, accrual, followUp, dropoutProb, dropoutTime, interim, frac, zfut, saDesign, saType, saAlpha, saPower, p0Neg, p0Pos, p1Neg, p1Pos, lmTime, m0Neg, m0Pos, m1Neg, m1Pos, nMaxNeg, nMaxPos, udN1Neg, udK1Neg, udN1Pos, udK1Pos, udNNeg, udKNeg, udNPos, udKPos, udNePos, udKePos, userScen, userPos, userNeg ]
+...

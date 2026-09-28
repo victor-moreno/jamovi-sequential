@@ -1,0 +1,492 @@
+---
+name:  biomarker
+title: Biomarker-Stratified Phase II
+menuGroup: Sequential
+menuTitle: Biomarker-Stratified Phase II
+menuSubtitle: Go/no-go and phase III population
+version: '0.1.0'
+jas: '1.2'
+
+description:
+    main: >-
+      Phase II designs stratified by a biomarker, which decide both whether to go to phase III
+      and in which population (biomarker-positive only, biomarker-stratified, all-comers).
+      Randomized designs with the decision algorithm of Freidlin et al. (2012); single-arm
+      stratified two-stage designs (Parashar et al. 2016, Li & Ivanova 2024, Jones & Holmgren
+      2007, parallel Simon designs). Binary response or time to event; fixed stratum sizes or
+      natural prevalence; exact operating characteristics, and patient-level analysis.
+
+options:
+    - name: data
+      type: Data
+
+    - name: trial
+      title: Trial
+      type: List
+      options:
+        - name: randomized
+          title: Randomized (experimental vs control)
+        - name: single
+          title: Single arm
+      default: randomized
+
+    - name: endpoint
+      title: Endpoint
+      type: List
+      options:
+        - name: surv
+          title: Time to event
+        - name: binary
+          title: Response (binary)
+      default: surv
+
+    - name: sizes
+      title: Stratum sizes
+      type: List
+      options:
+        - name: fixed
+          title: Fixed per stratum
+        - name: natural
+          title: Natural prevalence (all-comers)
+      default: fixed
+
+    - name: prev
+      title: Prevalence of BM+
+      type: Number
+      min: 0.01
+      max: 0.99
+      default: 0.33
+
+    # ---- randomized ----
+    - name: alpha1
+      title: One-sided α in BM+ (step 1)
+      type: Number
+      min: 0.001
+      max: 0.5
+      default: 0.10
+
+    - name: alpha2
+      title: One-sided α overall (step 2)
+      type: Number
+      min: 0.001
+      max: 0.5
+      default: 0.05
+
+    - name: power
+      title: Power in BM+
+      type: Number
+      min: 0.5
+      max: 0.999
+      default: 0.90
+
+    - name: alloc
+      title: Allocation ratio (experimental per control)
+      type: Number
+      min: 0.1
+      max: 10
+      default: 1
+
+    - name: ratioNeg
+      title: BM− patients per BM+ patient
+      type: Number
+      min: 0.1
+      max: 20
+      default: 2
+
+    - name: level
+      title: Confidence level for the BM− effect
+      type: Number
+      min: 0.5
+      max: 0.99
+      default: 0.80
+
+    - name: hrTarget
+      title: Target HR in BM+
+      type: Number
+      min: 0.05
+      max: 0.99
+      default: 0.5
+
+    - name: hrMid
+      title: Intermediate HR
+      type: Number
+      min: 0.05
+      max: 0.99
+      default: 0.667
+
+    - name: hrNoBen
+      title: Enrichment if the CI of HR in BM− lies above
+      type: Number
+      min: 0.05
+      max: 2
+      default: 0.769
+
+    - name: hrBen
+      title: All-comers if the CI of HR in BM− lies below
+      type: Number
+      min: 0.05
+      max: 2
+      default: 0.667
+
+    - name: pcPos
+      title: Control response rate in BM+
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.2
+
+    - name: pcNeg
+      title: Control response rate in BM−
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.2
+
+    - name: diffTarget
+      title: Target difference in BM+
+      type: Number
+      min: 0.001
+      max: 0.99
+      default: 0.3
+
+    - name: diffMid
+      title: Intermediate difference
+      type: Number
+      min: 0.001
+      max: 0.99
+      default: 0.2
+
+    - name: diffNoBen
+      title: Enrichment if the CI of the BM− difference lies below
+      type: Number
+      min: -0.5
+      max: 0.99
+      default: 0.1
+
+    - name: diffBen
+      title: All-comers if the CI of the BM− difference lies above
+      type: Number
+      min: -0.5
+      max: 0.99
+      default: 0.2
+
+    - name: medPos
+      title: Control median in BM+
+      type: Number
+      min: 0.01
+      default: 4
+
+    - name: medNeg
+      title: Control median in BM−
+      type: Number
+      min: 0.01
+      default: 4
+
+    - name: accrual
+      title: Accrual duration
+      type: Number
+      min: 0.01
+      default: 21
+
+    - name: followUp
+      title: Minimum follow-up
+      type: Number
+      min: 0
+      default: 6
+
+    - name: dropoutProb
+      title: Dropout probability
+      type: Number
+      min: 0
+      max: 0.99
+      default: 0
+
+    - name: dropoutTime
+      title: by time
+      type: Number
+      min: 0.01
+      default: 12
+
+    - name: interim
+      title: Interim futility analysis in each stratum
+      type: Bool
+      default: false
+
+    - name: frac
+      title: at information fraction
+      type: Number
+      min: 0.1
+      max: 0.9
+      default: 0.5
+
+    - name: zfut
+      title: Close the stratum if Z ≤
+      type: Number
+      min: -3
+      max: 3
+      default: 0
+
+    # ---- single arm ----
+    - name: saDesign
+      title: Design
+      type: List
+      options:
+        - name: parashar
+          title: Optimal stratified two-stage (Parashar)
+        - name: isotonic
+          title: User-defined, isotonic rules (Li & Ivanova)
+        - name: jones
+          title: User-defined (Jones & Holmgren rules)
+        - name: parallel
+          title: Parallel Simon designs
+      default: parashar
+
+    - name: saType
+      title: Criterion
+      type: List
+      options:
+        - name: optimal
+          title: Optimal (smallest expected N under H0)
+        - name: minimax
+          title: Minimax (smallest maximum N)
+      default: optimal
+
+    - name: saAlpha
+      title: Type I error (one-sided α)
+      type: Number
+      min: 0.001
+      max: 0.5
+      default: 0.05
+
+    - name: saPower
+      title: Power
+      type: Number
+      min: 0.5
+      max: 0.999
+      default: 0.80
+
+    - name: p0Neg
+      title: Uninteresting rate in BM−
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.2
+
+    - name: p0Pos
+      title: Uninteresting rate in BM+
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.2
+
+    - name: p1Neg
+      title: Target rate in BM−
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.4
+
+    - name: p1Pos
+      title: Target rate in BM+
+      type: Number
+      min: 0.001
+      max: 0.999
+      default: 0.5
+
+    - name: lmTime
+      title: Landmark time
+      type: Number
+      min: 0.01
+      default: 6
+
+    - name: m0Neg
+      title: Uninteresting median in BM−
+      type: Number
+      min: 0.01
+      default: 3
+
+    - name: m0Pos
+      title: Uninteresting median in BM+
+      type: Number
+      min: 0.01
+      default: 3
+
+    - name: m1Neg
+      title: Target median in BM−
+      type: Number
+      min: 0.01
+      default: 6
+
+    - name: m1Pos
+      title: Target median in BM+
+      type: Number
+      min: 0.01
+      default: 8
+
+    - name: nMaxNeg
+      title: Maximum BM− patients searched (0 = automatic)
+      type: Integer
+      min: 0
+      default: 0
+
+    - name: nMaxPos
+      title: Maximum BM+ patients searched (0 = automatic)
+      type: Integer
+      min: 0
+      default: 0
+
+    - name: udN1Neg
+      title: Stage 1 BM− patients
+      type: Integer
+      min: 1
+      default: 16
+
+    - name: udK1Neg
+      title: continue unselected if responses ≥
+      type: Integer
+      min: 0
+      default: 5
+
+    - name: udN1Pos
+      title: Stage 1 BM+ patients
+      type: Integer
+      min: 1
+      default: 8
+
+    - name: udK1Pos
+      title: else enrich if responses ≥
+      type: Integer
+      min: 0
+      default: 3
+
+    - name: udNNeg
+      title: Unselected route, total BM−
+      type: Integer
+      min: 1
+      default: 49
+
+    - name: udKNeg
+      title: all-comers if BM− responses ≥
+      type: Integer
+      min: 0
+      default: 15
+
+    - name: udNPos
+      title: Unselected route, total BM+
+      type: Integer
+      min: 1
+      default: 17
+
+    - name: udKPos
+      title: else BM+ only if BM+ responses ≥
+      type: Integer
+      min: 0
+      default: 7
+
+    - name: udNePos
+      title: Enrichment route, total BM+
+      type: Integer
+      min: 1
+      default: 32
+
+    - name: udKePos
+      title: BM+ only if responses ≥
+      type: Integer
+      min: 0
+      default: 12
+
+    # ---- scenarios ----
+    - name: userScen
+      title: Add a scenario
+      type: Bool
+      default: false
+
+    - name: userPos
+      title: Effect in BM+ (HR, difference or rate)
+      type: Number
+      default: 0.6
+
+    - name: userNeg
+      title: Effect in BM− (HR, difference or rate)
+      type: Number
+      default: 0.9
+
+    # ---- observed data ----
+    - name: biomarker
+      title: Biomarker
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: bmLevel
+      title: Positive level
+      type: Level
+      variable: (biomarker)
+
+    - name: arm
+      title: Arm
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: armLevel
+      title: Experimental level
+      type: Level
+      variable: (arm)
+
+    - name: response
+      title: Response
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: respLevel
+      title: Response level
+      type: Level
+      variable: (response)
+
+    - name: time
+      title: Time
+      type: Variable
+      default: null
+      suggested: [ continuous ]
+      permitted: [ numeric ]
+
+    - name: event
+      title: Event
+      type: Variable
+      default: null
+      suggested: [ nominal ]
+      permitted: [ factor ]
+
+    - name: eventLevel
+      title: Event level
+      type: Level
+      variable: (event)
+
+    - name: ciLevel
+      title: Interval level
+      type: Number
+      min: 0.5
+      max: 0.999
+      default: 0.95
+
+    # ---- output ----
+    - name: ocTable
+      title: Operating characteristics
+      type: Bool
+      default: true
+
+    - name: regionPlot
+      title: Decision map
+      type: Bool
+      default: true
+
+    - name: ocMap
+      title: Recommendation by true effects
+      type: Bool
+      default: false
+...

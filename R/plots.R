@@ -361,3 +361,165 @@ plot_cs <- function(st, cols, base, labels) {
         ggplot2::coord_cartesian(ylim = st$ylim) +
         ggplot2::labs(x = labels$x, y = labels$y) + base
 }
+
+# ---- Biomarker-Stratified Phase II ------------------------------------------------------------
+
+# Recommendations keep the same colour in every plot: validated categorical slots 1-3 (and 4 for
+# BM− only, which appears only in parallel designs, where "stratified" does not) of the dataviz
+# reference palette, all-pairs CVD-safe; "stop" is a neutral grey. Regions are also direct-labelled.
+bm_palette <- function() c(stop = "#c3c2b7", enrich = "#2a78d6", strat = "#eb6834", all = "#1baf7a",
+                           neg = "#eda100", now = "#D62728")
+
+bm_ink <- function(base) {
+    col <- tryCatch(ggplot2::calc_element("text", base[[1]])$colour, error = function(e) NULL)
+    if (is.null(col)) "#0b0b0b" else col
+}
+
+# Labels at the centre of each region of a tiled map.
+bm_region_labels <- function(df, x, y, what) {
+    s <- split(df, df[[what]])
+    do.call(rbind, lapply(names(s), function(k) {
+        d <- s[[k]]
+        # the cell nearest the region's centroid, so the label sits inside the region
+        cx <- stats::median(d[[x]]); cy <- stats::median(d[[y]])
+        i <- which.min((d[[x]] - cx)^2 / stats::var(df[[x]]) + (d[[y]] - cy)^2 / stats::var(df[[y]]))
+        data.frame(x = d[[x]][i], y = d[[y]][i], what = k)
+    }))
+}
+
+# Randomized design: the recommendation given the estimates in BM+ and BM− at the planned
+# information (the deterministic rule of the final analysis), with the observed estimates.
+plot_bm_rand_regions <- function(st, base, labels) {
+    pal <- bm_palette(); ink <- bm_ink(base)
+    surv <- st$endpoint == "surv"
+    # the grid covers the thresholds and the observed intervals, so no interval runs off the map
+    ob <- st$obs
+    thr <- c(st$c1 / sqrt(st$IP), st$thetaL, st$thetaU,
+             if (!is.null(ob)) c(ob[["thP"]] + c(-1, 1) * st$ciz * ob[["seP"]], ob[["thN"]] + c(-1, 1) * st$ciz * ob[["seN"]]))
+    lo <- min(-0.3, min(thr) - 0.3); hi <- max(thr) + 0.5
+    if (surv) { lo <- max(lo, log(0.15)); hi <- min(hi, -log(0.15)) }
+    th <- seq(lo, hi, length.out = 181)
+    g <- expand.grid(tp = th, tn = th)
+    zp <- g$tp * sqrt(st$IP)
+    zall <- (st$IP * g$tp + st$IN * g$tn) / sqrt(st$IP + st$IN)
+    ci <- st$zg / sqrt(st$IN)
+    g$rec <- ifelse(zp > st$c1, ifelse(g$tn + ci < st$thetaL, "enrich", ifelse(g$tn - ci > st$thetaU, "all", "strat")),
+                    ifelse(zall > st$c2, "all", "stop"))
+    # display scale: log HR (HR < 1 is benefit) for survival, the difference otherwise
+    tr <- function(t) if (surv) -t else t
+    g$x <- tr(g$tp); g$y <- tr(g$tn)
+    lev <- c("stop", "enrich", "strat", "all")
+    g$lab <- factor(unlist(labels[g$rec]), unlist(labels[lev]))
+    fills <- stats::setNames(pal[lev], unlist(labels[lev]))
+    lab <- bm_region_labels(g, "x", "y", "rec")
+    lab$text <- unlist(labels[lab$what])
+    p <- ggplot2::ggplot(g, ggplot2::aes(x, y)) +
+        ggplot2::geom_raster(ggplot2::aes(fill = lab)) +
+        ggplot2::scale_fill_manual(values = fills, drop = FALSE) +
+        ggplot2::geom_hline(yintercept = 0, colour = ink, alpha = 0.35, linetype = "dashed") +
+        ggplot2::geom_vline(xintercept = 0, colour = ink, alpha = 0.35, linetype = "dashed") +
+        ggplot2::geom_label(data = lab, ggplot2::aes(x, y, label = text), inherit.aes = FALSE,
+                            size = ann_size(base, 0.75), colour = ink, fill = "white", alpha = 0.8, label.size = 0)
+    if (!is.null(st$obs)) {
+        ob <- st$obs
+        o <- data.frame(x = tr(ob[["thP"]]), y = tr(ob[["thN"]]),
+                        x0 = tr(ob[["thP"]] - st$ciz * ob[["seP"]]), x1 = tr(ob[["thP"]] + st$ciz * ob[["seP"]]),
+                        y0 = tr(ob[["thN"]] - st$ciz * ob[["seN"]]), y1 = tr(ob[["thN"]] + st$ciz * ob[["seN"]]))
+        p <- p + ggplot2::geom_segment(data = o, ggplot2::aes(x = x0, xend = x1, y = y, yend = y), inherit.aes = FALSE,
+                                       colour = pal[["now"]], linewidth = 0.8) +
+            ggplot2::geom_segment(data = o, ggplot2::aes(x = x, xend = x, y = y0, yend = y1), inherit.aes = FALSE,
+                                  colour = pal[["now"]], linewidth = 0.8) +
+            ggplot2::geom_point(data = o, ggplot2::aes(x, y, colour = labels$obs), inherit.aes = FALSE, size = 3) +
+            ggplot2::scale_colour_manual(values = stats::setNames(pal[["now"]], labels$obs))
+    }
+    if (surv) {
+        br <- c(0.2, 0.3, 0.5, 0.7, 1, 1.5, 2, 3)
+        br <- br[log(br) >= min(g$x) & log(br) <= max(g$x)]
+        p <- p + ggplot2::scale_x_continuous(breaks = log(br), labels = format(br), expand = c(0, 0)) +
+            ggplot2::scale_y_continuous(breaks = log(br), labels = format(br), expand = c(0, 0))
+    } else p <- p + ggplot2::scale_x_continuous(expand = c(0, 0)) + ggplot2::scale_y_continuous(expand = c(0, 0))
+    p + ggplot2::labs(x = labels$x, y = labels$y, fill = NULL, colour = NULL) + base +
+        ggplot2::theme(legend.position = "top", legend.box = "vertical", panel.grid = ggplot2::element_blank(),
+                       legend.spacing.y = ggplot2::unit(2, "pt"), legend.margin = ggplot2::margin(0, 0, 0, 0)) +
+        ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE, order = 1), colour = ggplot2::guide_legend(order = 2))
+}
+
+# Single-arm design: the route after every stage-1 outcome (responses in BM− x BM+).
+plot_bm_routes <- function(st, base, labels) {
+    pal <- bm_palette(); ink <- bm_ink(base)
+    g <- st$g
+    key <- c(stop = "stop", both = "all", pos = "enrich", neg = "neg", goAll = "all", goPos = "enrich")
+    text <- c(stop = labels$stopRoute, both = labels$both, pos = labels$posRoute, neg = labels$negRoute,
+              goAll = labels$both, goPos = labels$posRoute)
+    lev <- unique(text[c("stop", "both", "pos", "neg")])
+    present <- unique(text[g$route])
+    lev <- lev[lev %in% present]
+    g$lab <- factor(text[g$route], lev)
+    fills <- stats::setNames(pal[key[match(lev, text)]], lev)
+    g$early <- g$route %in% c("goAll", "goPos")
+    step <- function(n) max(1, ceiling(n / 10))
+    p <- ggplot2::ggplot(g, ggplot2::aes(xn, xp)) +
+        ggplot2::geom_tile(ggplot2::aes(fill = lab), width = 0.9, height = 0.9) +
+        ggplot2::scale_fill_manual(values = fills)
+    if (any(g$early)) {
+        el <- c(goAll = labels$goAll, goPos = labels$goPos)
+        e <- g[g$early, ]; e$what <- el[e$route]
+        p <- p + ggplot2::geom_point(data = e, ggplot2::aes(shape = what), colour = ink, size = 1.8) +
+            ggplot2::scale_shape_manual(values = stats::setNames(c(16, 17), el))
+    }
+    if (!is.null(st$obs)) {
+        now <- data.frame(xn = st$obs[["xn"]], xp = st$obs[["xp"]])
+        p <- p + ggplot2::geom_tile(data = now, ggplot2::aes(colour = labels$now), fill = NA, width = 0.9, height = 0.9,
+                                    linewidth = 1.2) +
+            ggplot2::scale_colour_manual(values = stats::setNames(pal[["now"]], labels$now))
+    }
+    p + ggplot2::scale_x_continuous(breaks = seq(0, st$n1n, by = step(st$n1n)), expand = c(0, 0.3)) +
+        ggplot2::scale_y_continuous(breaks = seq(0, st$n1p, by = step(st$n1p)), expand = c(0, 0.3)) +
+        ggplot2::labs(x = labels$x, y = labels$y, fill = NULL, colour = NULL, shape = NULL) + base +
+        ggplot2::theme(legend.position = "top", legend.box = "vertical", panel.grid = ggplot2::element_blank(),
+                       legend.spacing.y = ggplot2::unit(2, "pt"), legend.margin = ggplot2::margin(0, 0, 0, 0)) +
+        ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE, order = 1),
+                        shape = ggplot2::guide_legend(order = 2), colour = ggplot2::guide_legend(order = 3))
+}
+
+# Most likely recommendation over a grid of true effects; shading = its probability.
+plot_bm_ocmap <- function(st, base, labels) {
+    pal <- bm_palette(); ink <- bm_ink(base)
+    g <- st$g
+    rand <- st$kind == "rand"
+    cats <- if (rand) c("stop", "enrich", "strat", "all") else c("stop", "pos", "neg", "all")
+    P <- as.matrix(g[, cats])
+    top <- cats[max.col(P, ties.method = "first")]
+    if (!rand) top[top == "pos"] <- "enrich"
+    g$top <- top; g$prob <- apply(P, 1, max)
+    surv <- rand && st$endpoint == "surv"
+    if (rand) { g$x <- if (surv) -g$thP else g$thP; g$y <- if (surv) -g$thN else g$thN }
+    else { g$x <- g$pn; g$y <- g$pp }
+    lev <- c("stop", "enrich", "strat", "neg", "all")
+    lev <- lev[lev %in% g$top]
+    g$lab <- factor(unlist(labels[g$top]), unlist(labels[lev]))
+    fills <- stats::setNames(pal[lev], unlist(labels[lev]))
+    dx <- diff(sort(unique(g$x)))[1]; dy <- diff(sort(unique(g$y)))[1]
+    sc <- st$sc
+    sc$x <- if (rand) (if (surv) -sc$thP else sc$thP) else sc$pn
+    sc$y <- if (rand) (if (surv) -sc$thN else sc$thN) else sc$pp
+    sc$text <- labels$sc[sc$key]
+    p <- ggplot2::ggplot(g, ggplot2::aes(x, y)) +
+        ggplot2::geom_tile(ggplot2::aes(fill = lab, alpha = prob), width = dx, height = dy) +
+        ggplot2::scale_fill_manual(values = fills) +
+        ggplot2::scale_alpha_continuous(range = c(0.25, 1), limits = c(0.25, 1), name = labels$prob,
+                                        breaks = c(0.5, 0.75, 1)) +
+        ggplot2::geom_point(data = sc, ggplot2::aes(x, y), inherit.aes = FALSE, colour = ink, size = 2) +
+        ggplot2::geom_text(data = sc, ggplot2::aes(x, y, label = text), inherit.aes = FALSE, colour = ink,
+                           size = ann_size(base, 0.7), vjust = -0.8)
+    if (surv) {
+        br <- c(0.3, 0.5, 0.7, 1, 1.2)
+        p <- p + ggplot2::scale_x_continuous(breaks = log(br), labels = format(br), expand = c(0, 0)) +
+            ggplot2::scale_y_continuous(breaks = log(br), labels = format(br), expand = c(0, 0))
+    } else p <- p + ggplot2::scale_x_continuous(expand = c(0, 0)) + ggplot2::scale_y_continuous(expand = c(0, 0))
+    p + ggplot2::labs(x = labels$x, y = labels$y, fill = NULL) + base +
+        ggplot2::theme(legend.position = "top", legend.box = "vertical", panel.grid = ggplot2::element_blank(),
+                       legend.spacing.y = ggplot2::unit(2, "pt"), legend.margin = ggplot2::margin(0, 0, 0, 0)) +
+        ggplot2::guides(fill = ggplot2::guide_legend(nrow = if (length(lev) > 3) 2 else 1, byrow = TRUE, order = 1),
+                        alpha = ggplot2::guide_legend(order = 2))
+}
