@@ -4,12 +4,14 @@ A [jamovi](https://www.jamovi.org) module for studies analysed repeatedly as the
 accumulate — clinical trials with interim analyses, sequential experiments, safety
 surveillance — with control of the type I and type II errors.
 
-## Version 0.5.10
+It needs no packages beyond those bundled with jamovi: `jmvcore`, `R6` and `ggplot2`.
 
 Every analysis works in the same order: the design options come first, and the data go in the
 **Analysis of observed data** box at the end of the options panel (variables, or patients and
 responses for phase II). Without data, each analysis is a design tool; with data, it also
 analyses them against that design.
+
+## Analyses (menu: Sequential)
 
 ### Group Sequential Design
 
@@ -56,20 +58,12 @@ From it the analysis gives:
 - once a boundary is crossed or the final analysis is reached, the stagewise-ordering p-value,
   median-unbiased estimate and interval.
 
-For one-sided designs these results agree with rpact's `getAnalysisResults` to 10⁻⁶.
-
 **Output**
 
 - A design summary, the boundaries (Z, nominal p, effect scale) and the stopping
   probabilities.
 - Operating characteristics.
 - Plots of the boundaries, the error spending, and power and expected sample size.
-
-The numerical engine is pure R: the recursive integration of Armitage, McPherson & Rowe
-(1969) as described by Jennison & Turnbull (2000, ch. 19). Its results agree with
-**rpact 4.4.0** and **gsDesign 3.11.0** to within 10⁻⁵ over the 144 designs in the test suite.
-Sample sizes, events, accrual, follow-up and analysis times agree with rpact to within 10⁻⁶
-(relative).
 
 ### Phase II Multistage Design
 
@@ -100,13 +94,6 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
   by the decision it leads to (promising in green). With observed data, the current status is
   outlined in red and the outcomes that can no longer be reached are faded.
 
-**Validation**
-
-- The Simon optimal and minimax designs agree with clinfun in 56 scenarios.
-- The UMVUE and p-values agree with clinfun's `twostage.inference`.
-- The predictive probabilities and boundaries agree with ph2bayes.
-- Fleming's boundaries reproduce two published examples.
-
 ### Sequential Probability Ratio Test
 
 *Sequential → Sequential Probability Ratio Test*: Wald's test after every observation.
@@ -132,9 +119,6 @@ Sample sizes, events, accrual, follow-up and analysis times agree with rpact to 
 - For data in arrival order (with a group variable for two samples): the decision, the n at the
   decision and the estimate, a path table, and a plot of the path against the boundaries.
 
-**Validation:** the LLR paths agree with the SPRT package and with sprtt; the exact binomial
-operating characteristics agree with gsDesign's `binomialSPRT` to 10⁻⁷.
-
 ### Safety Surveillance (MaxSPRT)
 
 *Sequential → Safety Surveillance (MaxSPRT)*: the maximized SPRT of Kulldorff et al. (2011) for
@@ -149,11 +133,6 @@ post-marketing safety surveillance.
 - **Data:** cumulative cases and expected counts (or all cases), one row per look, giving the
   LLR, the relative risk and the signal decision, and a plot of the counts against the
   signalling boundary.
-
-**Validation:** critical values, attained α, power, time to signal and surveillance length agree
-with the Sequential package (Silva & Kulldorff) to 10⁻⁶ in 10 designs. Sequential reports the
-lower end of the interval of critical values that give the same discrete design; so does
-jmsequential.
 
 ### Bayesian Sequential Monitoring
 
@@ -173,11 +152,6 @@ operating characteristics.
   decision at each look, or the Bayes factor path; plots of the thresholds, the probabilities, the
   prior and posterior, and the operating characteristics.
 
-**Validation:** the Bayes factor agrees with BayesFactor's `ttest.tstat` (to 2·10⁻⁵ on the log
-scale, BayesFactor's own accuracy; to 10⁻⁹ against adaptive integration). The two-arm posterior
-probability agrees with the exact formula to 10⁻¹². The exact operating characteristics agree with
-simulation.
-
 ### Anytime-Valid Monitoring
 
 *Sequential → Anytime-Valid Monitoring*: e-values and confidence sequences, valid at every sample
@@ -193,46 +167,62 @@ size and under optional stopping.
   the e-value, the always-valid p-value, the confidence sequence and the decision, with plots of
   the e-process and of the confidence sequence.
 
-**Validation:** the e-values equal safestats' `eGauss` e-values; the single-analysis sample sizes
-are identical to safestats' designs, and the continuous-monitoring sample sizes agree within
-simulation error.
-
-### Example data
+## Example data
 
 *Data library → jmsequential*: interim results of a trial (difference in means, survival, two arms
 binary), patients in arrival order (binary and continuous outcomes, two arms), and weekly
 surveillance counts.
 
-Planned next: individual-level data for interim analyses; a classical fixed-sample size module.
+## Tutorial
 
-## Installation
+A [website on sequential methods](https://victor-moreno.github.io/jamovi-sequential/) (in
+`docs/`): boundaries, spending, futility, triangular tests, sample size, monitoring, inference,
+SPRT, MaxSPRT, phase II, Bayesian and anytime-valid designs, with examples computed by this
+module. Each method page ends with its example worked in jamovi, with a screenshot of the options
+and the results. The site is rendered with Quarto from a source kept outside this repository.
 
-Download the `.jmo` that matches your jamovi (Help → About shows its R version) from the
-Releases page, then *Modules → jamovi library → Sideload*:
+## Install
+
+Prebuilt `.jmo` files are attached to the [Releases](../../releases) page — four per version, one
+for each combination of jamovi series and CPU:
 
 | your jamovi | Apple silicon | Intel / AMD |
 | --- | --- | --- |
-| current (R 4.6.0) | `jmsequential_<version>_current_R4.6.0_arm64.jmo` | `…_current_R4.6.0_x64.jmo` |
-| solid (R 4.5.0) | `jmsequential_<version>_solid_R4.5.0_arm64.jmo` | `…_solid_R4.5.0_x64.jmo` |
+| **current** (bundles R 4.6.0) | `jmsequential_<version>_current_R4.6.0_arm64.jmo` | `jmsequential_<version>_current_R4.6.0_x64.jmo` |
+| **solid** (bundles R 4.5.0) | `jmsequential_<version>_solid_R4.5.0_arm64.jmo` | `jmsequential_<version>_solid_R4.5.0_x64.jmo` |
 
-## Tutorial
+The same file works on macOS, Windows and Linux: jamovi checks the R version and the CPU, not the
+operating system (see Help → About). In jamovi, go to Modules (⊕) → Sideload and choose the
+`.jmo`.
 
-`tutorial/` is a Quarto website that introduces sequential methods — boundaries, spending,
-futility, triangular tests, sample size, monitoring, inference, SPRT, MaxSPRT, phase II,
-Bayesian and anytime-valid designs — with examples computed by this module. Each method page
-ends with its example worked in jamovi, with a screenshot of the options and the results
-(captured by `tutorial/screenshots/capture.py`). See `tutorial/README.md` to build it.
+## Build and install (developers)
 
-## Development
+```sh
+bash tools/install.sh                 # desktop and Docker (container "jamovi")
+bash tools/install.sh desktop         # jamovi.app, via jmvtools::install()
+bash tools/install.sh docker [name]   # jmc --install in a running container
+bash tools/build-jmo.sh current       # release: dist/*_current_R4.6.0_{x64,arm64}.jmo
+bash tools/build-jmo.sh solid         # release: dist/*_solid_R4.5.0_{x64,arm64}.jmo
+bash tools/release.sh                 # build all four and publish one GitHub release
+```
 
-- **Tests:** `Rscript -e 'testthat::test_local(".")'`. The reference values under
-  `tests/testthat/fixtures/` were generated from rpact, gsDesign, clinfun, ph2bayes, SPRT, sprtt,
-  Sequential, BayesFactor and safestats.
-- **Build:** `bash tools/build-jmo.sh {current|solid}` writes `dist/`.
-- **Install:** `bash tools/install.sh [desktop|docker|both]`, which runs `tools/smoke.R` against
-  the installed module.
+After each install, `tools/smoke.R` checks the installed module (a survival sample size and a
+Simon design). The tests run with `Rscript -e 'testthat::test_local(".")'`; their reference
+values in `tests/testthat/fixtures/` were generated from the R packages named below, which are
+not needed to run them.
+
+## Notes on methods
+
+- The numerical engine is pure R: the recursive integration of Armitage, McPherson & Rowe (1969)
+  as described by Jennison & Turnbull (2000, ch. 19), used for the group sequential boundaries,
+  the known-SD SPRT, the normal Bayesian rules and the known-SD anytime-valid design.
+- Phase II designs, the binomial SPRT and the two-arm Bayesian rules are computed exactly from the
+  binomial distribution.
 
 ## Acknowledgements
+
+This module was designed and built together with Claude Code, over several rounds of design,
+implementation and testing in jamovi.
 
 Methods follow the publications cited in the tutorial, in particular:
 
@@ -245,12 +235,20 @@ Methods follow the publications cited in the tutorial, in particular:
 - Spiegelhalter, Freedman & Parmar (1994); Rouder, Speckman, Sun, Morey & Iverson (2009);
 - Robbins (1970); Grünwald, de Heide & Koolen (2024).
 
-The R packages [rpact](https://www.rpact.org) (G. Wassmer, F. Pahlke),
-[gsDesign](https://keaven.github.io/gsDesign/) (K. Anderson), ldbounds, seqtest, clinfun,
-ph2bayes, SPRT, sprtt, Sequential, BayesFactor and
-[safestats](https://github.com/AlexanderLyNL/safestats) (A. Ly, R. Turner, J. ter Schure) served as
-references and test oracles. No code was copied from packages whose licences are incompatible
-with GPL-3.
+Ideas and reference values for the tests come from these R packages:
+[rpact](https://www.rpact.org) (G. Wassmer, F. Pahlke),
+[gsDesign](https://keaven.github.io/gsDesign/) (K. Anderson), ldbounds (C. Casper, T. Cook,
+O. A. Perez), seqtest (T. Yanagida), clinfun (V. E. Seshan), ph2bayes (K. Nagashima), SPRT
+(H. Budihal), sprtt (M. Snijder-Steinhilber, M. Schnuerch, A.-L. Schubert), Sequential (I. R. Silva,
+M. Kulldorff), BayesFactor (R. D. Morey, J. N. Rouder) and
+[safestats](https://github.com/AlexanderLyNL/safestats) (A. Ly, R. Turner and co-authors). They are
+not dependencies of the module, and no code was copied from packages whose licences are
+incompatible with GPL-3.
+
+This module has been developed with support of the Instituto de Salud Carlos III (ISCIII),
+“Programa FORTALECE del Ministerio de Ciencia e Innovación”, through the project number
+FORT23/00032 and the Consortium for Biomedical Research in Epidemiology and Public Health
+(CIBERESP), action Genrisk.
 
 ## Licence
 
