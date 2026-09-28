@@ -20,7 +20,7 @@ dist
 # compiled from jamovi/i18n/*.po by the build
 inst/i18n
 # local only, never pushed: survey report, implementation plan, fixture generator
-docs
+documents
 dev
 # tutorial: rendered site and Quarto caches are rebuilt; _freeze/ is tracked
 tutorial/_site
