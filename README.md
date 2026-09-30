@@ -249,7 +249,7 @@ operating system (see Help → About). In jamovi, go to Modules (⊕) → Sidelo
 ```sh
 bash tools/install.sh                 # desktop and Docker (container "jamovi")
 bash tools/install.sh desktop         # jamovi.app, via jmvtools::install()
-bash tools/install.sh docker [name]   # jmc --install in a running container
+bash tools/install.sh docker [name]   # jamovi >= 28.4 container, via ../jamovi-src's compiler
 bash tools/build-jmo.sh current       # release: dist/*_current_R4.6.0_{x64,arm64}.jmo
 bash tools/build-jmo.sh solid         # release: dist/*_solid_R4.5.0_{x64,arm64}.jmo
 bash tools/release.sh                 # build all four and publish one GitHub release
